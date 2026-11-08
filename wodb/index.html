@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · WODB</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="wodb.css">
+<style id="mida-pagina">@page{size:A4 landscape;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>WODB · Quin no hi encaixa?</h1>
+  </div>
+  <div class="fila">
+    <label>Full <select id="banc"></select></label>
+    <span class="grup">
+      <button id="btnA" class="on">Full A</button>
+      <span class="sep">o bé</span>
+      <label class="num">Full nou núm. <input id="num" type="number" min="1000" max="9999" step="1" inputmode="numeric"></label>
+      <button id="btnGen">Genera</button>
+      <button id="btnAtzar" title="Tria un número a l'atzar">A l'atzar</button>
+    </span>
+  </div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="full" class="on">Full 1</button>
+      <button data-vista="plantilla">Plantilla</button>
+      <button data-vista="solu">Solucionaris</button>
+    </span>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <div id="soluTria" class="fila amagat"></div>
+  <p id="estat" class="estat" role="status"></p>
+</header>
+<main id="pagines"></main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="tr-ratlles" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff"/><line x1="0" y1="0" x2="0" y2="9" stroke="#000" stroke-width="2.6"/></pattern>
+    <pattern id="tr-quadricula" patternUnits="userSpaceOnUse" width="10" height="10"><rect width="10" height="10" fill="#fff"/><path d="M0,0 H10 M0,0 V10" stroke="#000" stroke-width="1.6"/></pattern>
+    <pattern id="tr-punts" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="#fff"/><circle cx="4" cy="4" r="1.9" fill="#000"/></pattern>
+  </defs>
+</svg>
+<script src="motor.js"></script>
+<script src="bancs.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
