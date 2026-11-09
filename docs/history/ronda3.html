@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — ronda 3: geometria i probabilitat</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --paper:#3a3f46; --paper2:#30353b; --cell:#ffffff; --cellink:#1f2328;
+  --a:#e8743b; --a-soft:#fbe1d3; --b:#2f6fd0; --b-soft:#d9e6fa;
+  --water:#cfe3f7; --waterink:#1e40af; --sand:#f6ead0; --grass:#d9efc9; --gold:#facc15;
+  --ok:#15803d; --bad:#b91c1c;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26;
+    --paper:#4a5059; --paper2:#40454d; --cell:#f4f1ea; --cellink:#1f2328; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 6px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.cat{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.1rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.frase{font-size:1.02rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.box{border-radius:10px;padding:8px 11px;margin:8px 0;font-size:.92rem}
+.box b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.box.nou{background:var(--accent-soft)} .box.nou b{color:var(--accent)}
+.box.chk{background:transparent;border:1px dashed var(--line)} .box.chk b{color:var(--muted)}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+/* demos */
+.demo{margin:12px 0 6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.demo h4{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.gr{display:grid;gap:2px;padding:2px;background:var(--line);border-radius:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation;width:max-content;max-width:100%}
+.c{position:relative;display:flex;align-items:center;justify-content:center;background:var(--cell);color:var(--cellink);border-radius:3px;font-weight:650;line-height:1;overflow:hidden}
+.c.paper{background:repeating-linear-gradient(45deg,var(--paper),var(--paper) 4px,var(--paper2) 4px,var(--paper2) 8px);color:rgba(255,255,255,.35)}
+.c.dim{opacity:.45}
+.c.hole{box-shadow:inset 0 0 0 2.5px var(--accent)}
+.c .pv{position:absolute;top:0;left:2px;font-size:.55em;color:var(--a)}
+.c .lb{position:absolute;top:1px;right:2px;font-size:.5em;color:var(--muted)}
+.c.pr{background:#e9dcc7;color:#7c5a2a}
+.c.pr4{box-shadow:inset 0 0 0 2px #16a34a;background:#dcfce7}
+.c.water{background:var(--water);color:var(--waterink)}
+.c.sand{background:var(--sand)}
+.c.grass{background:var(--grass)}
+.c.gold{background:#fef3c7;color:#a16207}
+.c.sky{background:#1e293b;color:#fde68a}
+.c.sky.hole{background:#334155}
+.c.sky.paper{background:repeating-linear-gradient(45deg,#4b5563,#4b5563 4px,#374151 4px,#374151 8px);color:rgba(253,230,138,.35)}
+.c.hit{outline:3px solid var(--ok);outline-offset:-3px}
+.c.miss{outline:3px solid var(--bad);outline-offset:-3px}
+.c.best{outline:3px solid #16a34a;outline-offset:-3px}
+.c.bet{box-shadow:inset 0 0 0 3px var(--a)}
+.pad{display:grid;grid-template-columns:repeat(3,52px);gap:6px;margin-top:8px}
+.pad button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:1.15rem;height:44px;cursor:pointer}
+.btn{font-size:.85rem;height:auto;padding:7px 11px}
+.btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:disabled{opacity:.4}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.info{font-size:.88rem;margin:6px 0;min-height:1.3em}
+.msg{font-size:.88rem;min-height:1.3em;color:var(--muted);margin:4px 0}
+.msg.bad{color:var(--bad)} .msg.good{color:var(--ok);font-weight:600}
+.cap{font-size:.85rem;color:var(--muted);margin-top:6px}
+.small{font-size:.8rem;color:var(--muted)}
+.svgwrap svg{display:block;max-width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none;border-radius:8px}
+.bars{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;align-items:end;height:110px;margin-top:8px}
+.bars div{background:var(--accent);border-radius:4px 4px 0 0;position:relative;min-height:2px}
+.bars span{position:absolute;top:-16px;left:0;right:0;text-align:center;font-size:.68rem;color:var(--muted)}
+.blabels{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;font-size:.75rem;text-align:center;color:var(--muted)}
+.gatico{display:inline-block;font-size:1.3em;transition:transform .35s}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Ronda 3: geometria i probabilitat</h1>
+    <p>Sis jocs nous. En els de <b>geometria</b>, la plantilla deixa de ser una finestra i es converteix en una figura que es mou: els girs, les simetries i les translacions es fan amb les mans (una xinxeta, un regle, unes petjades), sense vocabulari. En els de <b>probabilitat</b>, l'atzar decideix on cau o com gira la plantilla, i la seva forma canvia les probabilitats.</p>
+    <p>Tots sis tenen una demo jugable, i les xifres que dono les he comprovat per ordinador. Respon amb els botons i, si vols, amb un comentari: tot es desa sol. Quan acabis, escriu-me «Revisa artifact».</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐ Els que provaria primer</button>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const DATA = {"constel":{"sky":[[0,0,0,1,1,0,0,0,0,1],[0,1,0,0,1,0,0,0,0,0],[0,0,1,1,1,1,0,0,0,1],[0,1,0,0,0,0,1,0,1,1],[0,0,0,1,0,0,1,0,1,0],[0,0,0,1,1,0,0,1,0,1],[0,0,0,0,1,0,0,1,0,0],[0,0,0,1,0,0,0,0,1,0]],"pat":[[0,0],[0,1],[0,3],[1,1],[1,2]]},"rastres":{"conill":[[[0,1],[1,1],[2,1],[2,2]],[[1,3],[2,3],[3,3],[3,4]],[[2,5],[3,5],[4,5],[4,6]],[[3,7],[4,7],[5,7],[5,8]]],"caminant":[[[1,0],[2,0],[3,0],[3,1]],[[4,2],[4,3],[5,2],[6,2]],[[1,4],[2,4],[3,4],[3,5]],[[4,6],[4,7],[5,6],[6,6]]],"ballarina":[[[0,2],[1,2],[2,2],[2,3]],[[1,6],[1,7],[1,8],[2,6]],[[5,6],[5,7],[6,7],[7,7]],[[5,3],[6,1],[6,2],[6,3]]],"granota":[[[2,1],[3,1],[4,1],[4,2]],[[3,5],[3,6],[4,6],[5,6]],[[2,1],[3,1],[4,1],[4,2]],[[3,5],[3,6],[4,6],[5,6]]],"diagonal":[[[0,0],[1,0],[2,0],[2,1]],[[2,2],[2,3],[2,4],[3,4]],[[4,4],[5,4],[6,4],[6,5]],[[6,6],[6,7],[6,8],[7,8]]]},"para":{"map":["~~~~~~~~~~","~~~..~~~~~","~~.....*~~","~*......~~","~~...~..*~","~~..~~~..~","~*.......~","~~..*...~~","~~~~..~~~~","~~~~~~~~~~"]}};
+const CATS=[
+ {id:'G',name:'Geometria: moviments i formes',desc:'Girs, simetries i translacions que es fan amb les mans.'},
+ {id:'P',name:'Probabilitat i atzar',desc:'Daus i monedes, i decisions en què la geometria també hi té a dir.'}];
+const ITEMS=[
+ {id:'G1',cat:'G',star:true,title:'La xinxeta',tags:['Girs','Simetries','Mediatriu'],lvl:'2n ESO → Batx.',
+  frase:'Clava una xinxeta i fes girar la plantilla fins que caigui exactament sobre la seva ombra.',
+  joc:'Al full 1 hi ha dibuixada l\'ombra de la plantilla en una altra posició. Tens tres eines: una xinxeta (per girar la plantilla al voltant d\'un punt), un regle (per capgirar-la com en un mirall) i el lliscament (moure-la sense girar-la). Has de portar la plantilla fins a l\'ombra amb un sol moviment, i la gràcia és clavar la xinxeta o posar el regle al lloc just a la primera. Nivells: mitja volta, quart de volta, mirall, «impossible?» (una ombra on cap eina sola no arriba) i «només regles» (fer un gir amb dos miralls).',
+  enganxa:'Clavar la xinxeta, girar i veure que la plantilla encaixa al mil·límetre és molt satisfactori. I quan falla, l\'error també ensenya: s\'ha quedat curta, s\'ha passat, ha girat cap a l\'altre costat…',
+  mates:'Moviments del pla en estat pur. El centre de gir és a la mateixa distància d\'un punt i del seu corresponent, és a dir, sobre la mediatriu; en una mitja volta, és el punt mitjà. L\'eix de simetria és la mediatriu mateixa. Un gir o una translació no poden convertir mai una figura en la seva imatge de mirall. I dos miralls que es tallen fan un gir del doble de l\'angle que formen, en un sentit o en l\'altre segons l\'ordre.',
+  nou:'La xinxeta converteix el centre de gir en una cosa física: no es dibuixa, es clava. En mode duel, un jugador dibuixa una ombra i l\'altre l\'ha d\'assolir amb un sol moviment o demostrar que és impossible.',
+  chk:'He comprovat els 5 nivells de la demo. El nivell 4 és una simetria amb lliscament: cap eina sola no hi arriba, però amb dues sí. Un detall curiós: per fer un quart de volta, la xinxeta només pot anar al centre d\'una casella o a una cantonada; per fer mitja volta, també pot anar al punt mitjà d\'un costat.',
+  pregunta:'Et sembla viable a l\'aula amb una xinxeta (sobre cartró) o amb la punta d\'un llapis fent de xinxeta?',
+  demo:'xinxeta'},
+ {id:'G2',cat:'G',star:true,title:'Rastres',tags:['Translacions','Girs','Simetria amb lliscament'],lvl:'1r ESO → Batx.',
+  frase:'Algú ha deixat tres petjades. On trepitjarà ara?',
+  joc:'La plantilla és una bota (una forma sense cap simetria). Al full 1 hi ha tres petjades seguides d\'un animal, i cada petjada surt de l\'anterior amb el mateix moviment: el conill salta, l\'excursionista camina alternant els peus, la ballarina gira… Cal col·locar la plantilla on anirà la quarta petjada, amb la posició i l\'orientació exactes. En duel, un jugador fa un rastre secret de 3 petjades (marcant pels forats) i l\'altre l\'ha de continuar.',
+  enganxa:'És una endevinalla visual: o encaixa o no encaixa. I fer un rastre que l\'altre no endevini obliga a inventar moviments enrevessats.',
+  mates:'Reconèixer quin moviment porta una figura a una altra (translació, gir, simetria o simetria amb lliscament), trobar-ne el centre o l\'eix, i repetir-lo. Les petjades d\'algú que camina són l\'exemple clàssic de simetria amb lliscament, i aquí s\'hi arriba jugant.',
+  nou:'Les petjades fan visible el que els llibres expliquen amb fletxes: repetir un moviment. I el rastre es fabrica amb la mateixa plantilla.',
+  chk:'He generat els 5 rastres de la demo aplicant tres vegades el mateix moviment a la primera petjada, i les quatre petjades caben al tauler. El de la granota té trampa: dues mitges voltes tornen al punt de partida, i per això la quarta petjada cau sobre la segona.',
+  pregunta:'Ho veus més com a trencaclosques (rastres ja fets) o com a duel (cada jugador fa rastres per a l\'altre)?',
+  demo:'rastres'},
+ {id:'G3',cat:'G',title:'Constel·lacions',tags:['Congruència','Figures de mirall'],lvl:'1r ESO → 4t ESO',
+  frase:'Troba la constel·lació en un cel ple d\'estrelles, sense caure en el parany del mirall.',
+  joc:'El full 1 és un cel amb estrelles, i els forats de la plantilla formen una constel·lació. Cal trobar l\'únic lloc on els 5 forats deixen veure 5 estrelles. La plantilla es pot girar, però no capgirar: al cel, una constel·lació no es veu mai com en un mirall. I el cel amaga un parany: la constel·lació capgirada també hi apareix sencera.',
+  enganxa:'És un joc de cerca ràpida, ideal per jugar a velocitat. El parany del mirall fa que fins i tot els més ràpids s\'hi equivoquin la primera vegada.',
+  mates:'Congruència: dues figures són iguals si un moviment porta l\'una a l\'altra. La diferència entre girar i capgirar (figures que no coincideixen amb la seva imatge de mirall, com les mans). I estratègies de cerca: les distàncies entre estrelles no canvien en girar.',
+  nou:'El parany del mirall: la mateixa plantilla, capgirada, també hi encaixa, i cal saber explicar per què no compta.',
+  chk:'Al cel de la demo (8×10, 25 estrelles), la constel·lació hi apareix exactament una vegada girada i una vegada capgirada (el parany). A més, hi ha 6 llocs on encaixen 4 de les 5 estrelles.',
+  pregunta:'El jugaries a velocitat (qui la troba primer) o com a reptes individuals amb cels cada vegada més plens?',
+  demo:'constel'},
+ {id:'P1',cat:'P',star:true,title:'Paracaigudistes',tags:['Valor esperat','Monedes','Risc'],lvl:'2n ESO → Batx.',
+  frase:'Tria on salta el teu equip: el vent decidirà on cau.',
+  joc:'El full 1 és el mapa d\'una illa amb aigua, sorra i tresors. La plantilla és la formació de 4 paracaigudistes: cada forat és un paracaigudista. Tries on apuntes i com orientes la formació. Després bufa el vent: es tiren dues monedes per al nord-sud i dues per a l\'est-oest. Dues cares t\'empenyen una casella cap a un costat; dues creus, cap a l\'altre, i una de cada no et mou. Cada paracaigudista que cau en un tresor dona +4 punts; a la sorra, +1, i a l\'aigua, −3. Es fan 5 salts.',
+  enganxa:'És una decisió de risc molt clara: els tresors són a prop de la costa, i apuntar-hi és temptador però perillós. El vent fa riure i patir a parts iguals.',
+  mates:'Probabilitat amb monedes (una de cada surt la meitat de les vegades, i per això sovint el vent no et mou), esdeveniments independents (nord-sud i est-oest) i valor esperat. Com que el valor esperat del salt és la suma dels valors esperats de cada paracaigudista, es pot calcular per parts. I geometria: el marge de seguretat respecte de la costa.',
+  nou:'La plantilla fa de formació: decidir on apuntar i com orientar-la és decidir sobre quatre punts alhora.',
+  chk:'Al mapa de la demo, el salt que donaria més punts sense vent (10) té un valor esperat de només 1,94 punts. El millor salt segons el valor esperat (4,19 punts) en donaria només 7 sense vent. Arriscar-se per als tresors no surt a compte.',
+  pregunta:'Hi juguem amb monedes, com a la demo, o prefereixes daus? I tots alhora amb el mateix vent?',
+  demo:'para'},
+ {id:'P2',cat:'P',star:true,title:'El gat marejat',tags:['Probabilitat','Simetries del quadrat'],lvl:'2n ESO → Batx.',
+  frase:'El gat dona voltes a l\'atzar. Aposta per quin ratolí veurà.',
+  joc:'La plantilla tapa un quadrat de 5×5 i només té un forat: l\'ull del gat. Al full 1, al voltant del gat, hi ha 8 ratolins, i l\'ull en veu un de sol. Es tira un dau tantes vegades com s\'hagi anunciat (per exemple, 4): amb 1 o 2, el gat gira a la dreta; amb 3 o 4, a l\'esquerra; amb 5 o 6, es tomba (es capgira). Abans de tirar, cadascú aposta per un ratolí.',
+  enganxa:'Sembla pura sort, però no ho és: hi ha ratolins impossibles. Qui ho descobreix guanya més que els altres, i tothom vol saber per què.',
+  mates:'Després d\'un nombre parell de tirades, el gat només pot veure 4 dels 8 ratolins; després d\'un nombre senar, només els altres 4. Cada moviment canvia la «paritat» de la posició: és una propietat dels girs i les simetries del quadrat. També hi ha arbres de probabilitat: després de 2 tirades, el ratolí inicial té probabilitat 1/3, i tres ratolins més, 2/9 cadascun.',
+  nou:'Les 8 maneres de col·locar una plantilla són els 8 resultats possibles. Un dau que les recorre a l\'atzar fa aparèixer una propietat sorprenent de les simetries del quadrat.',
+  chk:'He calculat les probabilitats exactes. Després de 2 tirades: 1/3, 2/9, 2/9 i 2/9, i els altres quatre ratolins, 0. Després de 4: 7/27 per al ratolí inicial i 20/81 per a cadascun dels altres tres possibles. A la llarga, cada ratolí possible s\'acosta a 1/4.',
+  pregunta:'T\'agrada com a introducció a la probabilitat amb sorpresa? El provaries a 3r o 4t d\'ESO?',
+  demo:'gat'},
+ {id:'P3',cat:'P',title:'El pont del borratxo',tags:['Probabilitat experimental','Daus'],lvl:'1r ESO → Batx.',
+  frase:'Quina forma creua millor el pont fent tentines?',
+  joc:'El full 1 té un riu i un pont de 4 caselles d\'amplada. La plantilla és un borratxo que l\'intenta creuar. Cada torn es tira un dau: amb 1, 2 o 3 avança; amb 4 es desvia amunt; amb 5, avall, i amb 6 gira 90°. Si algun forat cau a l\'aigua, s\'ha acabat. Abans de començar, cada jugador tria la forma (tres en fila, dòmino, L o quadrat), l\'orientació i la fila de sortida. En duel, guanya el primer que creua; qui cau a l\'aigua torna a començar.',
+  enganxa:'És una cursa de daus, però la decisió inicial compta molt. I es pot comprovar experimentant: fent 20 travessies i comparant resultats.',
+  mates:'Probabilitat experimental (freqüència relativa) i com s\'acosta a la probabilitat teòrica quan es repeteix moltes vegades. La geometria influeix en la probabilitat: una forma llarga col·locada al llarg del pont aguanta millor les desviacions. A Batxillerat, és una cadena de Markov.',
+  nou:'La forma i l\'orientació de la plantilla canvien la probabilitat: és un experiment aleatori en què decideix la geometria.',
+  chk:'He calculat les probabilitats exactes per al pont de 4×6 amb el dau descrit. Tres en fila al llarg del pont: 37%; de través: 18%. El dòmino va del 28% al 47% segons l\'orientació i la fila de sortida: el 47% s\'aconsegueix quan gira sobre l\'extrem de davant.',
+  pregunta:'El veus com a joc de daus per a 1r i 2n d\'ESO o com a experiment de probabilitat per a cursos superiors?',
+  demo:'pont'}
+];
+
+/* ============ motor comú (graella + plantilla) ============ */
+const ROT=o=>o.map(([r,c])=>[c,-r]);
+const MIR=o=>o.map(([r,c])=>[r,-c]);
+const KEY=o=>o.map(p=>p[0]+','+p[1]).sort().join(';');
+const cellsOf=p=>p.o.map(([r,c])=>[p.r+r,p.c+c]);
+const inside=(p,H,W)=>cellsOf(p).every(([r,c])=>r>=0&&r<H&&c>=0&&c<W);
+function moved(p,m){const q={r:p.r,c:p.c,o:p.o,f:p.f||0};
+  if(m==='u')q.r--;else if(m==='d')q.r++;else if(m==='l')q.c--;else if(m==='r')q.c++;
+  else if(m==='cw')q.o=ROT(p.o);else if(m==='ccw')q.o=ROT(ROT(ROT(p.o)));else if(m==='flip'){q.o=MIR(p.o);q.f=1-q.f;}
+  return q;}
+function maskSets(p){const holes=new Set(),cs=cellsOf(p);let r0=1e9,r1=-1e9,c0=1e9,c1=-1e9;
+  cs.forEach(([r,c])=>{holes.add(r+','+c);r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);});
+  return {holes,piv:p.r+','+p.c,inPaper:(r,c)=>r>=r0&&r<=r1&&c>=c0&&c<=c1&&!holes.has(r+','+c)};}
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+function cellSize(el,W,max){const w=(el.clientWidth||320)-24;return Math.max(18,Math.min(max||38,Math.floor((w-2*(W-1)-4)/W)));}
+function gridHTML(H,W,sz,fn){let h=`<div class="gr" style="grid-template-columns:repeat(${W},${sz}px);grid-auto-rows:${sz}px;font-size:${Math.round(sz*0.42)}px">`;
+  for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=fn(r,c)||{};h+=`<div class="c ${x.k||''}" data-r="${r}" data-c="${c}">${x.h!==undefined?x.h:esc(x.t!==undefined?x.t:'')}</div>`;}
+  return h+'</div>';}
+const PAD=(flip,flipLabel)=>`<div class="pad"><button data-m="ccw" aria-label="Gira a l'esquerra">⟲</button><button data-m="u" aria-label="Amunt">↑</button><button data-m="cw" aria-label="Gira a la dreta">⟳</button><button data-m="l" aria-label="Esquerra">←</button><button data-m="d" aria-label="Avall">↓</button><button data-m="r" aria-label="Dreta">→</button>${flip?`<button data-m="flip" style="grid-column:span 3;font-size:.9rem">${flipLabel||'⇋ Capgira'}</button>`:''}</div>`;
+const RENDERERS=[];window.addEventListener('resize',()=>RENDERERS.forEach(f=>f()));
+const L4=[[0,0],[1,0],[2,0],[2,1]];
+const sameCells=(a,b)=>a.length===b.length&&a.map(x=>x.join(',')).sort().join(';')===b.map(x=>x.join(',')).sort().join(';');
+const rnd=n=>Math.floor(Math.random()*n);
+function msgr(root){const el=root.querySelector('.msg');return (t,k)=>{el.innerHTML=t;el.className='msg '+(k||'');};}
+
+/* ============ G1 · La xinxeta (SVG) ============ */
+function demoXinxeta(root){
+  const N=8,A0=[[1.5,1.5],[1.5,2.5],[1.5,3.5],[2.5,3.5]];
+  const rotC=(pts,P,k)=>pts.map(([x,y])=>{let vx=x-P[0],vy=y-P[1];for(let i=0;i<((k%4)+4)%4;i++){[vx,vy]=[-vy,vx];}return [P[0]+vx,P[1]+vy];});
+  const LIN={h:[[1,0],[0,-1]],v:[[-1,0],[0,1]],d:[[0,1],[1,0]],a:[[0,-1],[-1,0]]};
+  const refC=(pts,P,d)=>pts.map(([x,y])=>{const m=LIN[d],vx=x-P[0],vy=y-P[1];return [P[0]+m[0][0]*vx+m[0][1]*vy,P[1]+m[1][0]*vx+m[1][1]*vy];});
+  const trC=(pts,dx,dy)=>pts.map(([x,y])=>[x+dx,y+dy]);
+  const LV=[
+   {t:'1 · Mitja volta',tools:['pin','ruler','slide'],max:1,target:rotC(A0,[4,4],2),ok:'Exacte! En una mitja volta, el centre és el punt mitjà entre qualsevol punt i el seu corresponent.'},
+   {t:'2 · Quart de volta',tools:['pin','ruler','slide'],max:1,target:rotC(A0,[3.5,3.5],1),ok:'Exacte! El centre és a la mateixa distància de cada punt i del seu corresponent: és a la mediatriu de cada parell.'},
+   {t:'3 · Mirall',tools:['pin','ruler','slide'],max:1,target:refC(A0,[3.5,3.5],'a'),ok:'Exacte! L\'eix de simetria és la mediatriu del segment que uneix cada punt amb el seu corresponent.'},
+   {t:'4 · Impossible?',tools:['pin','ruler','slide'],max:2,ask:true,target:trC(refC(A0,[0,4.5],'h'),3,0),ok:'Exacte! Era una simetria amb lliscament: un mirall i un lliscament al llarg del mirall. Cap eina sola no hi arriba.'},
+   {t:'5 · Només regles',tools:['ruler'],max:2,target:rotC(A0,[4,3],1),ok:'Exacte! Dos miralls que es tallen fan un gir del doble de l\'angle que formen. Prova l\'ordre invers: gira cap a l\'altre costat!'}];
+  let lv=0,st,tool='pin',pin=null,rp=[],busy=false,hint=false,answered=false;
+  const isHalf=v=>Math.abs(v*2-Math.round(v*2))<1e-9, isCen=v=>Math.abs((v-0.5)-Math.round(v-0.5))<1e-9;
+  const valid=pts=>pts.every(([x,y])=>isCen(x)&&isCen(y)&&x>0&&x<N&&y>0&&y<N);
+  const cellsKey=pts=>pts.map(([x,y])=>Math.round(y-.5)+','+Math.round(x-.5)).sort().join(';');
+  function reset(){st={pts:A0.map(p=>p.slice()),hist:[],moves:0,done:false};pin=null;rp=[];hint=false;answered=false;
+    say(LV[lv].ask?'Primer: es pot arribar a l\'ombra amb un sol moviment?':'Porta la plantilla fins a l\'ombra amb '+(LV[lv].max===1?'un sol moviment.':LV[lv].max+' moviments com a màxim.'));draw(null);}
+  let say;
+  root.innerHTML=`<h4>Demo · porta la plantilla fins a l'ombra</h4>
+   <div class="row2">${LV.map((l,i)=>`<button class="btn${i===0?' on':''}" data-lv="${i}">${l.t}</button>`).join('')}</div>
+   <div class="row2" data-g="tools"><button class="btn on" data-tool="pin">📌 Xinxeta</button><button class="btn" data-tool="ruler">📏 Regle</button><button class="btn" data-tool="slide">✋ Lliscar</button></div>
+   <div class="small" data-g="how"></div>
+   <div class="svgwrap"></div>
+   <div class="msg"></div>
+   <div class="row2" data-g="act"></div>
+   <div class="row2"><button class="btn" data-a="hint">Pista</button><button class="btn" data-a="undo">Desfés</button><button class="btn" data-a="reset">Torna a començar</button></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{if(busy)return;lv=+b.dataset.lv;root.querySelectorAll('[data-lv]').forEach(x=>x.classList.toggle('on',x===b));
+    if(!LV[lv].tools.includes(tool))setTool(LV[lv].tools[0]);reset();updTools();});
+  root.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>{if(busy)return;setTool(b.dataset.tool);});
+  root.querySelector('[data-a="reset"]').onclick=()=>{if(!busy)reset();};
+  root.querySelector('[data-a="undo"]').onclick=()=>{if(busy||!st.hist.length)return;st.pts=st.hist.pop();st.moves--;st.done=false;say('Moviment desfet.');draw(null);};
+  root.querySelector('[data-a="hint"]').onclick=()=>{hint=!hint;if(hint)say('La línia discontínua és la mediatriu entre la ★ i la seva ombra. Qualsevol centre de gir que porti l\'una a l\'altra hi és a sobre; i si és un mirall, el mirall és aquesta mateixa línia.');draw(null);};
+  function setTool(t){tool=t;pin=null;rp=[];root.querySelectorAll('[data-tool]').forEach(x=>x.classList.toggle('on',x.dataset.tool===t));updTools();draw(null);}
+  function updTools(){root.querySelectorAll('[data-tool]').forEach(x=>{x.disabled=!LV[lv].tools.includes(x.dataset.tool);});
+    const how={pin:'Toca el tauler per clavar la xinxeta (s\'enganxa als centres, a les cantonades i als punts mitjans dels costats). Després tria el gir.',
+      ruler:'Toca dos punts del tauler per posar-hi el regle (horitzontal, vertical o diagonal). Després capgira.',
+      slide:'Toca la casella on vols que vagi la ★: la plantilla hi llisca sense girar.'}[tool];
+    root.querySelector('[data-g="how"]').textContent=how;
+    const act=root.querySelector('[data-g="act"]');
+    if(tool==='pin')act.innerHTML='<button class="btn" data-r="1">⟳ 90°</button><button class="btn" data-r="3">⟲ 90°</button><button class="btn" data-r="2">↻ 180°</button>';
+    else if(tool==='ruler')act.innerHTML='<button class="btn" data-f="1">⇋ Capgira sobre el regle</button>';
+    else act.innerHTML='';
+    if(LV[lv].ask&&!answered)act.innerHTML='<span class="small" style="width:100%">Es pot fer amb un sol moviment?</span><button class="btn" data-ans="si">Sí, amb una eina</button><button class="btn" data-ans="no">No, cal combinar-ne dues</button>'+act.innerHTML;
+    act.querySelectorAll('[data-r]').forEach(b=>b.onclick=()=>doRot(+b.dataset.r));
+    act.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>doRef());
+    act.querySelectorAll('[data-ans]').forEach(b=>b.onclick=()=>{answered=true;
+      say(b.dataset.ans==='no'?'Correcte! L\'ombra és la imatge de mirall de la plantilla, però cap mirall sol no l\'hi porta. Ara fes-ho amb dos moviments.':'Prova-ho… i si no surt, pensa per què.',b.dataset.ans==='no'?'good':'');updTools();});}
+  function lineDir(P1,P2){const dx=P2[0]-P1[0],dy=P2[1]-P1[1];if(!dx&&!dy)return null;if(!dy)return 'h';if(!dx)return 'v';if(dx===dy)return 'd';if(dx===-dy)return 'a';return null;}
+  function commit(newPts){st.hist.push(st.pts);st.pts=newPts;st.moves++;pin=null;rp=[];
+    if(cellsKey(st.pts)===cellsKey(LV[lv].target)){st.done=true;say(LV[lv].ok,'good');}
+    else if(st.moves>=LV[lv].max)say('No ha encaixat. Desfés el moviment o torna a començar.','bad');
+    else say('Bé: et queda '+(LV[lv].max-st.moves)+' moviment.');
+    draw(null);}
+  function canMove(){if(busy)return false;if(st.done){say('Ja ho tens! Tria un altre nivell.','good');return false;}if(st.moves>=LV[lv].max){say('Ja has fet tots els moviments. Desfés o torna a començar.','bad');return false;}return true;}
+  function doRot(k){if(!canMove())return;if(!pin){say('Primer clava la xinxeta tocant el tauler.','bad');return;}
+    const np=rotC(st.pts,pin,k);if(!valid(np)){say('Amb la xinxeta aquí, la plantilla no cauria sobre les caselles del tauler.','bad');return;}
+    const ang=k===1?90:k===3?-90:180,P=pin;animate(t=>`rotate(${ang*t} ${P[0]} ${P[1]})`,()=>commit(np));}
+  function doRef(){if(!canMove())return;if(rp.length<2){say('Primer posa el regle tocant dos punts del tauler.','bad');return;}
+    const d=lineDir(rp[0],rp[1]);if(!d){say('El regle ha de ser horitzontal, vertical o diagonal.','bad');return;}
+    const np=refC(st.pts,rp[0],d);if(!valid(np)){say('Amb el regle aquí, la plantilla no cauria sobre les caselles del tauler.','bad');return;}
+    const m=LIN[d],P=rp[0];animate(t=>{const a=1+t*(m[0][0]-1),c=t*m[0][1],b=t*m[1][0],dd=1+t*(m[1][1]-1);
+      const e=P[0]-(a*P[0]+c*P[1]),f=P[1]-(b*P[0]+dd*P[1]);return `matrix(${a} ${b} ${c} ${dd} ${e} ${f})`;},()=>commit(np));}
+  function doSlide(cx,cy){if(!canMove())return;const s=st.pts[0],dx=cx-s[0],dy=cy-s[1];if(!dx&&!dy)return;
+    const np=trC(st.pts,dx,dy);if(!valid(np)){say('La plantilla sortiria del tauler.','bad');return;}
+    animate(t=>`translate(${dx*t} ${dy*t})`,()=>commit(np));}
+  function animate(tf,done){busy=true;const t0=performance.now(),D=650;
+    const step=now=>{let t=Math.min(1,(now-t0)/D);t=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;draw(tf(t));if(t<1)requestAnimationFrame(step);else{busy=false;done();}};requestAnimationFrame(step);}
+  function maskPath(pts){const m=.2;let x0=1e9,y0=1e9,x1=-1e9,y1=-1e9;pts.forEach(([x,y])=>{x0=Math.min(x0,x-.5);y0=Math.min(y0,y-.5);x1=Math.max(x1,x+.5);y1=Math.max(y1,y+.5);});
+    let d=`M${x0-m} ${y0-m}H${x1+m}V${y1+m}H${x0-m}Z`;pts.forEach(([x,y])=>{d+=`M${x-.42} ${y-.42}h.84v.84h-.84Z`;});return d;}
+  function draw(tf){
+    const T=LV[lv].target,S=st.pts;let g='';
+    for(let r=0;r<N;r++)for(let c=0;c<N;c++)g+=`<rect x="${c}" y="${r}" width="1" height="1" fill="#fff" stroke="#d8d2c4" stroke-width=".03"/>`;
+    A0.forEach(([x,y])=>{g+=`<rect x="${x-.5}" y="${y-.5}" width="1" height="1" fill="none" stroke="#9ca3af" stroke-width=".04" stroke-dasharray=".08 .08"/>`;});
+    T.forEach(([x,y],i)=>{g+=`<rect x="${x-.5+.04}" y="${y-.5+.04}" width=".92" height=".92" fill="#fde68a" stroke="#b45309" stroke-width=".05" stroke-dasharray=".12 .08"/>`;if(i===0)g+=`<text x="${x}" y="${y+.18}" font-size=".5" text-anchor="middle" fill="#b45309">★</text>`;});
+    if(hint){const s=S[0],t=T[0];if(s[0]!==t[0]||s[1]!==t[1]){const mx=(s[0]+t[0])/2,my=(s[1]+t[1])/2,vx=-(t[1]-s[1]),vy=t[0]-s[0],L=20/Math.hypot(vx,vy);
+      g+=`<line x1="${mx-vx*L}" y1="${my-vy*L}" x2="${mx+vx*L}" y2="${my+vy*L}" stroke="#7c3aed" stroke-width=".06" stroke-dasharray=".2 .12"/><line x1="${s[0]}" y1="${s[1]}" x2="${t[0]}" y2="${t[1]}" stroke="#7c3aed" stroke-width=".03"/>`;}}
+    g+=`<g ${tf?`transform="${tf}"`:''}><path d="${maskPath(S)}" fill="rgba(45,50,58,.82)" fill-rule="evenodd" stroke="#0f766e" stroke-width=".04"/>`;
+    S.forEach(([x,y])=>{g+=`<rect x="${x-.42}" y="${y-.42}" width=".84" height=".84" fill="none" stroke="#0f766e" stroke-width=".07"/>`;});
+    g+=`<text x="${S[0][0]}" y="${S[0][1]+.18}" font-size=".5" text-anchor="middle" fill="#e8743b">★</text></g>`;
+    if(tool==='ruler'&&rp.length){if(rp.length===2){const d=lineDir(rp[0],rp[1]);const vx=rp[1][0]-rp[0][0],vy=rp[1][1]-rp[0][1],L=20/Math.hypot(vx,vy)||0;
+        g+=`<line x1="${rp[0][0]-vx*L}" y1="${rp[0][1]-vy*L}" x2="${rp[0][0]+vx*L}" y2="${rp[0][1]+vy*L}" stroke="${d?'#2f6fd0':'#b91c1c'}" stroke-width=".09" opacity=".85"/>`;}
+      rp.forEach(p=>{g+=`<circle cx="${p[0]}" cy="${p[1]}" r=".13" fill="#2f6fd0"/>`;});}
+    if(tool==='pin'&&pin)g+=`<circle cx="${pin[0]}" cy="${pin[1]}" r=".17" fill="#dc2626" stroke="#fff" stroke-width=".05"/>`;
+    const w=Math.min(380,(root.clientWidth||320)-22);
+    root.querySelector('.svgwrap').innerHTML=`<svg viewBox="-.1 -.1 ${N+.2} ${N+.2}" width="${w}" height="${w}">${g}</svg>`;
+    const svg=root.querySelector('svg');
+    svg.onclick=e=>{if(busy)return;const rc=svg.getBoundingClientRect(),bx=(e.clientX-rc.left)/rc.width*(N+.2)-.1,by=(e.clientY-rc.top)/rc.height*(N+.2)-.1;
+      const sx=Math.max(0,Math.min(N,Math.round(bx*2)/2)),sy=Math.max(0,Math.min(N,Math.round(by*2)/2));
+      if(tool==='pin'){pin=[sx,sy];say('Xinxeta clavada. Ara tria el gir.');draw(null);}
+      else if(tool==='ruler'){if(rp.length>=2)rp=[];rp.push([sx,sy]);if(rp.length===2&&!lineDir(rp[0],rp[1]))say('El regle ha de ser horitzontal, vertical o diagonal. Torna-ho a provar.','bad');else if(rp.length===2)say('Regle posat. Ara capgira.');draw(null);}
+      else if(tool==='slide'){const cx=Math.floor(bx)+.5,cy=Math.floor(by)+.5;doSlide(cx,cy);}};
+  }
+  RENDERERS.push(()=>{if(!busy)draw(null);});updTools();reset();
+}
+
+/* ============ G2 · Rastres ============ */
+function demoRastres(root){
+  const H=8,W=10,R=DATA.rastres;
+  const LV=[{k:'conill',t:'Conill',m:'una translació: cada salt és el mateix desplaçament.'},
+            {k:'caminant',t:'Excursionista',m:'una simetria amb lliscament: un mirall i un pas endavant (peu esquerre, peu dret…).'},
+            {k:'ballarina',t:'Ballarina',m:'un gir de 90° al voltant d\'un punt fix. Quatre passos tanquen la volta.'},
+            {k:'granota',t:'Granota',m:'una mitja volta. Repetida dues vegades torna al punt de partida, i per això la 4a cau sobre la 2a!'},
+            {k:'diagonal',t:'Pingüí',m:'una simetria amb lliscament en diagonal: mirall en diagonal i pas al llarg del mirall.'}];
+  let lv=0,p,show=false,done=false,say;
+  function reset(){p={r:5,c:8,o:L4};show=false;done=false;say('Col·loca la bota on anirà la petjada 4 i prem «Comprova».');draw();}
+  root.innerHTML=`<h4>Demo · on anirà la petjada 4?</h4>
+   <div class="row2">${LV.map((l,i)=>`<button class="btn${i===0?' on':''}" data-lv="${i}">${l.t}</button>`).join('')}</div>
+   <div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="chk">Comprova</button><button class="btn" data-a="sol">Mostra la solució</button><button class="btn" data-a="reset">Torna a començar</button></div>
+   <div class="pv2"></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{lv=+b.dataset.lv;root.querySelectorAll('[data-lv]').forEach(x=>x.classList.toggle('on',x===b));reset();});
+  root.querySelector('[data-a="reset"]').onclick=reset;
+  root.querySelector('[data-a="sol"]').onclick=()=>{show=true;say('La petjada 4 és la de la vora verda. El moviment era '+LV[lv].m);draw();};
+  root.querySelector('[data-a="chk"]').onclick=()=>{const P=R[LV[lv].k];
+    if(sameCells(cellsOf(p),P[3])){done=true;say('Exacte! Era '+LV[lv].m,'good');}
+    else{const s=new Set(P[3].map(x=>x.join(',')));const n=cellsOf(p).filter(([r,c])=>s.has(r+','+c)).length;
+      say(n===4?'Lloc correcte, però l\'orientació no: fixa\'t en el taló i la punta.':'Encara no ('+n+' de 4 caselles bé). Mira com passa de la 1 a la 2, i de la 2 a la 3.','bad');}};
+  root.querySelector('.pv2').innerHTML=PAD(true,'⇋ Capgira la bota');
+  root.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>{const q=moved(p,b.dataset.m);if(!inside(q,H,W)){say('La bota sortiria del tauler.','bad');return;}p=q;say('');draw();});
+  function draw(){const P=R[LV[lv].k],lab={};
+    [0,1,2].forEach(i=>P[i].forEach(([r,c])=>{const k=r+','+c;lab[k]=(lab[k]?lab[k]+'·':'')+(i+1);}));
+    const s4=new Set(P[3].map(x=>x.join(','))),M=maskSets(p),sz=cellSize(root,W,36);
+    root.querySelector('.gwrap').innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls='';
+      if(lab[k])cls='pr';if(show&&s4.has(k))cls+=' pr4';
+      if(M.holes.has(k))cls+=' hole';else if(M.inPaper(r,c))cls+=' paper';
+      return {k:cls,h:(lab[k]||'')+(k===M.piv?'<span class="pv">★</span>':'')};});}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ G3 · Constel·lacions ============ */
+function demoConstel(root){
+  const S=DATA.constel.sky,H=S.length,W=S[0].length,PAT=DATA.constel.pat;
+  let p,say,t0=null,found=false;
+  function reset(){p={r:0,c:0,o:PAT,f:0};found=false;t0=performance.now();say('Mou i gira la plantilla fins que els 5 forats vegin 5 estrelles.');draw();}
+  root.innerHTML=`<h4>Demo · troba la constel·lació</h4><div class="info"></div><div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="chk">Comprova</button><button class="btn" data-a="reset">Torna a començar</button></div><div class="pv2"></div>`;
+  say=msgr(root);
+  root.querySelector('[data-a="reset"]').onclick=reset;
+  root.querySelector('.pv2').innerHTML=PAD(true,'⇋ Capgira (al cel no val!)');
+  root.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>{const q=moved(p,b.dataset.m);if(!inside(q,H,W)){say('La plantilla sortiria del cel.','bad');return;}p=q;say('');draw();});
+  root.querySelector('[data-a="chk"]').onclick=()=>{const n=cellsOf(p).filter(([r,c])=>S[r][c]).length;
+    if(n===5&&p.f===1)say('Has trobat el reflex! Hi encaixa, però amb la plantilla capgirada, i al cel les constel·lacions no es veuen mai com en un mirall. No compta: busca-la sense capgirar.','bad');
+    else if(n===5){found=true;say('L\'has trobada en '+Math.round((performance.now()-t0)/1000)+' segons!','good');}
+    else say(n+' de 5 forats veuen estrelles. Continua buscant.');};
+  function draw(){const M=maskSets(p),sz=cellSize(root,W,36),n=cellsOf(p).filter(([r,c])=>S[r][c]).length;
+    root.querySelector('.info').innerHTML=`Estrelles visibles: <b>${n}/5</b> · Plantilla ${p.f?'<b style="color:var(--bad)">capgirada</b>':'del dret'}`;
+    root.querySelector('.gwrap').innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls='sky';
+      if(M.holes.has(k))cls+=' hole';else if(M.inPaper(r,c))cls+=' paper';
+      return {k:cls,h:(S[r][c]?'★':'')+(k===M.piv?'<span class="pv">●</span>':'')};});}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ P1 · Paracaigudistes ============ */
+function demoPara(root){
+  const MAP=DATA.para.map,H=MAP.length,W=MAP[0].length,SC={'~':-3,'.':1,'*':4},PD=[[-1,.25],[0,.5],[1,.25]];
+  const score=(r,c)=>(r>=0&&r<H&&c>=0&&c<W)?SC[MAP[r][c]]:-3;
+  let p,jumps,total,showEV=false,last=null,busy=false,say;
+  const ev=q=>{let s=0;PD.forEach(([a,pa])=>PD.forEach(([b,pb])=>{cellsOf({r:q.r+a,c:q.c+b,o:q.o}).forEach(([r,c])=>{s+=pa*pb*score(r,c);});}));return s;};
+  function reset(){p={r:5,c:4,o:L4};jumps=5;total=0;last=null;say('Toca el mapa per apuntar (hi va la ★) i orienta la formació. Després, salta!');draw();}
+  root.innerHTML=`<h4>Demo · 5 salts sobre l'illa</h4><div class="info"></div><div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="jump">🪂 Salta!</button><button class="btn" data-a="ev">Mapa de valor esperat</button><button class="btn" data-a="new">Partida nova</button></div>
+   <div class="row2"><button class="btn" data-m="cw">⟳ Gira</button><button class="btn" data-m="flip">⇋ Capgira</button></div>
+   <div class="small">Tresor ★ +4 · sorra +1 · aigua −3. Vent: dues monedes per eix (dues cares o dues creus mouen una casella; una de cada no mou).</div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{if(busy)return;const q=moved(p,b.dataset.m);if(!inside(q,H,W)){say('Així la formació sortiria del mapa.','bad');return;}p=q;last=null;draw();});
+  root.querySelector('[data-a="new"]').onclick=()=>{if(!busy)reset();};
+  root.querySelector('[data-a="ev"]').onclick=e=>{showEV=!showEV;e.target.classList.toggle('on',showEV);draw();};
+  root.querySelector('[data-a="jump"]').onclick=()=>{if(busy)return;if(jumps<=0){say('Ja has fet els 5 salts. Total: '+total+' punts.','good');return;}
+    const coin=()=>Math.random()<.5?'C':'X',ns=[coin(),coin()],ew=[coin(),coin()];
+    const dr=ns[0]===ns[1]?(ns[0]==='C'?-1:1):0,dc=ew[0]===ew[1]?(ew[0]==='C'?1:-1):0;
+    const land={r:p.r+dr,c:p.c+dc,o:p.o},pts=cellsOf(land).map(([r,c])=>score(r,c)),g=pts.reduce((a,b)=>a+b,0);
+    busy=true;say(`Monedes nord-sud: ${ns.join(' ')} · est-oest: ${ew.join(' ')}…`);
+    setTimeout(()=>{last={land,pts};total+=g;jumps--;busy=false;
+      const dir=[dr?(dr<0?'cap al nord':'cap al sud'):'',dc?(dc>0?'cap a l\'est':'cap a l\'oest'):''].filter(Boolean).join(' i ');
+      say(`Monedes nord-sud: ${ns.join(' ')} · est-oest: ${ew.join(' ')} → ${dir?'el vent t\'empeny '+dir:'el vent no et mou'}. Punts del salt: ${pts.map(x=>(x>0?'+':'')+x).join(' ')} = <b>${g}</b>.`+(jumps?'':' Partida acabada: <b>'+total+' punts</b>.'),g>=0?'good':'bad');draw();},700);};
+  function draw(){const sz=cellSize(root,W,36),M=maskSets(p);let evs=null,best=null,bmax=-1e9,bmin=1e9;
+    if(showEV){evs={};for(let r=0;r<H;r++)for(let c=0;c<W;c++){const q={r,c,o:p.o};if(inside(q,H,W)){const v=ev(q);evs[r+','+c]=v;if(v>bmax){bmax=v;best=r+','+c;}bmin=Math.min(bmin,v);}}}
+    const lset=last?new Map(cellsOf(last.land).map(([r,c],i)=>[r+','+c,last.pts[i]])):null;
+    root.querySelector('.gwrap').innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c,t=MAP[r][c];let cls=t==='~'?'water':t==='*'?'gold':'sand',h=t==='*'?'★':'';
+      if(evs&&evs[k]!==undefined){const v=evs[k],a=(v-bmin)/(bmax-bmin||1);h=`<span style="font-size:.85em;color:${v<0?'#b91c1c':'#14532d'}">${v.toFixed(1).replace('.',',')}</span>`;if(k===best)cls+=' best';}
+      if(lset&&lset.has(k))cls+=lset.get(k)<0?' miss':' hit';
+      if(M.holes.has(k))cls+=' hole';else if(M.inPaper(r,c))cls+=' dim';
+      return {k:cls,h:h+(k===M.piv?'<span class="pv">★</span>':'')};});
+    root.querySelector('.gwrap').querySelectorAll('.c').forEach(el=>el.onclick=()=>{if(busy)return;const q={r:+el.dataset.r,c:+el.dataset.c,o:p.o};if(!inside(q,H,W)){say('Si apuntes aquí, la formació no cap dins del mapa.','bad');return;}p=q;last=null;say('Apuntes aquí. Valor esperat d\'aquest salt: <b>'+ev(p).toFixed(2).replace('.',',')+'</b> punts.');draw();});
+    root.querySelector('.info').innerHTML=`Salts que queden: <b>${jumps}</b> · Punts: <b>${total}</b>`+(showEV?' · Els nombres són el valor esperat si hi apuntes amb aquesta orientació (en verd, el millor).':'');}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ P2 · El gat marejat ============ */
+function demoGat(root){
+  const POS=[[-1,2],[1,2],[2,1],[2,-1],[1,-2],[-1,-2],[-2,-1],[-2,1]];  // ratolins 1..8
+  const idx=v=>POS.findIndex(q=>q[0]===v[0]&&q[1]===v[1]);
+  let eye,Mx,nRolls=4,bet=null,busy=false,stats={w:0,n:0},hist=null,say;
+  const MOV={cw:v=>[v[1],-v[0]],ccw:v=>[-v[1],v[0]],flip:v=>[v[0],-v[1]]};
+  const MM={cw:[[0,-1],[1,0]],ccw:[[0,1],[-1,0]],flip:[[-1,0],[0,1]]};
+  const mul=(A,B)=>[[A[0][0]*B[0][0]+A[0][1]*B[1][0],A[0][0]*B[0][1]+A[0][1]*B[1][1]],[A[1][0]*B[0][0]+A[1][1]*B[1][0],A[1][0]*B[0][1]+A[1][1]*B[1][1]]];
+  function reset(){eye=[-1,2];Mx=[[1,0],[0,1]];draw();}
+  root.innerHTML=`<h4>Demo · aposta i tira</h4>
+   <div class="row2"><span class="small">Tirades:</span>${[1,2,3,4,5,6].map(n=>`<button class="btn${n===4?' on':''}" data-n="${n}">${n}</button>`).join('')}</div>
+   <div class="info"></div><div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="roll">🎲 Tira</button><button class="btn" data-a="sim">Simula 1000 partides</button></div>
+   <div class="simout"></div>
+   <div class="small">Dau: 1-2 gira a la dreta · 3-4 gira a l'esquerra · 5-6 es tomba. Toca un ratolí per apostar-hi. El gat sempre comença mirant el ratolí 1.</div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{if(busy)return;nRolls=+b.dataset.n;root.querySelectorAll('[data-n]').forEach(x=>x.classList.toggle('on',x===b));hist=null;root.querySelector('.simout').innerHTML='';reset();say('');});
+  root.querySelector('[data-a="roll"]').onclick=()=>{if(busy)return;if(bet===null){say('Primer toca un ratolí per apostar-hi.','bad');return;}
+    reset();busy=true;let i=0;const faces='⚀⚁⚂⚃⚄⚅',seq=[];
+    const step=()=>{if(i>=nRolls){busy=false;const m=idx(eye)+1,win=m===bet;stats.n++;if(win)stats.w++;
+        say(`Tirades: ${seq.join(' ')} → el gat veu el ratolí <b>${m}</b>. `+(win?'Has guanyat!':'Has perdut.'),win?'good':'bad');draw();return;}
+      const d=rnd(6),mv=d<2?'cw':d<4?'ccw':'flip';seq.push(faces[d]);eye=MOV[mv](eye);Mx=mul(MM[mv],Mx);i++;
+      say('Tirades: '+seq.join(' '));draw();setTimeout(step,550);};
+    step();};
+  root.querySelector('[data-a="sim"]').onclick=()=>{const cnt=Array(8).fill(0);
+    for(let t=0;t<1000;t++){let v=[-1,2];for(let i=0;i<nRolls;i++){const d=rnd(6);v=MOV[d<2?'cw':d<4?'ccw':'flip'](v);}cnt[idx(v)]++;}
+    const mx=Math.max(...cnt);
+    root.querySelector('.simout').innerHTML=`<div class="bars">${cnt.map(c=>`<div style="height:${Math.max(2,100*c/mx)}%"><span>${(c/10).toFixed(1).replace('.',',')}%</span></div>`).join('')}</div><div class="blabels">${cnt.map((c,i)=>`<span>${i+1}</span>`).join('')}</div>
+     <div class="small" style="margin-top:6px">1000 partides amb ${nRolls} tirades. ${cnt.some(c=>c===0)?'Hi ha ratolins que no surten mai! Prova amb un altre nombre de tirades.':''}</div>`;};
+  function draw(){const sz=Math.min(54,cellSize(root,5,54)),vis=(2+eye[0])+','+(2+eye[1]);
+    const lab={};POS.forEach((q,i)=>{lab[(2+q[0])+','+(2+q[1])]=i+1;});
+    root.querySelector('.gwrap').innerHTML=gridHTML(5,5,sz,(r,c)=>{const k=r+','+c;
+      if(r===2&&c===2)return {k:'paper',h:`<span class="gatico" style="transform:matrix(${Mx[0][0]},${Mx[1][0]},${Mx[0][1]},${Mx[1][1]},0,0)">🐱</span>`};
+      if(k===vis)return {k:'hole'+(bet===lab[k]?' bet':''),h:'🐭<span class="lb">'+lab[k]+'</span>'};
+      if(lab[k])return {k:'paper'+(bet===lab[k]?' bet':''),h:'<span style="opacity:.55">'+lab[k]+'</span>'};
+      return {k:'paper',t:''};});
+    root.querySelector('.gwrap').querySelectorAll('.c').forEach(el=>el.onclick=()=>{if(busy)return;const k=el.dataset.r+','+el.dataset.c;if(lab[k]){bet=lab[k];say('Aposta: ratolí '+bet+'. Ara tira el dau.');draw();}});
+    root.querySelector('.info').innerHTML=`Aposta: <b>${bet||'—'}</b> · Encerts: ${stats.w} de ${stats.n}`;}
+  RENDERERS.push(draw);reset();say('Toca un ratolí per apostar-hi i tira el dau.');
+}
+
+/* ============ P3 · El pont del borratxo ============ */
+function demoPont(root){
+  const H=7,W=8,BR=[1,2,3,4];
+  const land=(r,c)=>r>=0&&r<H&&c>=0&&c<W&&(c===0||c===W-1||BR.includes(r));
+  const SH={fila:{t:'Tres en fila',o:[[0,-1],[0,0],[0,1]]},domino:{t:'Dòmino',o:[[0,0],[0,1]]},ela:{t:'L',o:[[0,0],[0,1],[1,0]]},quad:{t:'Quadrat',o:[[0,0],[0,1],[1,0],[1,1]]}};
+  let shape='fila',p,busy=false,exactCache={},say;
+  const status=q=>{const cs=cellsOf(q);if(cs.some(([r,c])=>!land(r,c)))return 'splash';if(cs.some(([r,c])=>c===W-1))return 'win';return 'ok';};
+  function startPos(o,row){const mc=Math.min(...o.map(x=>x[1]));return {r:row,c:-mc,o};}
+  function reset(keepO){const o=keepO?p.o:SH[shape].o;p=startPos(o,keepO?p.r:2);if(status(p)!=='ok'){for(let r=0;r<H;r++){const q=startPos(o,r);if(status(q)==='ok'){p=q;break;}}}say('Tria forma, orientació i fila de sortida. Després, tira el dau.');draw();}
+  function stepMove(q,d){return d<3?{...q,c:q.c+1}:d===3?{...q,r:q.r-1}:d===4?{...q,r:q.r+1}:{...q,o:ROT(q.o)};}
+  function exact(q0){const key=KEY(q0.o)+'|'+q0.r+'|'+q0.c;if(exactCache[key]!==undefined)return exactCache[key];
+    const os=[];let o=q0.o;for(let k=0;k<4;k++){if(!os.some(x=>KEY(x)===KEY(o)))os.push(o);o=ROT(o);}
+    const V=new Map(),S=[];for(let r=-3;r<H+3;r++)for(let c=-3;c<W+3;c++)os.forEach(oo=>{const q={r,c,o:oo};S.push(q);V.set(r+'|'+c+'|'+KEY(oo),status(q)==='win'?1:0);});
+    const val=q=>{const s=status(q);if(s==='win')return 1;if(s==='splash')return 0;return V.get(q.r+'|'+q.c+'|'+KEY(q.o))||0;};
+    for(let it=0;it<400;it++){let dmax=0;S.forEach(q=>{if(status(q)!=='ok')return;let t=0;for(let d=0;d<6;d++)t+=val(stepMove(q,d))/6;const k=q.r+'|'+q.c+'|'+KEY(q.o);dmax=Math.max(dmax,Math.abs(t-V.get(k)));V.set(k,t);});if(dmax<1e-9)break;}
+    return exactCache[key]=V.get(q0.r+'|'+q0.c+'|'+KEY(q0.o));}
+  root.innerHTML=`<h4>Demo · creua el pont</h4>
+   <div class="row2">${Object.entries(SH).map(([k,v])=>`<button class="btn${k===shape?' on':''}" data-s="${k}">${v.t}</button>`).join('')}</div>
+   <div class="row2"><button class="btn" data-a="rot">⟳ Orientació</button><button class="btn" data-a="up">↑ Fila</button><button class="btn" data-a="dn">↓ Fila</button></div>
+   <div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="roll">🎲 Tira el dau</button><button class="btn" data-a="sim">Simula 1000 travessies</button><button class="btn" data-a="ex">Probabilitat exacta</button><button class="btn" data-a="reset">Torna a la sortida</button></div>
+   <div class="small">Dau: 1-2-3 avança · 4 amunt · 5 avall · 6 gira 90° sobre la ★.</div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{if(busy)return;shape=b.dataset.s;root.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on',x===b));reset(false);});
+  const atStart=()=>Math.min(...cellsOf(p).map(x=>x[1]))===0;
+  root.querySelector('[data-a="rot"]').onclick=()=>{if(busy)return;const o=ROT(p.o);for(const dr of [0,-1,1,-2,2,-3,3]){const q=startPos(o,p.r+dr);if(status(q)==='ok'){p=q;say('');draw();return;}}say('Aquesta orientació no cap a la sortida.','bad');};
+  root.querySelector('[data-a="up"]').onclick=()=>{if(busy)return;const q=startPos(p.o,p.r-1);if(status(q)!=='ok'){say('Més amunt cauria a l\'aigua.','bad');return;}p=q;say('');draw();};
+  root.querySelector('[data-a="dn"]').onclick=()=>{if(busy)return;const q=startPos(p.o,p.r+1);if(status(q)!=='ok'){say('Més avall cauria a l\'aigua.','bad');return;}p=q;say('');draw();};
+  root.querySelector('[data-a="reset"]').onclick=()=>{if(!busy)reset(true);};
+  let walk=null;
+  root.querySelector('[data-a="roll"]').onclick=()=>{if(busy)return;if(status(p)!=='ok'){say('Torna a la sortida per començar una travessia nova.','bad');return;}
+    const d=rnd(6),q=stepMove(p,d),f='⚀⚁⚂⚃⚄⚅'[d],what=d<3?'avança':d===3?'es desvia amunt':d===4?'es desvia avall':'gira';
+    p=q;const s=status(p);say(`${f} El borratxo ${what}.`+(s==='splash'?' <b>Ha caigut a l\'aigua!</b>':s==='win'?' <b>Ha creuat el pont!</b>':''),s==='splash'?'bad':s==='win'?'good':'');draw();};
+  root.querySelector('[data-a="sim"]').onclick=()=>{if(!atStart()||status(p)!=='ok'){say('Torna a la sortida per simular des d\'allà.','bad');return;}
+    let w=0;for(let t=0;t<1000;t++){let q=p,s='ok';while(s==='ok'){q=stepMove(q,rnd(6));s=status(q);}if(s==='win')w++;}
+    say(`De 1000 travessies, n'han arribat <b>${w}</b>: freqüència relativa ${(w/10).toFixed(1).replace('.',',')}%.`);};
+  root.querySelector('[data-a="ex"]').onclick=()=>{if(!atStart()||status(p)!=='ok'){say('Torna a la sortida per calcular-la des d\'allà.','bad');return;}
+    say(`Probabilitat exacta de creuar des d'aquí: <b>${(100*exact(p)).toFixed(1).replace('.',',')}%</b>.`,'good');};
+  function draw(){const sz=cellSize(root,W,38),M=maskSets(p);
+    root.querySelector('.gwrap').innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls=(c===0||c===W-1)?'grass':BR.includes(r)?'sand':'water';
+      if(M.holes.has(k))cls+=' hole'+(land(r,c)?'':' miss');else if(M.inPaper(r,c))cls+=' paper';
+      return {k:cls,h:(cls.startsWith('water')&&!M.holes.has(k)?'<span style="opacity:.5">~</span>':'')+(k===M.piv?'<span class="pv">★</span>':'')};});}
+  RENDERERS.push(draw);p={r:2,c:1,o:SH.fila.o};reset(false);
+}
+
+const DEMOS={xinxeta:demoXinxeta,rastres:demoRastres,constel:demoConstel,para:demoPara,gat:demoGat,pont:demoPont};
+
+/* ============ revisió ============ */
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state={answers:{},replies:{},filter:'all'};let db=null;const queues={},timers={};
+function cardHTML(it){
+  let s=`<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ provar primer</span>':''}</div>`;
+  s+=`<div class="tags">${it.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<span class="tag lvl">${esc(it.lvl)}</span></div>`;
+  s+=`<div class="frase">${esc(it.frase)}</div>`;
+  s+=`<div class="sec"><b>Com es juga</b><p>${esc(it.joc)}</p></div>`;
+  s+=`<div class="demo" data-demo="${it.demo}"></div>`;
+  s+=`<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  s+=`<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  s+=`<div class="box nou"><b>Què té de nou</b>${esc(it.nou)}</div>`;
+  s+=`<div class="box chk"><b>Què he comprovat</b>${esc(it.chk)}</div>`;
+  s+=`<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s+=`<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s+=`<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea><div class="st"></div>`;
+  s+=`<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;}
+function build(){const list=document.getElementById('list');
+  CATS.forEach(c=>{const sec=document.createElement('section');sec.dataset.cat=c.id;
+    sec.innerHTML=`<h2 class="cat">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{const card=document.createElement('article');card.className='card';card.id='item-'+it.id;card.innerHTML=cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{const cur=(state.answers[it.id]||{}).decision||'';save(it.id,{decision:cur===b.dataset.v?'':b.dataset.v});});
+      const ta=card.querySelector('textarea');
+      ta.oninput=()=>{clearTimeout(timers[it.id]);setSt(it.id,'Escrivint…');timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200);};
+      ta.onblur=()=>{clearTimeout(timers[it.id]);commitComment(it.id,ta.value);};
+      sec.appendChild(card);});
+    list.appendChild(sec);});
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b));applyFilter();});
+  document.querySelectorAll('.demo').forEach(el=>{try{DEMOS[el.dataset.demo](el);}catch(e){el.innerHTML='<span class="small">No s\'ha pogut carregar la demo.</span>';console.error(e);}});
+  ITEMS.forEach(it=>updateCard(it.id));updateCount();}
+function isAnswered(id){const a=state.answers[id];return !!(a&&(a.decision||(a.comment&&a.comment.trim())));}
+function commitComment(id,val){const cur=(state.answers[id]||{}).comment||'';if(val===cur){setSt(id,isAnswered(id)?'Desat ✓':'');return;}save(id,{comment:val});}
+function setSt(id,t){const c=document.getElementById('item-'+id);if(c)c.querySelector('.st').textContent=t;}
+function updateCard(id){const c=document.getElementById('item-'+id);if(!c)return;const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');if(document.activeElement!==ta&&ta.value!==(a.comment||''))ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id],rb=c.querySelector('.reply');if(r&&r.text){rb.style.display='block';rb.querySelector('.rt').textContent=r.text;}else rb.style.display='none';}
+function updateCount(){const n=ITEMS.filter(i=>isAnswered(i.id)).length;document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';}
+function applyFilter(){ITEMS.forEach(it=>{const c=document.getElementById('item-'+it.id);let show=true;
+  if(state.filter==='pending')show=!isAnswered(it.id);if(state.filter==='star')show=!!it.star;c.classList.toggle('hide',!show);});
+  document.querySelectorAll('section[data-cat]').forEach(s=>s.classList.toggle('hide',!s.querySelector('.card:not(.hide)')));}
+function save(id,patch){const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});state.answers[id]=cur;updateCard(id);updateCount();
+  if(!db){setSt(id,'No es pot desar en aquesta vista');return;}setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body)).then(()=>setSt(id,'Desat ✓')).catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));}
+function banner(t){const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none';}
+build();applyFilter();
+(async()=>{
+  if(!window.claude||typeof window.claude.use!=='function'){banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.');return;}
+  try{db=await window.claude.use('db');}catch(e){db=null;}
+  if(!db){banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).');return;}
+  const t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{if(!snap.metadata.fromCache){clearTimeout(t);banner('');}
+    const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});
+    ITEMS.forEach(it=>{if(!(it.id in next)&&state.answers[it.id]&&queues[it.id])next[it.id]=state.answers[it.id];});
+    state.answers=next;ITEMS.forEach(it=>updateCard(it.id));updateCount();},e=>{clearTimeout(t);banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').');});
+  db.collection('replies').onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});state.replies=next;ITEMS.forEach(it=>updateCard(it.id));},()=>{});
+})();
+</script>
+</body>
+</html>

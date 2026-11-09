@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — ronda 2: jocs inventats</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --paper:#3a3f46; --paper2:#30353b; --cell:#ffffff; --cellink:#1f2328;
+  --a:#e8743b; --a-soft:#fbe1d3; --b:#2f6fd0; --b-soft:#d9e6fa;
+  --lava:#fbd5c8; --lavaink:#9a3412; --boom:#f59e0b; --ok:#15803d; --bad:#b91c1c;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26;
+    --paper:#4a5059; --paper2:#40454d; --cell:#f4f1ea; --cellink:#1f2328; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 6px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.sp{display:grid;gap:6px;margin:12px 0 4px}
+.sp div{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:.9rem}
+.sp b{color:var(--accent)}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.cat{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.1rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.tag.sup{border-color:var(--star);color:var(--star)}
+.frase{font-size:1.02rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.box{border-radius:10px;padding:8px 11px;margin:8px 0;font-size:.92rem}
+.box b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.box.nou{background:var(--accent-soft)} .box.nou b{color:var(--accent)}
+.box.chk{background:transparent;border:1px dashed var(--line)} .box.chk b{color:var(--muted)}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+
+/* ---- grids (demos i exemples) ---- */
+.demo{margin:12px 0 6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.demo h4{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.gr{display:grid;gap:2px;padding:2px;background:var(--line);border-radius:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation;width:max-content;max-width:100%}
+.c{position:relative;display:flex;align-items:center;justify-content:center;background:var(--cell);color:var(--cellink);border-radius:3px;font-weight:650;line-height:1}
+.c.paper{background:repeating-linear-gradient(45deg,var(--paper),var(--paper) 4px,var(--paper2) 4px,var(--paper2) 8px);color:rgba(255,255,255,.35)}
+.c.hole{box-shadow:inset 0 0 0 2.5px var(--accent);background:#fff}
+.c.lava{background:var(--lava);color:var(--lavaink)}
+.c.hole.lava{background:#fca5a5}
+.c .pv{position:absolute;top:0;left:2px;font-size:.55em;color:var(--a)}
+.c .lb{position:absolute;top:1px;right:2px;font-size:.5em;color:var(--muted)}
+.c .ar{position:absolute;bottom:0;right:2px;font-size:.6em;color:#64748b}
+.c .mk{position:absolute;bottom:0;left:2px;font-size:.55em;color:var(--bad);letter-spacing:-1px}
+.c.tA{background:var(--a-soft);color:#b45309;text-decoration:line-through}
+.c.tB{background:var(--b-soft);color:#1d4ed8;text-decoration:line-through}
+.c.tN{background:#e5e7eb;color:#9ca3af;text-decoration:line-through}
+.c.boom{background:var(--boom);color:#fff}
+.c.boom .ar{color:#fff}
+.c.gold{box-shadow:inset 0 0 0 3px #eab308}
+.c.pa{background:var(--a-soft)} .c.pb{background:var(--b-soft)}
+.c.seen{background:#fde68a}
+.c.ink{background:#1f2328;color:#fff}
+.c.unk{background:var(--cell);opacity:.55}
+.c.no{background:var(--cell)}
+.c.goal{box-shadow:inset -3px 0 0 #16a34a}
+.c.hole.goal{box-shadow:inset 0 0 0 2.5px var(--accent),inset -3px 0 0 #16a34a}
+.pad{display:grid;grid-template-columns:repeat(3,52px);gap:6px;margin-top:8px}
+.pad button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:1.15rem;height:44px;cursor:pointer}
+.btn{font-size:.85rem;height:auto;padding:7px 11px}
+.btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.info{font-size:.88rem;margin:6px 0;min-height:1.3em}
+.msg{font-size:.88rem;min-height:1.3em;color:var(--muted)}
+.msg.bad{color:var(--bad)} .msg.good{color:var(--ok);font-weight:600}
+.dlay{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.cap{font-size:.85rem;color:var(--muted);margin-top:6px;max-width:560px}
+.exrow{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.excol{display:flex;flex-direction:column;gap:4px}
+.small{font-size:.8rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Ronda 2: jocs inventats per a la plantilla</h1>
+    <p>Aquesta vegada no he partit de jocs coneguts, sinó d'una pregunta: <b>què pot fer una plantilla amb forats que no pugui fer cap altra cosa?</b> Hi he trobat cinc «superpoders», i cada joc en fa servir almenys un:</p>
+    <div class="sp">
+      <div><b>Personatge.</b> Els forats poden ser peus o ulls: la plantilla es converteix en algú que camina per sobre dels nombres.</div>
+      <div><b>Peça compartida.</b> Una sola plantilla per a dos jugadors: el que fas tu decideix el que pot fer l'altre.</div>
+      <div><b>Segell.</b> A través dels forats es pot marcar el full: la plantilla deixa rastre.</div>
+      <div><b>Orientació.</b> Girar-la o capgirar-la canvia el que veus, sense moure-la de lloc.</div>
+      <div><b>Totes les posicions.</b> El conjunt de totes les col·locacions possibles és un mapa amagat o un espai de probabilitat.</div>
+    </div>
+    <p>Quatre jocs tenen una <b>demo jugable</b> aquí mateix. Els exemples i les xifres que dono els he comprovat per ordinador. Respon amb els botons i, si vols, amb un comentari: tot es desa sol. Quan acabis, escriu-me «Revisa artifact».</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐ Amb demo</button>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const DATA = {"bestia":{"B":[[88,53,7,34,51,21,96,13,22,17],[84,30,60,50,39,21,78,89,57,15],[52,84,95,1,36,10,13,23,24,80],[20,1,63,43,36,15,56,10,54,78],[7,84,2,51,63,73,20,32,12,89],[32,68,89,22,15,78,46,62,37,89]],"det":{"primer":18,"mult4":17,"mult5":19,"mult6":18}},"pinta":{"B":[[55,40,33,66,58,26,73,62,20,58],[78,53,65,86,26,56,65,96,94,68],[86,32,37,15,30,35,46,54,34,19],[45,15,66,74,69,42,31,70,78,88],[57,94,57,14,43,26,89,10,66,28],[47,30,89,26,68,12,80,34,22,69],[24,65,22,58,78,45,57,82,33,26],[94,92,16,12,34,62,35,19,34,64],[79,56,72,23,42,52,84,97,11,59]],"up":[[0,0],[1,0],[2,0],[2,1]],"dn":[[0,1],[1,1],[2,1],[2,0]],"r180":[[2,1],[1,1],[0,1],[0,0]]},"reaccio":{"T":[[2,3,3,1,2,2,1,2,2,1],[1,2,1,1,2,2,2,1,2,1],[2,1,1,2,1,3,1,3,1,2],[2,3,2,2,1,2,3,1,1,2],[3,2,2,1,2,1,2,2,1,2],[1,1,2,2,1,1,1,1,1,2]],"D":[[3,3,0,0,0,0,0,3,0,2],[1,0,2,1,3,3,1,3,3,3],[1,3,0,2,2,0,1,1,2,2],[2,2,0,3,2,0,3,0,1,0],[3,3,0,1,3,0,3,2,1,1],[3,1,2,0,0,0,1,1,1,0]],"best":30,"bestCell":[3,6],"BL":[[-1,0],[-2,0],[0,1]]},"collita":{"B":[[1,4,2,9,7,2,9,9,9,8],[1,-4,6,4,-5,7,6,1,9,7],[5,-7,-5,2,4,-3,-9,5,6,6],[5,2,3,4,7,9,6,-9,1,-6],[4,-7,-5,8,8,3,9,7,-6,3],[2,-9,3,-6,7,8,9,-3,2,9]]},"segells1":{"cnt":[[1,0,1,1,0,1],[0,2,0,2,1,1],[0,0,2,0,2,0],[1,0,1,2,0,1],[0,1,0,0,1,0]],"S":[[0,0],[0,2],[1,1]],"sol":[[0,0],[0,3],[1,1],[1,3],[2,2],[3,0],[3,3]]},"lladres":{"H":6,"W":8,"start":[5,0],"goal":[0,7],"guards":[[3,1,0],[0,5,0],[4,1,1]],"t":19},"robot":{"B":[[5,6,9,1,8],[4,1,3,2,6],[8,4,7,9,2],[4,1,4,7,5],[3,7,3,2,3]],"g":26,"o":32}};
+
+const CATS = [
+  {id:'D', name:'Per a dos jugadors', desc:'Duels cara a cara. També es poden jugar equip contra equip.'},
+  {id:'P', name:'Trencaclosques', desc:'Per jugar sol o en equip, amb nivells i rècords.'},
+  {id:'A', name:'Tota la classe', desc:'Activitats en què juga tot el grup alhora.'}
+];
+
+const ITEMS = [
+ {id:'D1',cat:'D',star:true,title:'La collita',sup:['Peça compartida','Segell'],tags:['Enters','Càlcul mental','Estratègia'],lvl:'1r ESO → Batx.',
+  frase:'Mou la plantilla una vegada i queda\'t tot el que vegis pels forats, també els negatius.',
+  joc:'El full 1 té nombres de l\'1 al 9 i algunes «pomes podrides» (nombres negatius). Hi ha una sola plantilla, compartida pels dos jugadors. Al teu torn la mous una vegada: un pas, un gir de 90° sobre la ★ o una tombarella (capgirar-la). Et quedes tots els nombres que es veuen pels forats i que encara no estan ratllats: els sumes al teu marcador i els ratlles. Cada jugada t\'ha de deixar veure almenys un nombre nou. Si no pots, la partida s\'acaba i guanya qui té més punts.',
+  enganxa:'Cada jugada té dues cares: el que agafes tu i el que deixes a l\'abast de l\'altre. Les partides duren uns 20 torns i el lideratge canvia sovint.',
+  mates:'Suma d\'enters (amb negatius), càlcul mental ràpid i anticipació: abans de moure, cal calcular quina és la millor resposta del rival.',
+  nou:'Una sola peça per a dos jugadors que, a més, té forma. No conec cap joc que funcioni així. La forma de la plantilla decideix què pots agafar i què regales.',
+  chk:'He simulat centenars de partides per ordinador. Un jugador que té en compte la millor resposta del rival guanya el 71% de les vegades contra un que només agafa el màxim immediat. Un que mira una jugada més endavant guanya el 62% contra el primer. Pensar més té premi, i per tant el joc té profunditat.',
+  pregunta:'El provem tal com està o vols ajustar alguna regla (quantitat de negatius, final de partida)?',
+  demo:'collita'},
+ {id:'D2',cat:'D',title:'Iguala-la!',sup:['Orientació'],tags:['Càlcul mental','Estratègia'],lvl:'1r ESO → 4t ESO',
+  frase:'Fes una suma amb la teva plantilla; l\'altre l\'ha d\'igualar amb la seva en 45 segons.',
+  joc:'Cada jugador té una plantilla de forma diferent (per exemple, una L i una T, totes dues de 4 forats). En A col·loca la seva on vol i diu la suma que es veu. En B té 45 segons per trobar una col·locació de la seva plantilla que sumi exactament el mateix. Si la troba, el punt és per a B; si no, és per a A. Després es canvien els papers.',
+  enganxa:'Inventar el repte també és un joc: cal trobar sumes que la plantilla de l\'altre no pugui fer. I buscar contra rellotge sempre té tensió.',
+  mates:'Molt de càlcul mental (cada recerca són desenes de sumes) i raonar quines sumes són possibles: el màxim, el mínim i els «forats» de cada forma.',
+  nou:'El repte el crea el rival i depèn de la forma de les dues plantilles: la mateixa suma pot ser fàcil per a una forma i impossible per a l\'altra.',
+  chk:'En el tauler de l\'exemple (5×6, xifres de l\'1 al 9), la L pot fer les sumes 7, 9, 13, 16, 31 i 32, que la T no pot fer mai. Són reptes impossibles d\'igualar, i trobar-los és l\'estratègia secreta.',
+  pregunta:'T\'agrada que cada jugador tingui una plantilla diferent, o prefereixes que tots dos tinguin la mateixa?',
+  ex:'iguala'},
+
+ {id:'P1',cat:'P',star:true,title:'La bèstia',sup:['Personatge','Orientació'],tags:['Primers i múltiples','Planificació'],lvl:'1r ESO → Batx.',
+  frase:'Porta la bèstia d\'un costat a l\'altre sense que cap pota trepitgi la lava.',
+  joc:'La plantilla és una bèstia de 3 potes (els forats). La norma del dia diu quins nombres són lava, per exemple «els primers són lava». La bèstia es mou fent un pas (amunt, avall, a l\'esquerra o a la dreta) o girant 90° sobre la pota de la ★. Després de cada moviment, cap pota pot quedar sobre lava. Cal arribar a la vora dreta amb el mínim de moviments.',
+  enganxa:'Cada món és un trencaclosques nou, i un sol full en conté molts: si canvies la norma (primers, múltiples de 4, de 5, de 6…), la lava canvia de lloc i el camí és completament diferent.',
+  mates:'Reconèixer ràpidament primers i múltiples (cada moviment obliga a comprovar 3 nombres) i planificar: de vegades cal girar per passar per un pas estret.',
+  nou:'Els forats són peus i els nombres són el terreny. La plantilla deixa de ser una finestra i es converteix en un personatge.',
+  chk:'Amb nombres a l\'atzar, el camí sol ser gairebé recte, o no n\'hi ha cap. Per això he fet un generador que busca fulls on els 4 mons tenen camí i el camí és tortuós. Al tauler de la demo, el mínim és de 17 a 19 moviments segons el món, quan en línia recta en caldrien uns 7.',
+  pregunta:'T\'agrada la idea d\'«un full, molts mons»? Hi afegim la tombarella (capgirar la bèstia) com a moviment de nivell 2?',
+  demo:'bestia'},
+ {id:'P2',cat:'P',star:true,title:'Reacció en cadena',sup:['Orientació','Segell'],tags:['Algorismes','Comptar'],lvl:'1r ESO → Batx.',
+  frase:'Encén una sola casella i mira fins on arriba l\'explosió.',
+  joc:'Cada casella del full 1 té un nombre (1, 2 o 3) i una fletxa. La plantilla és la forma d\'una explosió: la ★ i 3 forats. Quan una casella esclata, hi poses la ★, amb la plantilla apuntant cap on diu la fletxa, i fas una marca a cada casella que es veu pels forats. Una casella esclata quan té tantes marques com el seu nombre. Tries una guspira inicial i la cadena avança tota sola.',
+  enganxa:'La majoria de guspires s\'apaguen de seguida, però n\'hi ha una que encén mig tauler: buscar-la és com buscar or. En duel, cada jugador tria 5 guspires per torns, i les caselles que esclaten són seves.',
+  mates:'Comptar i seguir un procés pas a pas (un algorisme) sense equivocar-se. I una pregunta per a Batxillerat: si dues caselles esclaten alhora, importa l\'ordre? No: el resultat final és sempre el mateix, i es pot demostrar.',
+  nou:'Les reaccions en cadena existeixen als videojocs. Aquí la novetat és que l\'explosió té forma i direcció (la plantilla, girada segons la fletxa) i que es pot jugar amb paper i llapis.',
+  chk:'Al tauler de la demo, la millor guspira fa esclatar 30 de les 60 caselles i la segona millor, només 13. De mitjana, una guspira n\'encén 4 o 5.',
+  pregunta:'El veus més com a repte individual (trobar la guspira d\'or) o com a duel?',
+  demo:'reaccio'},
+ {id:'P3',cat:'P',title:'El robot llaminer',sup:['Personatge','Orientació'],tags:['Algorismes','Càlcul mental'],lvl:'1r ESO → Batx.',
+  frase:'El robot sempre es menja el nombre més gran que veu. Ets capaç de menjar-ne més que ell?',
+  joc:'La plantilla és un robot: un forat per al cos i tres ulls (davant, esquerra i dreta). A cada pas, el robot mira els tres nombres, es mou cap al més gran, s\'hi gira i se\'l menja (el ratlles). Després de 5 o 8 passos es compta el que s\'ha menjat. Tu surts del mateix lloc, amb les mateixes regles de moviment, però tries el camí. Guanyes si menges més que el robot.',
+  enganxa:'Guanyar el robot gairebé sempre és possible, però no és evident: cal renunciar a un nombre gran ara per arribar a nombres més grans després.',
+  mates:'És la idea d\'algorisme voraç (agafar sempre el millor del moment) i per què no sempre és el millor. Suma mental i planificació. A Batxillerat, el pont cap a la programació dinàmica.',
+  nou:'La plantilla fa de «vista local» del robot i gira amb ell: el que veu depèn de cap on mira.',
+  chk:'Amb 8 passos en taulers de 6×10 a l\'atzar, el robot només fa el millor camí en 1 de cada 5 partides. De mitjana, el millor camí li guanya per 5 punts.',
+  pregunta:'Ho veus com a repte individual, o com a duel en què un jugador tria on surt el robot i l\'altre l\'ha de superar?',
+  ex:'robot'},
+ {id:'P4',cat:'P',title:'Segells',sup:['Segell'],tags:['Lògica','Algorismes'],lvl:'1r ESO → Batx.',
+  frase:'Algú ha segellat aquest full: descobreix on va posar el segell.',
+  joc:'La plantilla és un segell: cada vegada que la poses, fas un punt a cada forat. El full 1 diu quants punts té cada casella al final. Cal trobar on es va posar el segell cada vegada. Nivell 1: el segell no gira. Nivell 2: pot girar. Nivell 3: també es pot capgirar.',
+  enganxa:'És un tipus de trencaclosques nou, amb una única solució, com un sudoku. I el nivell 1 té un truc que, quan el descobreixes, el resol sempre.',
+  mates:'Lògica i algorismes. El truc del nivell 1: la primera casella amb punts (llegint com un llibre) només la pot cobrir un forat concret del segell, i això fixa una posició. És el mateix raonament que resol un sistema d\'equacions «esglaonat». Als nivells 2 i 3 ja no n\'hi ha prou, i cal raonar de debò.',
+  nou:'És un trencaclosques al revés: no busques on posar la plantilla, sinó on es va posar.',
+  chk:'El truc del nivell 1 funciona sempre (es pot demostrar). També he generat un exemple de nivell 3 de 5×5 amb una sola solució.',
+  pregunta:'T\'interessa com a col·lecció de trencaclosques per nivells (per exemple, un full cada setmana)?',
+  ex:'segells'},
+ {id:'P5',cat:'P',title:'Lladres i vigilants',sup:['Personatge','Orientació'],tags:['Girs','Periodicitat','Camins'],lvl:'1r ESO → 4t ESO',
+  frase:'Creua la sala sense que et vegi cap vigilant. Compte: giren a cada torn.',
+  joc:'Al full 1 hi ha vigilants que miren cap a una direcció. La plantilla és el que veu un vigilant: un con de 4 caselles al seu davant. A cada torn, el lladre es mou una casella (o s\'espera) i després tots els vigilants giren 90° en el sentit de les agulles del rellotge. El lladre no pot acabar mai un torn en una casella que vegi un vigilant (es comprova posant-hi la plantilla). Cal arribar al tresor en el mínim de torns.',
+  enganxa:'Cal pensar en l\'espai i en el temps alhora: de vegades, esperar un torn és la millor jugada. Els nivells poden ser cada vegada més difícils.',
+  mates:'Girs i periodicitat: cada vigilant torna a mirar cap al mateix lloc cada 4 torns. Si n\'hi ha que giren cada 2 torns, hi apareix el mínim comú múltiple. També planificació de camins en l\'espai i el temps.',
+  nou:'Els jocs d\'infiltració existeixen als videojocs. La novetat és el con de visió físic: la plantilla que gira sobre cada vigilant.',
+  chk:'He generat un nivell de 6×8 amb 3 vigilants en què el camí més curt és de 19 torns; sense vigilants en caldrien 12. Cal esperar i esquivar.',
+  pregunta:'El vols com a sèrie de nivells? Hi afegim una versió per a dos, en què un jugador mou els vigilants?',
+  ex:'lladres'},
+
+ {id:'A1',cat:'A',star:true,title:'Pinta per sumes',sup:['Totes les posicions','Orientació'],tags:['Càlcul mental','Divisibilitat'],lvl:'1r ESO → Batx.',
+  frase:'Suma el que veus pels forats i pinta: quan acabeu, apareix un dibuix.',
+  joc:'El full 1 té nombres que semblen posats a l\'atzar. Es posa la plantilla en cada posició, una per una, se sumen els 4 nombres visibles i, si la suma compleix la norma, es pinta la casella marcada en un full de respostes. Cada alumne fa unes quantes posicions, i quan tota la classe ha acabat, apareix un dibuix. La sorpresa: el mateix full amaga tres dibuixos. Amb la plantilla del dret i la norma «suma parell» surt un cor; capgirada i amb «múltiple de 3», una cara somrient; girada 180° i amb «múltiple de 5», el símbol π.',
+  enganxa:'Ningú no sap què sortirà fins que el dibuix comença a aparèixer, i els equips poden intentar endevinar-lo abans d\'hora (amb la teva puntuació: +5 si l\'encerten, −10 si fallen).',
+  mates:'Moltíssim càlcul mental i dreceres per descobrir: per saber si una suma és parell, n\'hi ha prou amb comptar quants nombres senars hi ha. A Batxillerat: és un «filtre» d\'imatge (una convolució), com els de les fotos del mòbil.',
+  nou:'Cada orientació de la plantilla llegeix el mateix full d\'una manera diferent. Ho fa possible el teorema xinès del residu: com que les sumes mòdul 2, 3 i 5 són independents, un sol full pot amagar tres dibuixos.',
+  chk:'He generat el full de la demo (9×10, nombres del 10 al 99) i he comprovat que els tres dibuixos surten exactament.',
+  pregunta:'T\'agrada com a activitat de tota la classe? Vols que el generador permeti fer servir els teus dibuixos?',
+  demo:'pinta'},
+ {id:'A2',cat:'A',title:'La ruleta de la plantilla',sup:['Totes les posicions','Orientació'],tags:['Probabilitat','Valor esperat'],lvl:'2n ESO → Batx.',
+  frase:'Aposta per la suma abans que el dau decideixi com cau la plantilla.',
+  joc:'Es fixa on va la ★. Un dau de 8 cares (o un dau de 4 i una moneda) decidirà l\'orientació: cada cara és un dels 8 girs o capgirades. Abans de tirar, els equips tenen un minut per estudiar les 8 possibilitats i apostar fitxes a resultats com «suma ≥ 19 (paga ×3)», «suma parell (paga ×2)» o «exactament 18 (paga ×5)». Es tira el dau, es col·loca la plantilla i es paga.',
+  enganxa:'Les apostes enganxen per si soles, i aquí, a la llarga, guanya qui calcula millor.',
+  mates:'Probabilitat de Laplace (casos favorables entre 8), valor esperat i decidir si una aposta surt a compte.',
+  nou:'Les 8 orientacions de la plantilla formen un espai de probabilitat natural: el dau tria un element del grup de simetries del quadrat.',
+  chk:'A l\'exemple, les 8 orientacions sumen 14, 15, 17, 18, 18, 19, 19 i 20. «Suma ≥ 19» té una probabilitat de 3/8; si paga ×3, cada fitxa apostada en torna 9/8 de mitjana. És una aposta que surt a compte.',
+  pregunta:'T\'interessa per a la unitat de probabilitat? Hi juguem amb fitxes o amb punts?',
+  ex:'ruleta'},
+ {id:'A3',cat:'A',title:'Rover perdut',sup:['Personatge','Orientació'],tags:['Lògica','Orientació relativa'],lvl:'1r ESO → Batx.',
+  frase:'Guieu el rover fins a la base només amb ordres i amb el que diuen els seus sensors.',
+  joc:'L\'equip A té el full 1 i el rover (la plantilla, amb una fletxa que indica cap on mira) en un lloc secret. L\'equip B té una còpia del full 1, però no sap on és el rover. B dona ordres: «endavant», «gira a la dreta», «gira a l\'esquerra». A les executa i diu què detecten els sensors: si cada forat veu un nombre parell o senar (per exemple, «senar, senar, parell»), o «bloquejat» si el rover sortiria del full. B ha de deduir on és el rover i portar-lo a la base amb el mínim d\'ordres. Després es canvien els papers.',
+  enganxa:'És una missió de deducció: al principi el rover pot ser a qualsevol lloc, i cada resposta descarta possibilitats fins que el trobes.',
+  mates:'Lògica, eliminació de casos i orientació relativa: «endavant» no vol dir «amunt», sinó que depèn de cap on mira el rover.',
+  nou:'Les ordres es donen des del punt de vista del rover, i els sensors són els forats de la plantilla.',
+  chk:'Amb sensors de parell/senar i triant bé les ordres, calen unes 3 ordres per localitzar el rover. Si els sensors diguessin el nombre exacte, n\'hi hauria prou amb la primera lectura, i el joc seria massa fàcil.',
+  pregunta:'T\'agrada amb sensors de parell/senar, o prefereixes que diguin la suma?',
+  ex:'rover'}
+];
+
+/* ================= Motor comú ================= */
+const ROT=o=>o.map(([r,c])=>[c,-r]);
+const MIR=o=>o.map(([r,c])=>[r,-c]);
+const KEY=o=>o.map(p=>p[0]+','+p[1]).sort().join(';');
+const cellsOf=p=>p.o.map(([r,c])=>[p.r+r,p.c+c]);
+const inside=(p,H,W)=>cellsOf(p).every(([r,c])=>r>=0&&r<H&&c>=0&&c<W);
+function moved(p,m){const q={r:p.r,c:p.c,o:p.o};
+  if(m==='u')q.r--;else if(m==='d')q.r++;else if(m==='l')q.c--;else if(m==='r')q.c++;
+  else if(m==='cw')q.o=ROT(p.o);else if(m==='ccw')q.o=ROT(ROT(ROT(p.o)));else if(m==='flip')q.o=MIR(p.o);
+  return q;}
+const pkey=p=>p.r+'|'+p.c+'|'+KEY(p.o);
+function maskSets(p){const holes=new Set(),cs=cellsOf(p);let r0=1e9,r1=-1e9,c0=1e9,c1=-1e9;
+  cs.forEach(([r,c])=>{holes.add(r+','+c);r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);});
+  return {holes,piv:p.r+','+p.c,inPaper:(r,c)=>r>=r0&&r<=r1&&c>=c0&&c<=c1&&!holes.has(r+','+c)};}
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+function cellSize(el,W,max){const w=(el.clientWidth||320)-24;return Math.max(18,Math.min(max||38,Math.floor((w-2*(W-1)-4)/W)));}
+function gridHTML(H,W,sz,fn){let h=`<div class="gr" style="grid-template-columns:repeat(${W},${sz}px);grid-auto-rows:${sz}px;font-size:${Math.round(sz*0.42)}px">`;
+  for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=fn(r,c)||{};h+=`<div class="c ${x.k||''}" data-r="${r}" data-c="${c}">${x.h!==undefined?x.h:esc(x.t!==undefined?x.t:'')}</div>`;}
+  return h+'</div>';}
+const PAD=(flip)=>`<div class="pad"><button data-m="ccw" aria-label="Gira a l'esquerra">⟲</button><button data-m="u" aria-label="Amunt">↑</button><button data-m="cw" aria-label="Gira a la dreta">⟳</button><button data-m="l" aria-label="Esquerra">←</button><button data-m="d" aria-label="Avall">↓</button><button data-m="r" aria-label="Dreta">→</button>${flip?'<button data-m="flip" aria-label="Tomba" style="grid-column:span 3;font-size:.9rem">⇋ Tomba (capgira)</button>':''}</div>`;
+const RENDERERS=[];
+window.addEventListener('resize',()=>RENDERERS.forEach(f=>f()));
+function rotv([r,c],k){for(let i=0;i<k;i++){[r,c]=[c,-r];}return [r,c];}
+
+/* ================= DEMO: La collita ================= */
+function demoCollita(root){
+  const B=DATA.collita.B,H=B.length,W=B[0].length,SH=[[0,0],[0,1],[1,1],[2,1]];
+  let st;
+  function reset(){st={p:{r:1,c:4,o:SH},own:B.map(r=>r.map(()=>0)),sc:[0,0],turn:0,over:false,last:'',busy:false,
+      vsCPU:st?st.vsCPU:true};
+    cellsOf(st.p).forEach(([r,c])=>st.own[r][c]=3);draw();}
+  const free=(r,c)=>st.own[r][c]===0;
+  const gain=(p,own)=>cellsOf(p).reduce((s,[r,c])=>s+(own[r][c]===0?B[r][c]:0),0);
+  const legal=(p,own)=>['u','d','l','r','cw','ccw','flip'].map(m=>moved(p,m)).filter(q=>inside(q,H,W)&&cellsOf(q).some(([r,c])=>own[r][c]===0));
+  function apply(q,who){const vals=[];cellsOf(q).forEach(([r,c])=>{if(st.own[r][c]===0){vals.push(B[r][c]);st.own[r][c]=who+1;}});
+    const g=vals.reduce((a,b)=>a+b,0);st.sc[who]+=g;st.p=q;
+    st.last=(who===0?(st.vsCPU?'Tu':'Taronja'):(st.vsCPU?'Ordinador':'Blau'))+': '+(g>=0?'+':'')+g+' ('+vals.join(' + ').replace(/\+ -/g,'− ')+')';
+    st.turn=1-who;
+    if(!legal(st.p,st.own).length){st.over=true;}
+  }
+  function cpu(){const L=legal(st.p,st.own);let best=null,bv=-1e9;
+    L.forEach(q=>{const own=st.own.map(r=>r.slice());const g=gain(q,own);cellsOf(q).forEach(([r,c])=>{own[r][c]=9;});
+      const opp=Math.max(0,...legal(q,own).map(u=>gain(u,own)));const v=g-opp+Math.random()*1e-3;if(v>bv){bv=v;best=q;}});
+    apply(best,1);}
+  function move(m){if(st.over||st.busy)return;if(st.vsCPU&&st.turn===1)return;
+    const q=moved(st.p,m);
+    if(!inside(q,H,W)){say('La plantilla sortiria del full.','bad');return;}
+    if(!cellsOf(q).some(([r,c])=>free(r,c))){say('Has de veure almenys un nombre nou.','bad');return;}
+    apply(q,st.turn);draw();
+    if(st.vsCPU&&!st.over&&st.turn===1){st.busy=true;setTimeout(()=>{cpu();st.busy=false;draw();},650);}
+  }
+  let msgEl;
+  function say(t,k){msgEl.textContent=t;msgEl.className='msg '+(k||'');}
+  root.innerHTML=`<h4>Demo · juga contra l'ordinador</h4>
+   <div class="row2"><button class="btn on" data-mode="cpu">Contra l'ordinador</button><button class="btn" data-mode="two">Dos jugadors</button><button class="btn" data-act="new">Partida nova</button></div>
+   <div class="info" id="ci"></div><div class="gwrap"></div><div class="msg"></div>${PAD(true)}
+   <div class="small" style="margin-top:6px">Taronja: el que has agafat tu. Blau: el que ha agafat el rival. Gris: el punt de partida.</div>`;
+  msgEl=root.querySelector('.msg');
+  root.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>move(b.dataset.m));
+  root.querySelector('[data-act="new"]').onclick=()=>reset();
+  root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{st.vsCPU=b.dataset.mode==='cpu';root.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x===b));reset();});
+  function draw(){
+    const gw=root.querySelector('.gwrap'),sz=cellSize(root,W,36),M=maskSets(st.p);
+    gw.innerHTML=gridHTML(H,W,sz,(r,c)=>{const o=st.own[r][c],k=r+','+c;let cls='';
+      if(o===1)cls='tA';else if(o===2)cls='tB';else if(o===3)cls='tN';
+      if(M.holes.has(k))cls+=' hole';else if(M.inPaper(r,c))cls+=' paper';
+      const v=B[r][c];return {k:cls,h:(v<0?'−'+(-v):v)+(k===M.piv?'<span class="pv">★</span>':'')};});
+    const n0=st.vsCPU?'Tu':'Taronja',n1=st.vsCPU?'Ordinador':'Blau';
+    root.querySelector('#ci').innerHTML=`<b style="color:var(--a)">${n0}: ${st.sc[0]}</b> · <b style="color:var(--b)">${n1}: ${st.sc[1]}</b> · `+
+      (st.over?'<b>Partida acabada</b>':(st.turn===0?`Torn: ${n0.toLowerCase()==='tu'?'teu':n0}`:`Torn: ${n1}${st.vsCPU?' (pensant…)':''}`));
+    if(st.over){const w=st.sc[0]>st.sc[1]?n0:st.sc[1]>st.sc[0]?n1:null;say((st.last?st.last+'. ':'')+'No queden jugades. '+(w?('Guanya '+w+'!'):'Empat!'),'good');}
+    else say(st.last||'Mou la plantilla: et quedes el que es vegi pels forats.');
+  }
+  RENDERERS.push(()=>draw());reset();
+}
+
+/* ================= DEMO: La bèstia ================= */
+function demoBestia(root){
+  const B=DATA.bestia.B,H=B.length,W=B[0].length,FEET=[[0,0],[1,0],[1,2]];
+  const isP=n=>{if(n<2)return false;for(let d=2;d*d<=n;d++)if(n%d===0)return false;return true;};
+  const RULES={primer:{t:'Primers',f:isP,w:n=>n+' és primer'},mult4:{t:'Múltiples de 4',f:n=>n%4===0,w:n=>n+' és múltiple de 4'},
+    mult5:{t:'Múltiples de 5',f:n=>n%5===0,w:n=>n+' és múltiple de 5'},mult6:{t:'Múltiples de 6',f:n=>n%6===0,w:n=>n+' és múltiple de 6'}};
+  let rule='primer',showLava=false,flip=false,st=null,minD=null;
+  function oris(){const L=[];let o=FEET;for(let f=0;f<(flip?2:1);f++){for(let k=0;k<4;k++){if(!L.some(x=>KEY(x)===KEY(o)))L.push(o);o=ROT(o);}o=MIR(FEET);}return L;}
+  function safe(p){return inside(p,H,W)&&cellsOf(p).every(([r,c])=>!RULES[rule].f(B[r][c]));}
+  const isGoal=p=>cellsOf(p).some(([r,c])=>c===W-1);
+  function solve(){const O=oris(),all=[];for(let r=-2;r<H+2;r++)for(let c=-2;c<W+2;c++)O.forEach(o=>{const p={r,c,o};if(safe(p))all.push(p);});
+    const dist=new Map(),q=[];all.filter(isGoal).forEach(p=>{dist.set(pkey(p),0);q.push(p);});
+    const ms=['u','d','l','r','cw','ccw'].concat(flip?['flip']:[]);
+    for(let i=0;i<q.length;i++){const p=q[i],d=dist.get(pkey(p));ms.forEach(m=>{const t=moved(p,m);const k=pkey(t);if(!dist.has(k)&&safe(t)){dist.set(k,d+1);q.push(t);}});}
+    let best=null;all.filter(p=>cellsOf(p).some(([r,c])=>c===0)).forEach(p=>{const d=dist.get(pkey(p));if(d!==undefined&&(best===null||d<best.d))best={p,d};});
+    return best;}
+  function reset(){const b=solve();minD=b?b.d:null;st={p:b?b.p:{r:0,c:0,o:FEET},n:0,done:false};say(b?'La bèstia és a l\'esquerra. Porta-la fins a la vora verda de la dreta.':'Aquest món no té solució.','');draw();}
+  let msgEl;function say(t,k){msgEl.textContent=t;msgEl.className='msg '+(k||'');}
+  function move(m){if(st.done)return;const q=moved(st.p,m);
+    if(!inside(q,H,W)){say('La bèstia sortiria del full.','bad');return;}
+    const bad=cellsOf(q).find(([r,c])=>RULES[rule].f(B[r][c]));
+    if(bad){say('Una pota cauria a la lava: '+RULES[rule].w(B[bad[0]][bad[1]])+'.','bad');return;}
+    st.p=q;st.n++;
+    if(isGoal(q)){st.done=true;say(`Ho has aconseguit en ${st.n} moviments. El mínim possible és ${minD}.`+(st.n===minD?' Perfecte!':''),'good');}
+    else say('');draw();}
+  root.innerHTML=`<h4>Demo · creua el riu de lava</h4>
+   <div class="row2" data-g="rule">${Object.entries(RULES).map(([k,v])=>`<button class="btn${k===rule?' on':''}" data-rule="${k}">Lava: ${v.t}</button>`).join('')}</div>
+   <div class="row2"><button class="btn" data-act="lava">Mostra la lava</button><button class="btn" data-act="flip">Nivell 2: amb tombarella</button><button class="btn" data-act="reset">Torna a començar</button></div>
+   <div class="info"></div><div class="gwrap"></div><div class="msg"></div><div class="pv2"></div>`;
+  msgEl=root.querySelector('.msg');
+  root.querySelectorAll('[data-rule]').forEach(b=>b.onclick=()=>{rule=b.dataset.rule;root.querySelectorAll('[data-rule]').forEach(x=>x.classList.toggle('on',x===b));reset();});
+  root.querySelector('[data-act="lava"]').onclick=e=>{showLava=!showLava;e.target.classList.toggle('on',showLava);draw();};
+  root.querySelector('[data-act="flip"]').onclick=e=>{flip=!flip;e.target.classList.toggle('on',flip);reset();};
+  root.querySelector('[data-act="reset"]').onclick=()=>reset();
+  function draw(){const gw=root.querySelector('.gwrap'),sz=cellSize(root,W,36),M=maskSets(st.p);
+    gw.innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c,v=B[r][c];let cls='';
+      if(showLava&&RULES[rule].f(v))cls+=' lava';if(c===W-1)cls+=' goal';
+      if(M.holes.has(k))cls+=' hole';else if(M.inPaper(r,c))cls+=' paper';
+      return {k:cls,h:v+(k===M.piv?'<span class="pv">★</span>':'')};});
+    root.querySelector('.info').innerHTML=`Món: <b>${RULES[rule].t} = lava</b> · Moviments: <b>${st.n}</b>`+(minD!==null?` · Mínim possible: ${minD}`:'');
+    root.querySelector('.pv2').innerHTML=PAD(flip);root.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>move(b.dataset.m));}
+  msgEl=root.querySelector('.msg');RENDERERS.push(()=>draw());reset();
+}
+
+/* ================= DEMO: Reacció en cadena ================= */
+function demoReaccio(root){
+  const T=DATA.reaccio.T,D=DATA.reaccio.D,BL=DATA.reaccio.BL,H=T.length,W=T[0].length,AR=['↑','→','↓','←'];
+  let st={boom:new Set(),marks:{},run:false,cur:null,rec:0,tries:0,timer:null,gold:false};
+  function blast(r,c){return BL.map(v=>{const [dr,dc]=rotv(v,D[r][c]);return [r+dr,c+dc];}).filter(([a,b])=>a>=0&&a<H&&b>=0&&b<W);}
+  function start(r,c){if(st.run)return;clearTimeout(st.timer);st.boom=new Set([r+','+c]);st.marks={};st.run=true;st.tries++;
+    const q=[[r,c]];let i=0;
+    const step=()=>{if(i>=q.length){st.run=false;st.cur=null;const n=st.boom.size;st.rec=Math.max(st.rec,n);
+        say(st.revealing?`Aquesta és la guspira d'or: ${n} caselles.`:`Han esclatat ${n} caselles.`+(n>=DATA.reaccio.best?' Has trobat la guspira d\'or!':(st.tries>=3?' Encara n\'hi ha una de més bona…':'')),n>=DATA.reaccio.best?'good':'');st.revealing=false;draw();return;}
+      const [a,b]=q[i++];st.cur=[a,b];
+      blast(a,b).forEach(([x,y])=>{const k=x+','+y;if(st.boom.has(k))return;st.marks[k]=(st.marks[k]||0)+1;if(st.marks[k]>=T[x][y]){st.boom.add(k);q.push([x,y]);}});
+      draw();st.timer=setTimeout(step,260);};
+    step();}
+  let msgEl;function say(t,k){msgEl.textContent=t;msgEl.className='msg '+(k||'');}
+  root.innerHTML=`<h4>Demo · toca una casella per encendre-la</h4>
+   <div class="info"></div><div class="gwrap"></div><div class="msg">Cada casella mostra quantes marques necessita per esclatar i cap on apunta l'explosió.</div>
+   <div class="row2"><button class="btn" data-act="gold">Revela la guspira d'or</button><button class="btn" data-act="clr">Neteja</button></div>
+   <div class="small">Forma de l'explosió (si la fletxa apunta amunt): les dues caselles de davant i la de la dreta.</div>`;
+  msgEl=root.querySelector('.msg');
+  root.querySelector('[data-act="gold"]').onclick=()=>{if(st.run)return;st.gold=true;st.revealing=true;const [r,c]=DATA.reaccio.bestCell;start(r,c);};
+  root.querySelector('[data-act="clr"]').onclick=()=>{if(st.run)return;st.boom=new Set();st.marks={};st.cur=null;say('');draw();};
+  function draw(){const gw=root.querySelector('.gwrap'),sz=cellSize(root,W,36);
+    const holes=new Set(st.cur?blast(st.cur[0],st.cur[1]).map(([a,b])=>a+','+b):[]);
+    gw.innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls='';if(st.boom.has(k))cls+=' boom';if(holes.has(k))cls+=' hole';
+      if(st.gold&&k===DATA.reaccio.bestCell.join(','))cls+=' gold';
+      const m=st.marks[k]&&!st.boom.has(k)?'<span class="mk">'+'•'.repeat(st.marks[k])+'</span>':'';
+      const pv=st.cur&&st.cur[0]===r&&st.cur[1]===c?'<span class="pv">★</span>':'';
+      return {k:cls,h:T[r][c]+'<span class="ar">'+AR[D[r][c]]+'</span>'+m+pv};});
+    gw.querySelectorAll('.c').forEach(el=>el.onclick=()=>start(+el.dataset.r,+el.dataset.c));
+    root.querySelector('.info').innerHTML=`Intents: ${st.tries} · El teu rècord: <b>${st.rec}</b> caselles`;}
+  RENDERERS.push(()=>draw());draw();
+}
+
+/* ================= DEMO: Pinta per sumes ================= */
+function demoPinta(root){
+  const B=DATA.pinta.B,H=B.length,W=B[0].length;
+  const MODES=[{t:'Del dret · suma parell',holes:DATA.pinta.up,mod:2,mk:'★',cond:'parell'},
+               {t:'Capgirada · múltiple de 3',holes:DATA.pinta.dn,mod:3,mk:'●',cond:'múltiple de 3'},
+               {t:'Girada 180° · múltiple de 5',holes:DATA.pinta.r180,mod:5,mk:'◆',cond:'múltiple de 5'}];
+  MODES.forEach(m=>{const a=m.holes.slice().sort((x,y)=>x[0]-y[0]||x[1]-y[1]).pop();m.rel=m.holes.map(([r,c])=>[r-a[0],c-a[1]]);});
+  const IH=H-2,IW=W-1;let mode=0,res=MODES.map(()=>Array(IH*IW).fill(0)),idx=-1,timer=null;
+  const anchor=i=>[2+Math.floor(i/IW),1+i%IW];
+  function compute(i){const [r,c]=anchor(i),m=MODES[mode],vals=m.rel.map(([dr,dc])=>B[r+dr][c+dc]),s=vals.reduce((a,b)=>a+b,0);
+    res[mode][i]=(s%m.mod===0)?1:2;return {vals,s,ok:s%m.mod===0};}
+  let msgEl;
+  function show(i){idx=i;const x=compute(i);msgEl.innerHTML=`${x.vals.join(' + ')} = <b>${x.s}</b> → ${x.ok?'és '+MODES[mode].cond+': <b>pinta</b>':'no és '+MODES[mode].cond+': no pintis'}`;draw();}
+  function next(){let i=res[mode].indexOf(0);if(i<0){i=(idx+1)%(IH*IW);}show(i);}
+  function all(){clearInterval(timer);timer=setInterval(()=>{const i=res[mode].indexOf(0);if(i<0){clearInterval(timer);timer=null;msgEl.innerHTML='<b>Fet!</b> Mira el full de respostes.';return;}show(i);},35);}
+  root.innerHTML=`<h4>Demo · un full, tres dibuixos</h4>
+   <div class="row2">${MODES.map((m,i)=>`<button class="btn${i===0?' on':''}" data-mode="${i}">${m.t}</button>`).join('')}</div>
+   <div class="row2"><button class="btn" data-act="next">Següent posició</button><button class="btn" data-act="all">Fes-les totes</button><button class="btn" data-act="clr">Esborra</button></div>
+   <div class="msg" style="color:var(--ink)">Toca «Següent posició» per sumar, o una casella del full de respostes.</div>
+   <div class="dlay"><div class="excol"><span class="small">Full 1 amb la plantilla</span><div class="gwrap"></div></div><div class="excol"><span class="small">Full de respostes</span><div class="awrap"></div></div></div>`;
+  msgEl=root.querySelector('.msg');
+  root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{clearInterval(timer);timer=null;mode=+b.dataset.mode;idx=-1;root.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x===b));msgEl.textContent='Norma: pinta si la suma és '+MODES[mode].cond+'. La casella que es pinta és la del '+MODES[mode].mk+'.';draw();});
+  root.querySelector('[data-act="next"]').onclick=()=>{clearInterval(timer);timer=null;next();};
+  root.querySelector('[data-act="all"]').onclick=()=>all();
+  root.querySelector('[data-act="clr"]').onclick=()=>{clearInterval(timer);timer=null;res[mode]=Array(IH*IW).fill(0);idx=-1;draw();};
+  function draw(){const gw=root.querySelector('.gwrap'),aw=root.querySelector('.awrap');
+    const two=root.clientWidth>=560,sz=two?Math.min(30,cellSize(root,W*2+2,30)):cellSize(root,W,34);
+    let M=null;if(idx>=0){const [r,c]=anchor(idx);M=maskSets({r,c,o:MODES[mode].rel});}
+    gw.innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls='';if(M){if(M.holes.has(k))cls='hole';else if(M.inPaper(r,c))cls='paper';}
+      return {k:cls,h:B[r][c]+(M&&k===M.piv?'<span class="pv">'+MODES[mode].mk+'</span>':'')};});
+    aw.innerHTML=gridHTML(IH,IW,sz,(r,c)=>{const v=res[mode][r*IW+c];return {k:v===1?'ink':v===2?'no':'unk',t:''};});
+    aw.querySelectorAll('.c').forEach(el=>el.onclick=()=>{clearInterval(timer);timer=null;show(+el.dataset.r*IW+ +el.dataset.c);});}
+  RENDERERS.push(()=>draw());draw();
+}
+
+/* ================= Exemples estàtics ================= */
+const EX={
+ iguala(root){const B=[[3,7,7,5,8,4],[8,9,3,9,9,4],[1,1,6,7,2,3],[4,4,1,7,7,8],[1,6,9,8,2,6]];
+   const p={r:1,c:3,o:[[0,0],[0,1],[1,0],[2,0]]},M=maskSets(p);
+   const f=()=>{root.innerHTML='<h4>Exemple</h4>'+gridHTML(5,6,cellSize(root,6,40),(r,c)=>{const k=r+','+c;return {k:M.holes.has(k)?'hole':M.inPaper(r,c)?'paper':'',t:B[r][c]};})+
+     '<div class="cap">La L troba 9 + 9 + 7 + 7 = 32. En aquest tauler, la T no pot passar de 30: és un repte impossible d\'igualar.</div>';};
+   RENDERERS.push(f);f();},
+ robot(root){const B=DATA.robot.B,G=[[4,1],[4,0],[3,0],[2,0],[1,0]],O=[[3,2],[2,2],[2,3],[3,3],[3,4]];
+   const one=(path,cls,sz)=>gridHTML(5,5,sz,(r,c)=>{const i=path.findIndex(([a,b])=>a===r&&b===c);
+     if(r===4&&c===2)return {k:'hole',h:B[r][c]+'<span class="pv">R↑</span>'};
+     return {k:i>=0?cls:'',h:B[r][c]+(i>=0?'<span class="lb">'+(i+1)+'</span>':'')};});
+   const f=()=>{const sz=Math.max(18,Math.min(34,Math.floor(((root.clientWidth||320)-38)/2/5)-3));
+     root.innerHTML='<h4>Exemple · 5 passos des de R, mirant amunt</h4><div class="exrow"><div class="excol"><span class="small">El robot: 7 + 3 + 4 + 8 + 4 = <b>26</b></span>'+one(G,'pa',sz)+
+     '</div><div class="excol"><span class="small">Millor camí: 4 + 7 + 9 + 7 + 5 = <b>32</b></span>'+one(O,'pb',sz)+'</div></div>'+
+     '<div class="cap">El robot veu 4 davant i 7 a l\'esquerra, i tria el 7, però queda arraconat a la vora. Renunciar al 7 i pujar pel 4 dona 6 punts més.</div>';};
+   RENDERERS.push(f);f();},
+ segells(root){const C=DATA.segells1.cnt;
+   const f=()=>{const sz=cellSize(root,6,40);root.innerHTML='<h4>Exemple · nivell 1</h4><div class="exrow"><div class="excol"><span class="small">Punts finals de cada casella</span>'+
+     gridHTML(5,6,sz,(r,c)=>({k:C[r][c]?'':'no',t:C[r][c]?C[r][c]:''}))+'</div><div class="excol"><span class="small">El segell (3 forats)</span>'+
+     gridHTML(2,3,sz,(r,c)=>{const h=(r===0&&(c===0||c===2))||(r===1&&c===1);return {k:h?'hole':'paper',t:''};})+'</div></div>'+
+     '<div class="cap">On s\'ha posat el segell (i quantes vegades)? Pista: la casella de dalt a l\'esquerra té 1 punt, i només un dels forats del segell hi pot arribar. Solució: 7 segells.</div>';};
+   RENDERERS.push(f);f();},
+ lladres(root){const L=DATA.lladres,AR=['▲','►','▼','◄'],CONE=[[-1,0],[-2,-1],[-2,0],[-2,1]],seen=new Set();
+   L.guards.forEach(([r,c,d])=>CONE.forEach(v=>{const [dr,dc]=rotv(v,d);seen.add((r+dr)+','+(c+dc));}));
+   const f=()=>{root.innerHTML='<h4>Exemple · nivell de 6×8</h4>'+gridHTML(L.H,L.W,cellSize(root,L.W,38),(r,c)=>{const k=r+','+c,g=L.guards.find(x=>x[0]===r&&x[1]===c);
+       if(g)return {k:'ink',t:AR[g[2]]};if(r===L.start[0]&&c===L.start[1])return {k:'pa',t:'L'};if(r===L.goal[0]&&c===L.goal[1])return {k:'pb',t:'💎'};
+       return {k:seen.has(k)?'seen':'',t:''};})+
+     '<div class="cap">Torn 0. En groc, el que veuen els vigilants (▲ ► són vigilants i la fletxa indica cap on miren). Després de cada moviment del lladre (L), tots giren 90°. Camí mínim fins al diamant: 19 torns.</div>';};
+   RENDERERS.push(f);f();},
+ ruleta(root){const N=[[7,2,9],[4,5,1],[8,3,6]],p={r:1,c:1,o:[[0,0],[-1,0],[0,1],[1,1]]},M=maskSets(p);
+   const f=()=>{root.innerHTML='<h4>Exemple · la ★ al centre</h4>'+gridHTML(3,3,44,(r,c)=>{const k=r+','+c;return {k:M.holes.has(k)?'hole':M.inPaper(r,c)?'paper':'',h:N[r][c]+(k===M.piv?'<span class="pv">★</span>':'')};})+
+     '<div class="cap">Aquesta orientació suma 5 + 2 + 1 + 6 = 14. Les 8 orientacions sumen 14, 15, 17, 18, 18, 19, 19 i 20: «suma ≥ 19» té probabilitat 3/8.</div>';};
+   RENDERERS.push(f);f();},
+ rover(root){const B=[[6,3,8,1,9],[2,7,5,4,3],[9,4,7,6,2],[1,8,3,5,6]],p={r:2,c:2,o:[[0,0],[-1,0],[-1,1]]},M=maskSets(p);
+   const f=()=>{root.innerHTML='<h4>Exemple · el rover mira amunt</h4>'+gridHTML(4,5,cellSize(root,5,42),(r,c)=>{const k=r+','+c;return {k:M.holes.has(k)?'hole':M.inPaper(r,c)?'paper':'',h:B[r][c]+(k===M.piv?'<span class="pv">↑</span>':'')};})+
+     '<div class="cap">Sensors (cos, davant, davant a la dreta): 7, 5, 4 → «senar, senar, parell». L\'equip B només sent aquestes tres paraules i ha de deduir on és el rover.</div>';};
+   RENDERERS.push(f);f();}
+};
+const DEMOS={collita:demoCollita,bestia:demoBestia,reaccio:demoReaccio,pinta:demoPinta};
+
+/* ================= Revisió (respostes) ================= */
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state={answers:{},replies:{},filter:'all'};let db=null;const queues={},timers={};
+function cardHTML(it){
+  let s=`<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ amb demo</span>':''}</div>`;
+  s+=`<div class="tags">${it.sup.map(t=>`<span class="tag sup">${esc(t)}</span>`).join('')}${it.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<span class="tag lvl">${esc(it.lvl)}</span></div>`;
+  s+=`<div class="frase">${esc(it.frase)}</div>`;
+  s+=`<div class="sec"><b>Com es juga</b><p>${esc(it.joc)}</p></div>`;
+  s+=`<div class="demo" data-demo="${it.demo||''}" data-ex="${it.ex||''}"></div>`;
+  s+=`<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  s+=`<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  s+=`<div class="box nou"><b>Què té de nou</b>${esc(it.nou)}</div>`;
+  s+=`<div class="box chk"><b>Què he comprovat</b>${esc(it.chk)}</div>`;
+  s+=`<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s+=`<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s+=`<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea><div class="st"></div>`;
+  s+=`<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;}
+function build(){const list=document.getElementById('list');
+  CATS.forEach(c=>{const sec=document.createElement('section');sec.dataset.cat=c.id;
+    sec.innerHTML=`<h2 class="cat">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{const card=document.createElement('article');card.className='card';card.id='item-'+it.id;
+      card.innerHTML=cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{const cur=(state.answers[it.id]||{}).decision||'';save(it.id,{decision:cur===b.dataset.v?'':b.dataset.v});});
+      const ta=card.querySelector('textarea');
+      ta.oninput=()=>{clearTimeout(timers[it.id]);setSt(it.id,'Escrivint…');timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200);};
+      ta.onblur=()=>{clearTimeout(timers[it.id]);commitComment(it.id,ta.value);};
+      sec.appendChild(card);});
+    list.appendChild(sec);});
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b));applyFilter();});
+  document.querySelectorAll('.demo').forEach(el=>{try{if(el.dataset.demo)DEMOS[el.dataset.demo](el);else if(el.dataset.ex)EX[el.dataset.ex](el);else el.remove();}catch(e){el.innerHTML='<span class="small">No s\'ha pogut carregar la demo.</span>';console.error(e);}});
+  ITEMS.forEach(it=>updateCard(it.id));updateCount();}
+function isAnswered(id){const a=state.answers[id];return !!(a&&(a.decision||(a.comment&&a.comment.trim())));}
+function commitComment(id,val){const cur=(state.answers[id]||{}).comment||'';if(val===cur){setSt(id,isAnswered(id)?'Desat ✓':'');return;}save(id,{comment:val});}
+function setSt(id,t){const c=document.getElementById('item-'+id);if(c)c.querySelector('.st').textContent=t;}
+function updateCard(id){const c=document.getElementById('item-'+id);if(!c)return;const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');if(document.activeElement!==ta&&ta.value!==(a.comment||''))ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id],rb=c.querySelector('.reply');if(r&&r.text){rb.style.display='block';rb.querySelector('.rt').textContent=r.text;}else rb.style.display='none';}
+function updateCount(){const n=ITEMS.filter(i=>isAnswered(i.id)).length;document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';}
+function applyFilter(){ITEMS.forEach(it=>{const c=document.getElementById('item-'+it.id);let show=true;
+  if(state.filter==='pending')show=!isAnswered(it.id);if(state.filter==='star')show=!!it.star;c.classList.toggle('hide',!show);});
+  document.querySelectorAll('section[data-cat]').forEach(s=>s.classList.toggle('hide',!s.querySelector('.card:not(.hide)')));}
+function save(id,patch){const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});state.answers[id]=cur;updateCard(id);updateCount();
+  if(!db){setSt(id,'No es pot desar en aquesta vista');return;}setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body)).then(()=>setSt(id,'Desat ✓')).catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));}
+function banner(t){const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none';}
+build();applyFilter();
+(async()=>{
+  if(!window.claude||typeof window.claude.use!=='function'){banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.');return;}
+  try{db=await window.claude.use('db');}catch(e){db=null;}
+  if(!db){banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).');return;}
+  const t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{if(!snap.metadata.fromCache){clearTimeout(t);banner('');}
+    const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});
+    ITEMS.forEach(it=>{if(!(it.id in next)&&state.answers[it.id]&&queues[it.id])next[it.id]=state.answers[it.id];});
+    state.answers=next;ITEMS.forEach(it=>updateCard(it.id));updateCount();},e=>{clearTimeout(t);banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').');});
+  db.collection('replies').onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});state.replies=next;ITEMS.forEach(it=>updateCard(it.id));},()=>{});
+})();
+</script>
+</body>
+</html>

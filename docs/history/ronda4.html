@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — ronda 4: grafs, sòlids, sanefes i calidoscopis</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --paper:#3a3f46; --paper2:#30353b; --cell:#ffffff; --cellink:#1f2328;
+  --a:#e8743b; --a-soft:#fbe1d3; --b:#2f6fd0; --b-soft:#d9e6fa;
+  --ok:#15803d; --bad:#b91c1c;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+  --k0:#f4f1ea; --k1:#2f6fd0; --k2:#e8743b;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26;
+    --paper:#4a5059; --paper2:#40454d; --cell:#f4f1ea; --cellink:#1f2328; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 6px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.catt{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.1rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.frase{font-size:1.02rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.box{border-radius:10px;padding:8px 11px;margin:8px 0;font-size:.92rem}
+.box b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.box.nou{background:var(--accent-soft)} .box.nou b{color:var(--accent)}
+.box.chk{background:transparent;border:1px dashed var(--line)} .box.chk b{color:var(--muted)}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+.demo{margin:12px 0 6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.demo h4{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.gr{display:grid;gap:2px;padding:2px;background:var(--line);border-radius:6px;user-select:none;-webkit-user-select:none;touch-action:manipulation;width:max-content;max-width:100%}
+.c{position:relative;display:flex;align-items:center;justify-content:center;background:var(--cell);color:var(--cellink);border-radius:3px;font-weight:650;line-height:1;overflow:hidden}
+.c.paper{background:repeating-linear-gradient(45deg,var(--paper),var(--paper) 4px,var(--paper2) 4px,var(--paper2) 8px);color:rgba(255,255,255,.4)}
+.c.dim{filter:brightness(.72)}
+.c.hole{box-shadow:inset 0 0 0 2.5px var(--accent)}
+.c.go{box-shadow:inset 0 0 0 3px var(--a);cursor:pointer}
+.c.opt{background:#fef3c7}
+.c.rock{background:#57534e;color:#fff}
+.c.wet{background:#93c5fd}
+.c.path{background:#2563eb;color:#fff}
+.c.blk{background:#e7e5e4}
+.c.whi{background:#fff}
+.c .pv{position:absolute;top:0;left:2px;font-size:.55em;color:var(--a)}
+.c .lb{position:absolute;bottom:1px;right:2px;font-size:.5em;color:#6b7280}
+.c.k0{background:var(--k0)} .c.k1{background:var(--k1)} .c.k2{background:var(--k2)}
+.c.pa{box-shadow:inset 0 0 0 3px #16a34a} .c.pb{box-shadow:inset 0 0 0 3px #7c3aed} .c.pc{box-shadow:inset 0 0 0 3px #db2777}
+.pad{display:grid;grid-template-columns:repeat(3,52px);gap:6px;margin-top:8px}
+.pad button,.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:1.15rem;height:44px;cursor:pointer}
+.btn{font-size:.85rem;height:auto;padding:7px 11px}
+.btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.info{font-size:.88rem;margin:6px 0;min-height:1.3em}
+.msg{font-size:.88rem;min-height:1.3em;color:var(--muted);margin:4px 0}
+.msg.bad{color:var(--bad)} .msg.good{color:var(--ok);font-weight:600}
+.small{font-size:.8rem;color:var(--muted)}
+.svgwrap svg{display:block;max-width:100%;height:auto;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.duo{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start;margin-top:8px}
+.duo>div{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.bars{display:flex;gap:2px;align-items:flex-end;height:90px;margin-top:14px}
+.bars div{flex:1;background:var(--accent);border-radius:3px 3px 0 0;min-height:1px;position:relative}
+.bars div.hl{background:var(--a)}
+.blabels{display:flex;gap:2px;font-size:.62rem;color:var(--muted)}
+.blabels span{flex:1;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Ronda 4: grafs, sòlids, sanefes i calidoscopis</h1>
+    <p>Cinc jocs nous sobre els temes que m'has proposat. No els he fet servir tots: els <b>triangles</b> i les <b>tessel·lacions</b> apareixen dins del calidoscopi (només tres triangles fan un calidoscopi perfecte, i són els de les tessel·lacions regulars), i l'<b>hexàgon</b> hi té una versió pròpia amb un full de rusc. He preferit això a forçar un joc més fluix.</p>
+    <p>Tots tenen una demo jugable, i les xifres que dono les he comprovat per ordinador. Respon amb els botons i, si vols, amb un comentari: tot es desa sol. Quan acabis, escriu-me «Revisa artifact».</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐ Els que provaria primer</button>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const DATA = {"dau":{"A":{"B":[[2,5,1,3,1,4,4,4,6,4],[2,4,4,1,4,4,5,1,6,4],[6,2,2,5,1,3,1,1,1,6],[5,3,1,6,2,4,6,1,5,2],[4,4,5,2,3,2,6,2,4,3],[1,4,5,6,1,2,6,6,3,1],[6,3,6,6,5,4,5,6,2,3],[3,5,4,5,4,5,1,4,2,6]],"sol":[[0,1],[1,1],[2,0],[2,1],[3,1],[3,2]],"decoy":null,"net":[[0,0],[1,0],[1,1],[1,2],[1,3],[2,1]]},"B":{"B":[[1,1,1,3,2,6,6,3,3,5],[2,5,1,5,6,2,4,6,4,6],[5,3,6,4,5,3,1,1,3,4],[3,4,3,2,2,5,2,2,2,1],[2,3,2,1,4,5,3,5,6,5],[2,4,4,6,5,3,5,3,3,4],[2,4,6,6,4,6,5,2,4,3],[4,5,5,3,6,4,4,3,5,6]],"sol":[[2,2],[3,2],[3,3],[4,3],[4,4],[5,4]],"decoy":null,"net":[[0,0],[0,1],[1,1],[1,2],[2,2],[2,3]]},"C":{"B":[[3,4,4,2,2,5,3,2,3,4],[2,4,6,4,6,5,2,4,5,6],[5,1,4,6,1,4,5,1,4,2],[2,6,6,6,1,2,3,2,2,3],[2,2,5,6,6,1,2,1,1,3],[2,4,3,2,4,1,1,4,3,1],[3,4,5,6,1,5,6,6,3,3],[4,4,4,1,2,6,5,6,4,4]],"sol":[[5,2],[5,3],[5,4],[6,4],[6,5],[6,6]],"decoy":[[2,6],[3,6],[4,6],[4,7],[5,7],[6,7]],"net":[[0,0],[0,1],[0,2],[1,2],[1,3],[1,4]]}},"salt":[{"holes":[[0,2],[1,1]],"H":7,"W":7,"start":[6,0],"target":[0,6],"rocks":[[0,0],[1,1],[1,3],[2,2],[2,6],[3,3],[3,6],[4,4],[5,5]],"min":7},{"holes":[[0,2],[1,1]],"H":7,"W":7,"start":[6,0],"target":[0,5],"rocks":[[0,0],[1,1],[1,3],[2,2],[2,6],[3,3],[3,6],[4,4],[5,5]],"min":null},{"holes":[[2,3]],"H":8,"W":8,"start":[7,0],"target":[0,7],"rocks":[[1,0],[3,2],[3,3],[5,7],[7,4],[7,7]],"min":6},{"holes":[[0,3],[1,1]],"H":8,"W":8,"start":[7,0],"target":[0,7],"rocks":[[0,3],[0,4],[1,3],[2,2],[2,3],[2,4],[3,3],[3,4],[4,3],[5,1],[5,3],[5,6],[6,1],[6,3],[6,4],[7,3]],"min":8}],"kal":{"B":[[2,1,1,2,0,1,0,0,0,0],[1,1,0,1,2,0,2,0,0,0],[1,1,0,1,0,0,0,2,2,1],[0,0,0,0,0,0,0,0,1,1],[0,2,0,0,0,1,1,0,1,1],[0,0,1,0,1,1,2,2,0,2],[1,0,1,1,1,1,1,0,1,1],[0,0,1,0,1,1,0,2,1,1]],"targets":[{"apex":[8,2],"g":4},{"apex":[4,4],"g":7},{"apex":[5,6],"g":3}]},"hex":{"rows":9,"cols":11,"color":[[[0,0],1],[[1,0],2],[[2,0],1],[[3,0],1],[[4,0],2],[[5,0],2],[[6,0],0],[[7,0],0],[[8,0],2],[[9,0],1],[[10,0],2],[[0,1],0],[[1,1],0],[[2,1],1],[[3,1],1],[[4,1],0],[[5,1],0],[[6,1],2],[[7,1],0],[[8,1],2],[[9,1],1],[[10,1],1],[[-1,2],2],[[0,2],0],[[1,2],2],[[2,2],0],[[3,2],2],[[4,2],0],[[5,2],0],[[6,2],0],[[7,2],0],[[8,2],0],[[9,2],2],[[-1,3],0],[[0,3],1],[[1,3],1],[[2,3],1],[[3,3],2],[[4,3],0],[[5,3],2],[[6,3],0],[[7,3],1],[[8,3],1],[[9,3],0],[[-2,4],0],[[-1,4],1],[[0,4],1],[[1,4],1],[[2,4],2],[[3,4],0],[[4,4],1],[[5,4],1],[[6,4],0],[[7,4],2],[[8,4],1],[[-2,5],0],[[-1,5],0],[[0,5],2],[[1,5],0],[[2,5],1],[[3,5],0],[[4,5],1],[[5,5],1],[[6,5],0],[[7,5],0],[[8,5],0],[[-3,6],0],[[-2,6],0],[[-1,6],0],[[0,6],1],[[1,6],1],[[2,6],1],[[3,6],1],[[4,6],0],[[5,6],2],[[6,6],0],[[7,6],1],[[-3,7],1],[[-2,7],0],[[-1,7],1],[[0,7],1],[[1,7],0],[[2,7],1],[[3,7],0],[[4,7],0],[[5,7],0],[[6,7],0],[[7,7],0],[[-4,8],0],[[-3,8],1],[[-2,8],1],[[-1,8],0],[[0,8],2],[[1,8],0],[[2,8],1],[[3,8],2],[[4,8],0],[[5,8],0],[[6,8],1]],"wedge":[[0,0,0],[1,0,-1],[1,1,-2],[2,0,-2],[2,1,-3],[2,2,-4],[3,0,-3],[3,1,-4],[4,0,-4]],"targets":[{"c":[6,0],"g":6},{"c":[3,1],"g":7},{"c":[0,2],"g":1}]}};
+const CATS=[
+ {id:'G',name:'Grafs i camins connexos',desc:'Xarxes, distàncies i connexions dins la graella.'},
+ {id:'C',name:'Sòlids platònics',desc:'Del full pla al cos de tres dimensions.'},
+ {id:'S',name:'Sanefes, calidoscopis i l\'hexàgon',desc:'Simetries que es repeteixen en una tira, al voltant d\'un punt o al rusc.'}];
+const ITEMS=[
+ {id:'G1',cat:'G',star:true,title:'Saltamartins',tags:['Grafs','Distàncies','Invariants'],lvl:'1r ESO → Batx.',
+  frase:'Els forats de la plantilla són els salts de la teva peça. Arribaràs a la bandera?',
+  joc:'La plantilla té una ★ (on és la peça) i uns quants forats, que són les caselles on pot saltar. Poses la ★ sobre la peça, gires o capgires la plantilla com vulguis, i la peça salta a qualsevol forat lliure. Les roques no es poden trepitjar, però sí saltar. El repte és arribar a la bandera amb el mínim de salts. Cada plantilla és una peça inventada, i n\'hi ha que no poden arribar mai a certes caselles.',
+  enganxa:'Cada plantilla és una peça nova amb personalitat pròpia, com les dels escacs, però inventada. Dissenyar-ne una (foradant una plantilla en blanc) i provar-la és irresistible. En duel, dues peces diferents fan una cursa.',
+  mates:'Grafs: les caselles són els vèrtexs i els salts, les arestes. El mínim de salts és la distància en el graf, que es calcula per capes, com una taca d\'oli que s\'escampa. Invariants: una peça que salta (1, 1) o (2, 0) no canvia mai de color a l\'escaquer, i per això no pot arribar a la meitat de les caselles. Amb un sol forat a (m, n), la peça arriba a tot arreu només si m i n no tenen cap divisor comú i m + n és senar: el cavall, que salta (1, 2), sí; una peça que salti (1, 3), no.',
+  nou:'La plantilla converteix una regla de moviment en un objecte que es pot tocar: els forats són els salts. Canviar de plantilla és canviar de graf.',
+  chk:'He comprovat la regla en un tauler de 12×12: les peces (1, 2), (2, 3), (1, 4) i (3, 4) arriben a les 144 caselles; (1, 1) i (1, 3), només a 72, i (2, 2), a 18. Els mínims dels 4 nivells de la demo són 7 salts, impossible, 6 salts i 8 salts.',
+  pregunta:'Ho veus com a trencaclosques per nivells, com a cursa per a dos o com a repte de «dissenya la teva peça»?',
+  demo:'salt'},
+ {id:'G2',cat:'G',title:'Pluja',tags:['Camins connexos','Probabilitat'],lvl:'2n ESO → Batx.',
+  frase:'Plou a l\'atzar: quan arribarà l\'aigua de dalt a baix?',
+  joc:'El full 1 és un terreny sec de 8×8. Cada torn es tiren dos daus, que diuen on cau un núvol, i la plantilla (el núvol) mulla les caselles dels seus forats. Quan hi ha un camí de caselles mullades de la fila de dalt a la de baix (passant d\'una casella a una altra pel costat, no per la cantonada), l\'aigua ha passat. Abans de començar, cada equip aposta: passarà amb 1-6 núvols, amb 7-9, amb 10-12 o amb 13 o més?',
+  enganxa:'La tensió creix a cada núvol: durant una bona estona no passa res i, de cop, tot es connecta. Les apostes fan que cada tirada compti.',
+  mates:'Camins connexos en una graella i probabilitat. És un model de percolació, el que es fa servir per estudiar com l\'aigua travessa la terra o com s\'escampa un incendi: hi ha un punt a partir del qual, de cop, tot queda connectat. La forma del núvol hi té molta influència.',
+  nou:'El núvol és la plantilla, i la seva forma i orientació canvien el moment en què l\'aigua passa.',
+  chk:'He simulat 20.000 partides. Amb núvols en forma de creu, la mediana és de 10 núvols, i quan l\'aigua passa hi ha mullada la meitat del terreny. Les quatre franges d\'aposta tenen, aproximadament, un 16%, un 33%, un 23% i un 28% de probabilitat. Amb una barra vertical de 3 caselles calen una mica més de núvols (mediana d\'11), però només es mulla el 37% del terreny. Si la barra cau a l\'atzar, horitzontal o vertical, la mediana puja a 16.',
+  pregunta:'T\'agrada com a experiment de classe amb apostes, o el preferiries com a duel en què cada equip decideix on cauen els seus núvols?',
+  demo:'pluja'},
+ {id:'C1',cat:'C',star:true,title:'El dau amagat',tags:['Desenvolupaments del cub','Visió espacial','Quiralitat'],lvl:'1r ESO → Batx.',
+  frase:'La plantilla és el desplegament d\'un cub. Troba el lloc on dibuixa un dau de debò.',
+  joc:'Els forats de la plantilla formen el desplegament d\'un cub: sis quadrats que, plegats, fan un cub. El full 1 està ple de xifres de l\'1 al 6. Si plegues mentalment el que veus pels forats, obtens un dau, però en un dau de debò les cares oposades sumen 7 (1 i 6, 2 i 5, 3 i 4). Només hi ha un lloc del full on la plantilla dona un dau correcte, i cal trobar-lo. Hi ha tres nivells, amb desplegaments diferents, i el darrer té un parany: un dau del mirall.',
+  enganxa:'Tothom ha tingut un dau a la mà, però gairebé ningú no sap quines cares són oposades en un desplegament. Quan ho descobreixes, comences a «veure» el cub plegat, i això fa il·lusió.',
+  mates:'Desplegaments del cub, visió espacial i cares oposades. Un truc: en una tira de quatre quadrats, els alterns són oposats. Al nivell final: un dau i el seu reflex compleixen les mateixes sumes, però no són iguals (quiralitat). Els daus occidentals tenen l\'1, el 2 i el 3 en sentit antihorari al voltant del vèrtex on es troben; els xinesos, normalment, en sentit horari.',
+  nou:'La plantilla és el desplegament, i el full 1, el material del dau. Cal pensar en tres dimensions mirant un full pla.',
+  chk:'He plegat per ordinador totes les col·locacions possibles dels tres taulers de la demo. En cadascun hi ha exactament un dau correcte, i al tercer, a més, un dau del mirall (el parany). Que els daus occidentals són de «mà dreta» (1, 2 i 3 en sentit antihorari) ho he contrastat amb fonts sobre la quiralitat dels daus.',
+  pregunta:'Hi afegim desplegaments de paper per comprovar-ho plegant? T\'interessaria una versió amb altres sòlids platònics (octàedre, icosàedre) sobre un full de triangles?',
+  demo:'dau'},
+ {id:'S1',cat:'S',title:'Sanefa trencada',tags:['Sanefes','Simetries','Patrons'],lvl:'1r ESO → Batx.',
+  frase:'En aquesta sanefa hi ha una figura que no segueix la regla. Troba-la!',
+  joc:'El full 1 té sanefes (tires decorades) fetes repetint una mateixa figura amb una regla: només desplaçant-la, fent-ne el reflex, girant-la mitja volta… En cada sanefa hi ha exactament una figura equivocada, i cal trobar-la tan de pressa com puguis. La plantilla, amb la forma de la figura, serveix per comprovar-ho: si hi encaixa amb la mateixa orientació que a les altres, és bona.',
+  enganxa:'És un «troba l\'error» amb trampa: la figura equivocada és igual que les altres, però girada o reflectida. Entrena l\'ull per veure simetries, i n\'hi ha prou amb un minut per partida.',
+  mates:'Les set famílies de sanefes: translació, simetria amb lliscament, miralls verticals, mitges voltes, mirall horitzontal i les seves combinacions. Està demostrat que no n\'hi ha més. Els noms de la demo s\'inspiren en els que va proposar Conway (salt, pas, pas de costat…).',
+  nou:'La plantilla amb la forma del motiu és l\'eina per comprovar-ho: el moviment que la porta d\'una figura a la següent és la regla de la sanefa.',
+  chk:'He comprovat que el motiu de la demo no té cap simetria (ni miralls ni mitja volta), de manera que qualsevol figura girada o reflectida és un error que es pot detectar. La demo genera les 7 sanefes amb un error a l\'atzar cada vegada.',
+  pregunta:'T\'agrada com a joc ràpid d\'escalfament? Hi afegim la versió creativa, en què cada alumne fa una sanefa amb la plantilla i un company n\'ha d\'endevinar la regla?',
+  demo:'sanefa'},
+ {id:'S2',cat:'S',star:true,title:'Calidoscopi de butxaca',tags:['Calidoscopis','Simetria','Hexàgon','Triangles'],lvl:'1r ESO → Batx.',
+  frase:'Mou el triangle pel full fins que el calidoscopi dibuixi la imatge de la carta.',
+  joc:'La plantilla té forma de tros de pastís: és un triangle de caselles, i els seus dos costats són dos miralls. El que es veu pels forats es reflecteix 8 vegades i forma una imatge simètrica, com en un calidoscopi. Cada carta mostra una imatge, i cal trobar on s\'ha de posar la plantilla (i com s\'ha de girar) perquè el calidoscopi la dibuixi. A la versió hexagonal, amb un full de rusc, el triangle és més estret, la imatge es repeteix 12 vegades i surten flocs de neu.',
+  enganxa:'Cada petit moviment de la plantilla canvia tota la imatge, com quan gires un calidoscopi de debò. I amb dos miralls petits units amb cinta adhesiva, la imatge es veu de veritat sobre el paper.',
+  mates:'Simetria de reflexió i el «tros mínim» (domini fonamental): tota la imatge surt d\'una vuitena part (o d\'una dotzena part). Dos miralls a 45° fan 8 còpies i a 30°, 12: 360° dividits per l\'angle. I una propietat dels triangles: només tres triangles fan un calidoscopi perfecte amb tres miralls (45-45-90, 60-60-60 i 30-60-90), i són els que corresponen a les tessel·lacions regulars de quadrats, triangles i hexàgons.',
+  nou:'La plantilla és el tros que el calidoscopi multiplica. Buscar-lo a l\'inrevés, de la imatge al tros, obliga a pensar en simetria.',
+  chk:'Al full quadrat de la demo hi ha 280 col·locacions possibles, i cada una de les tres cartes surt en un sol lloc. Al full hexagonal n\'hi ha 536, i també hi he triat cartes que només surten en un lloc.',
+  pregunta:'T\'interessa la versió hexagonal (cal un full de rusc i una plantilla amb forats hexagonals)? Hi faries servir miralls de debò?',
+  demo:'kal'}
+];
+
+/* ============ motor comú ============ */
+const ROT=o=>o.map(([r,c])=>[c,-r]);
+const MIR=o=>o.map(([r,c])=>[r,-c]);
+const cellsOf=p=>p.o.map(([r,c])=>[p.r+r,p.c+c]);
+const inside=(p,H,W)=>cellsOf(p).every(([r,c])=>r>=0&&r<H&&c>=0&&c<W);
+function moved(p,m){const q={r:p.r,c:p.c,o:p.o};
+  if(m==='u')q.r--;else if(m==='d')q.r++;else if(m==='l')q.c--;else if(m==='r')q.c++;
+  else if(m==='cw')q.o=ROT(p.o);else if(m==='ccw')q.o=ROT(ROT(ROT(p.o)));else if(m==='flip')q.o=MIR(p.o);
+  return q;}
+function maskSets(p){const holes=new Set(),cs=cellsOf(p);let r0=1e9,r1=-1e9,c0=1e9,c1=-1e9;
+  cs.forEach(([r,c])=>{holes.add(r+','+c);r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);});
+  return {holes,piv:p.r+','+p.c,inPaper:(r,c)=>r>=r0&&r<=r1&&c>=c0&&c<=c1&&!holes.has(r+','+c)};}
+function esc(s){return String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));}
+function cellSize(el,W,max){const w=(el.clientWidth||320)-24;return Math.max(16,Math.min(max||38,Math.floor((w-2*(W-1)-4)/W)));}
+function gridHTML(H,W,sz,fn){let h=`<div class="gr" style="grid-template-columns:repeat(${W},${sz}px);grid-auto-rows:${sz}px;font-size:${Math.round(sz*0.44)}px">`;
+  for(let r=0;r<H;r++)for(let c=0;c<W;c++){const x=fn(r,c)||{};h+=`<div class="c ${x.k||''}" data-r="${r}" data-c="${c}">${x.h!==undefined?x.h:esc(x.t!==undefined?x.t:'')}</div>`;}
+  return h+'</div>';}
+const PAD=(flip)=>`<div class="pad"><button data-m="ccw" aria-label="Gira a l'esquerra">⟲</button><button data-m="u" aria-label="Amunt">↑</button><button data-m="cw" aria-label="Gira a la dreta">⟳</button><button data-m="l" aria-label="Esquerra">←</button><button data-m="d" aria-label="Avall">↓</button><button data-m="r" aria-label="Dreta">→</button>${flip?'<button data-m="flip" style="grid-column:span 3;font-size:.9rem">⇋ Capgira</button>':''}</div>`;
+const RENDERERS=[];window.addEventListener('resize',()=>RENDERERS.forEach(f=>f()));
+const rnd=n=>Math.floor(Math.random()*n);
+function msgr(root){const el=root.querySelector('.msg');return (t,k)=>{el.innerHTML=t;el.className='msg '+(k||'');};}
+const fmt=x=>String(x).replace('.',',');
+
+/* ============ G1 · Saltamartins ============ */
+function demoSalt(root){
+  const LV=DATA.salt,NAMES=['1 · Primer viatge','2 · Impossible?','3 · La zebra','4 · El mur'];
+  const oriH=(holes,g)=>holes.map(([r,c])=>{let x=[r,c];if(g>=4)x=[x[0],-x[1]];for(let i=0;i<g%4;i++)x=[x[1],-x[0]];return x;});
+  let lv=0,pos,jumps,g=0,showAll=false,showDist=false,showCol=false,answered=false,done=false,say;
+  const L=()=>LV[lv],rockSet=()=>new Set(L().rocks.map(x=>x.join(',')));
+  const allMoves=()=>{const S=new Set(),out=[];for(let k=0;k<8;k++)oriH(L().holes,k).forEach(v=>{const s=v.join(',');if(!S.has(s)){S.add(s);out.push(v);}});return out;};
+  const free=(r,c,R)=>r>=0&&r<L().H&&c>=0&&c<L().W&&!R.has(r+','+c);
+  function bfs(from){const R=rockSet(),M=allMoves(),D=new Map([[from.join(','),0]]),q=[from];
+    for(let i=0;i<q.length;i++){const u=q[i],d=D.get(u.join(','));M.forEach(([a,b])=>{const v=[u[0]+a,u[1]+b],k=v.join(',');if(free(v[0],v[1],R)&&!D.has(k)){D.set(k,d+1);q.push(v);}});}
+    return D;}
+  function reset(){pos=L().start.slice();jumps=0;g=0;done=false;answered=false;
+    say(lv===1?'Primer pensa-ho: pot arribar a la bandera aquesta peça?':'Posa la ★ sobre el saltamartí, gira la plantilla i toca un forat taronja per saltar-hi.');draw();}
+  root.innerHTML=`<h4>Demo · arriba a la bandera</h4>
+   <div class="row2">${NAMES.map((t,i)=>`<button class="btn${i===0?' on':''}" data-lv="${i}">${t}</button>`).join('')}</div>
+   <div class="info"></div><div class="gwrap"></div><div class="msg"></div><div class="ask"></div>
+   <div class="row2"><button class="btn" data-a="all">Mostra tots els salts</button><button class="btn" data-a="dist">Mapa de distàncies</button><button class="btn" data-a="col">Pinta l'escaquer</button><button class="btn" data-a="reset">Torna a començar</button></div>
+   <div class="row2"><button class="btn" data-m="ccw">⟲ Gira</button><button class="btn" data-m="cw">⟳ Gira</button><button class="btn" data-m="flip">⇋ Capgira</button></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{lv=+b.dataset.lv;root.querySelectorAll('[data-lv]').forEach(x=>x.classList.toggle('on',x===b));reset();});
+  root.querySelector('[data-a="reset"]').onclick=reset;
+  root.querySelector('[data-a="all"]').onclick=e=>{showAll=!showAll;e.target.classList.toggle('on',showAll);draw();};
+  root.querySelector('[data-a="dist"]').onclick=e=>{showDist=!showDist;e.target.classList.toggle('on',showDist);draw();};
+  root.querySelector('[data-a="col"]').onclick=e=>{showCol=!showCol;e.target.classList.toggle('on',showCol);draw();};
+  root.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{const m=b.dataset.m;if(m==='cw')g=(g<4?(g+1)%4:4+((g-4+1)%4));else if(m==='ccw')g=(g<4?(g+3)%4:4+((g-4+3)%4));else g=(g<4?4+((4-g)%4):((4-(g-4))%4));draw();});
+  function jump(r,c){if(done)return;pos=[r,c];jumps++;const t=L().target;
+    if(r===t[0]&&c===t[1]){done=true;const m=bfs(L().start).get(t.join(','));say(`Has arribat en ${jumps} salts. El mínim possible és ${m}.`+(jumps===m?' Perfecte!':''),'good');}else say('');draw();}
+  function draw(){const l=L(),R=rockSet(),sz=cellSize(root,l.W,40),cur=oriH(l.holes,g).map(([a,b])=>[pos[0]+a,pos[1]+b]);
+    const curS=new Set(cur.map(x=>x.join(','))),allS=new Set(allMoves().map(([a,b])=>(pos[0]+a)+','+(pos[1]+b)));
+    let r0=pos[0],r1=pos[0],c0=pos[1],c1=pos[1];cur.forEach(([a,b])=>{r0=Math.min(r0,a);r1=Math.max(r1,a);c0=Math.min(c0,b);c1=Math.max(c1,b);});
+    const D=showDist?bfs(pos):null,t=l.target;
+    root.querySelector('.gwrap').innerHTML=gridHTML(l.H,l.W,sz,(r,c)=>{const k=r+','+c;let cls='',h='';
+      if(showCol)cls=(r+c)%2?'blk':'whi';
+      if(R.has(k)){cls='rock';h='🪨';}
+      if(r===t[0]&&c===t[1])h='🚩';
+      if(D&&D.has(k)&&!(r===pos[0]&&c===pos[1]))h=(h?h:'')+`<span class="lb" style="font-size:.6em;color:#0f766e;font-weight:700">${D.get(k)}</span>`;
+      if(r===pos[0]&&c===pos[1]){h='🦗<span class="pv">★</span>';cls+=' hole';}
+      else if(curS.has(k)){cls+=free(r,c,R)?' go':' hole';}
+      else if(showAll&&allS.has(k)&&free(r,c,R))cls+=' opt';
+      if(r>=r0&&r<=r1&&c>=c0&&c<=c1&&!curS.has(k)&&!(r===pos[0]&&c===pos[1]))cls+=' dim';
+      return {k:cls,h};});
+    root.querySelector('.gwrap').querySelectorAll('.c.go').forEach(el=>el.onclick=()=>jump(+el.dataset.r,+el.dataset.c));
+    root.querySelector('.info').innerHTML=`Salts: <b>${jumps}</b> · Forats de la plantilla: ${l.holes.map(h=>'('+h.join(', ')+')').join(' i ')}`;
+    const ask=root.querySelector('.ask');
+    if(lv===1&&!answered){ask.innerHTML='<div class="row2"><button class="btn" data-ans="si">Sí, s\'hi pot arribar</button><button class="btn" data-ans="no">No, és impossible</button></div>';
+      ask.querySelectorAll('[data-ans]').forEach(b=>b.onclick=()=>{answered=true;
+        if(b.dataset.ans==='no')say('Correcte! Pinta l\'escaquer: tots els salts d\'aquesta peça (dos passos rectes o un en diagonal) mantenen el color de la casella, i la bandera és d\'un altre color. És un invariant.','good');
+        else say('Prova-ho… Pista: pinta l\'escaquer i mira de quin color són les caselles on pots anar.','bad');draw();});}
+    else ask.innerHTML='';}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ G2 · Pluja ============ */
+function demoPluja(root){
+  const N=8,SH={creu:{t:'Creu (5)',o:[[0,0],[-1,0],[1,0],[0,-1],[0,1]]},barra:{t:'Barra vertical (3)',o:[[-1,0],[0,0],[1,0]]},atzar:{t:'Barra a l\'atzar (3)',o:null}};
+  const BETS=[[1,6,'1-6'],[7,9,'7-9'],[10,12,'10-12'],[13,999,'13 o més']];
+  let shape='creu',wet,k,done,bet=null,path=null,last=null,busy=false,say;
+  function reset(){wet=Array.from({length:N},()=>Array(N).fill(0));k=0;done=false;path=null;last=null;say(bet===null?'Tria una aposta i fes ploure.':'Aposta: '+BETS[bet][2]+' núvols. Fes ploure!');draw();}
+  function conn(W){const prev=new Map(),q=[];for(let c=0;c<N;c++)if(W[0][c]){q.push([0,c]);prev.set('0,'+c,null);}
+    for(let i=0;i<q.length;i++){const [r,c]=q[i];if(r===N-1){const p=[];let key=r+','+c;while(key){p.push(key);key=prev.get(key);}return p;}
+      [[1,0],[-1,0],[0,1],[0,-1]].forEach(([a,b])=>{const rr=r+a,cc=c+b,kk=rr+','+cc;if(rr>=0&&rr<N&&cc>=0&&cc<N&&W[rr][cc]&&!prev.has(kk)){prev.set(kk,r+','+c);q.push([rr,cc]);}});}
+    return null;}
+  const shapeO=()=>shape==='atzar'?(Math.random()<.5?SH.barra.o:[[0,-1],[0,0],[0,1]]):SH[shape].o;
+  function rain(){if(done||busy)return;const d1=1+rnd(6),d2=1+rnd(6),o=shapeO();k++;
+    last={r:d1,c:d2,o};o.forEach(([a,b])=>{wet[d1+a][d2+b]=1;});path=conn(wet);
+    if(path){done=true;const bi=BETS.findIndex(([a,b])=>k>=a&&k<=b);
+      say(`Daus: ${d1} i ${d2}. <b>L'aigua ha passat al núvol ${k}!</b> `+(bet===null?'':(bi===bet?'Has guanyat l\'aposta!':'Has perdut l\'aposta (franja '+BETS[bi][2]+').')),'good');}
+    else say(`Daus: ${d1} i ${d2}. Núvol ${k}: encara no passa.`);draw();}
+  function simulate(){const cnt={};let tot=0;const R=[];
+    for(let t=0;t<1000;t++){const W=Array.from({length:N},()=>Array(N).fill(0));let n=0;while(!conn(W)){n++;const o=shapeO(),a=1+rnd(6),b=1+rnd(6);o.forEach(([x,y])=>{W[a+x][b+y]=1;});}R.push(n);}
+    R.sort((a,b)=>a-b);const med=R[500],maxK=25;const h=Array(maxK+1).fill(0);R.forEach(n=>h[Math.min(n,maxK)]++);const mx=Math.max(...h);
+    const fr=BETS.map(([a,b])=>R.filter(n=>n>=a&&n<=b).length/10);
+    root.querySelector('.simout').innerHTML=`<div class="bars">${h.slice(1).map((v,i)=>`<div class="${bet!==null&&i+1>=BETS[bet][0]&&i+1<=BETS[bet][1]?'hl':''}" style="height:${Math.max(1,90*v/mx)}px"></div>`).join('')}</div>
+      <div class="blabels">${h.slice(1).map((v,i)=>`<span>${(i+1)%2?(i+1===maxK?maxK+'+':i+1):''}</span>`).join('')}</div>
+      <div class="small" style="margin-top:4px">1000 pluges amb «${SH[shape].t}». Mediana: <b>${med}</b> núvols. Franges: ${BETS.map((b,i)=>b[2]+': '+fmt(fr[i].toFixed(1))+'%').join(' · ')}.</div>`;}
+  root.innerHTML=`<h4>Demo · fes ploure</h4>
+   <div class="row2">${Object.entries(SH).map(([kk,v])=>`<button class="btn${kk===shape?' on':''}" data-s="${kk}">${v.t}</button>`).join('')}</div>
+   <div class="row2"><span class="small">Aposta:</span>${BETS.map((b,i)=>`<button class="btn" data-b="${i}">${b[2]}</button>`).join('')}</div>
+   <div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="rain">☁️ Fes ploure</button><button class="btn" data-a="reset">Torna a començar</button><button class="btn" data-a="sim">Simula 1000 pluges</button></div>
+   <div class="simout"></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{shape=b.dataset.s;root.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on',x===b));root.querySelector('.simout').innerHTML='';reset();});
+  root.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bet=+b.dataset.b;root.querySelectorAll('[data-b]').forEach(x=>x.classList.toggle('on',x===b));if(k===0)say('Aposta: '+BETS[bet][2]+' núvols. Fes ploure!');});
+  root.querySelector('[data-a="rain"]').onclick=rain;root.querySelector('[data-a="reset"]').onclick=reset;root.querySelector('[data-a="sim"]').onclick=simulate;
+  function draw(){const sz=cellSize(root,N,40),P=new Set(path||[]),L=last?new Set(last.o.map(([a,b])=>(last.r+a)+','+(last.c+b))):new Set();
+    root.querySelector('.gwrap').innerHTML=gridHTML(N,N,sz,(r,c)=>{const kk=r+','+c;let cls=P.has(kk)?'path':wet[r][c]?'wet':'';if(L.has(kk))cls+=' hole';return {k:cls,t:''};});}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ C1 · El dau amagat ============ */
+const QM={E:[[0,0,1],[0,1,0],[-1,0,0]],W:[[0,0,-1],[0,1,0],[1,0,0]],N:[[1,0,0],[0,0,1],[0,-1,0]],S:[[1,0,0],[0,0,-1],[0,1,0]]};
+const mm=(A,B)=>A.map((row,i)=>[0,1,2].map(j=>row[0]*B[0][j]+row[1]*B[1][j]+row[2]*B[2][j]));
+function foldNet(cells){const key=(r,c)=>r+','+c,set=new Set(cells.map(([r,c])=>key(r,c)));
+  const start=cells.slice().sort((a,b)=>a[0]-b[0]||a[1]-b[1])[0],R={};R[key(...start)]=[[1,0,0],[0,1,0],[0,0,1]];const order=[start];
+  for(let i=0;i<order.length;i++){const cur=order[i];[['N',-1,0],['S',1,0],['E',0,1],['W',0,-1]].forEach(([d,dr,dc])=>{const nb=[cur[0]+dr,cur[1]+dc],k=key(...nb);if(set.has(k)&&!R[k]){R[k]=mm(QM[d],R[key(...cur)]);order.push(nb);}});}
+  const out={};Object.entries(R).forEach(([k,M])=>{out[k]=[-M[2][0],-M[2][1],M[2][2]];});return out;}
+function demoDau(root){
+  const LV=[DATA.dau.A,DATA.dau.B,DATA.dau.C],NAMES=['1 · Tira de quatre','2 · Escala','3 · El dau del mirall'];
+  let lv=0,p,showPairs=false,say;
+  function reset(){p={r:3,c:3,o:LV[lv].net.map(x=>x.slice())};const B=LV[lv].B;if(!inside(p,B.length,B[0].length))p={r:0,c:0,o:p.o};
+    say(lv===2?'Aquí hi ha dos daus que compleixen les sumes, però només un és com els daus de debò (1, 2 i 3 en sentit antihorari).':'Mou la plantilla fins que el que es veu pels forats, plegat, sigui un dau correcte.');draw();}
+  function analyse(){const B=LV[lv].B,cs=cellsOf(p),vals=cs.map(([r,c])=>B[r][c]),N=foldNet(cs),nk=cs.map(([r,c])=>N[r+','+c]);
+    const pairs=[],used=new Set();cs.forEach((x,i)=>{if(used.has(i))return;const j=nk.findIndex((n,jj)=>jj!==i&&n[0]===-nk[i][0]&&n[1]===-nk[i][1]&&n[2]===-nk[i][2]);used.add(i);used.add(j);pairs.push([i,j]);});
+    const distinct=new Set(vals).size===6,ok=distinct&&pairs.every(([i,j])=>vals[i]+vals[j]===7);let hand=0;
+    if(ok){const nv={};vals.forEach((v,i)=>nv[v]=nk[i]);const [a,b,c]=[nv[1],nv[2],nv[3]];hand=Math.sign(a[0]*(b[1]*c[2]-b[2]*c[1])-a[1]*(b[0]*c[2]-b[2]*c[0])+a[2]*(b[0]*c[1]-b[1]*c[0]));}
+    return {cs,vals,pairs,distinct,ok,hand};}
+  root.innerHTML=`<h4>Demo · troba el dau</h4>
+   <div class="row2">${NAMES.map((t,i)=>`<button class="btn${i===0?' on':''}" data-lv="${i}">${t}</button>`).join('')}</div>
+   <div class="info"></div><div class="gwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="chk">Comprova</button><button class="btn" data-a="pairs">Mostra les cares oposades</button><button class="btn" data-a="reset">Torna a començar</button></div><div class="pv2"></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-lv]').forEach(b=>b.onclick=()=>{lv=+b.dataset.lv;root.querySelectorAll('[data-lv]').forEach(x=>x.classList.toggle('on',x===b));reset();});
+  root.querySelector('[data-a="reset"]').onclick=reset;
+  root.querySelector('[data-a="pairs"]').onclick=e=>{showPairs=!showPairs;e.target.classList.toggle('on',showPairs);draw();};
+  root.querySelector('[data-a="chk"]').onclick=()=>{const a=analyse();
+    if(!a.distinct)say('Hi ha xifres repetides: un dau ha de tenir de l\'1 al 6.','bad');
+    else if(!a.ok)say('Les xifres hi són totes, però les cares oposades no sumen 7: '+a.pairs.map(([i,j])=>a.vals[i]+' i '+a.vals[j]).join(', ')+'.','bad');
+    else if(lv===2&&a.hand<0)say('Compleix les sumes… però és el dau del mirall! L\'1, el 2 i el 3 hi van en sentit horari. Busca l\'altre.','bad');
+    else say('Exacte! És un dau correcte'+(a.hand>0?', i de mà dreta, com els daus occidentals.':'.'),'good');};
+  root.querySelector('.pv2').innerHTML=PAD(true);
+  root.querySelectorAll('.pad button').forEach(b=>b.onclick=()=>{const B=LV[lv].B,q=moved(p,b.dataset.m);if(!inside(q,B.length,B[0].length)){say('La plantilla sortiria del full.','bad');return;}p=q;say('');draw();});
+  function draw(){const B=LV[lv].B,H=B.length,W=B[0].length,a=analyse(),M=maskSets(p),sz=cellSize(root,W,36);
+    const pc={};if(showPairs)a.pairs.forEach(([i,j],t)=>{const cl=['pa','pb','pc'][t];pc[a.cs[i].join(',')]=cl;pc[a.cs[j].join(',')]=cl;});
+    root.querySelector('.gwrap').innerHTML=gridHTML(H,W,sz,(r,c)=>{const k=r+','+c;let cls='';
+      if(M.holes.has(k))cls='hole '+(pc[k]||'');else if(M.inPaper(r,c))cls='paper';
+      return {k:cls,h:B[r][c]+(k===M.piv?'<span class="pv">★</span>':'')};});
+    root.querySelector('.info').innerHTML='Parelles de cares oposades: '+a.pairs.map(([i,j])=>{const s=a.vals[i]+a.vals[j];return `<b style="color:${s===7?'var(--ok)':'var(--bad)'}">${a.vals[i]}+${a.vals[j]}=${s}</b>`;}).join(' · ');}
+  RENDERERS.push(draw);reset();
+}
+
+/* ============ S1 · Sanefa trencada ============ */
+function demoSanefa(root){
+  const MOT=[[0,0],[1,1],[1,2]];
+  const TF={I:([r,c])=>[r,c],H:([r,c])=>[r,2-c],V:([r,c])=>[1-r,c],R:([r,c])=>[1-r,2-c]};
+  const SW={I:'H',H:'I',V:'R',R:'V'},BAND={I:0,H:0,V:1,R:1};
+  const RULES=[
+   {t:'Salt',d:'només translacions: cada figura és igual que l\'anterior, desplaçada.',f:k=>['I']},
+   {t:'Pas',d:'simetria amb lliscament: la figura i el seu reflex alternen a dalt i a baix, com unes petjades.',f:k=>[k%2?'V':'I']},
+   {t:'Pas de costat',d:'miralls verticals: cada figura és el reflex de la del costat.',f:k=>[k%2?'H':'I']},
+   {t:'Salt amb gir',d:'mitges voltes: la figura i la mateixa figura girada 180° alternen.',f:k=>[k%2?'R':'I']},
+   {t:'Bot',d:'mirall horitzontal: cada figura té el seu reflex just a sota.',f:k=>['I','V']},
+   {t:'Pas de costat amb gir',d:'miralls verticals i mitges voltes: la seqüència és figura, reflex, reflex cap per avall, mitja volta…',f:k=>[['I','H','V','R'][k%4]]},
+   {t:'Bot amb gir',d:'tots dos miralls: cada columna té la figura i el seu reflex, i les columnes s\'alternen com en un mirall.',f:k=>k%2?['H','R']:['I','V']}];
+  const SLOTS=6;let order=[],oi=0,items,err,found=false,tries=0,score=[0,0],say;
+  function shuffle(a){for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function newFrieze(){if(!order.length||oi>=order.length){order=shuffle([0,1,2,3,4,5,6]);oi=0;}const R=RULES[order[oi++]];
+    items=[];for(let k=0;k<SLOTS;k++)R.f(k).forEach(T=>items.push({k,T,band:BAND[T]}));
+    err=rnd(items.length);items[err].wrong=SW[items[err].T];found=false;tries=0;cur=R;say('Toca la figura que no segueix la regla.');draw();}
+  let cur;
+  root.innerHTML=`<h4>Demo · troba l'error</h4><div class="info"></div><div class="svgwrap"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="next">Sanefa nova</button></div>
+   <div class="small">La línia discontínua és el mig de la tira: les figures de baix són reflexos o girs de les de dalt.</div>`;
+  say=msgr(root);
+  root.querySelector('[data-a="next"]').onclick=newFrieze;
+  function draw(){const cols=SLOTS*4-1,rows=4,W=Math.min(560,(root.clientWidth||320)-22),cell=W/cols;
+    let g=`<rect x="0" y="0" width="${cols}" height="${rows}" fill="#fff"/><line x1="0" y1="2" x2="${cols}" y2="2" stroke="#d1d5db" stroke-width=".05" stroke-dasharray=".2 .15"/>`;
+    items.forEach((it,i)=>{const T=it.wrong||it.T,x0=it.k*4,y0=it.band*2;
+      MOT.map(TF[T]).forEach(([r,c])=>{g+=`<rect x="${x0+c+.06}" y="${y0+r+.06}" width=".88" height=".88" rx=".12" fill="${found&&i===err?'#dc2626':'#1f2937'}"/>`;});
+      g+=`<rect data-i="${i}" x="${x0-.3}" y="${y0-.1}" width="3.6" height="2.2" fill="transparent" ${found&&i===err?'stroke="#dc2626" stroke-width=".08"':''}/>`;});
+    root.querySelector('.svgwrap').innerHTML=`<svg viewBox="-.4 -.2 ${cols+.8} ${rows+.4}" width="${W}" height="${W*(rows+.4)/(cols+.8)}">${g}</svg>`;
+    root.querySelectorAll('rect[data-i]').forEach(el=>el.onclick=()=>{if(found)return;const i=+el.dataset.i;tries++;
+      if(i===err){found=true;score[0]++;score[1]++;say(`Trobada${tries>1?' (després de '+tries+' intents)':' a la primera'}! Regla «${cur.t}»: ${cur.d}`,'good');}
+      else say('Aquesta segueix la regla. Fixa\'t en com passa de cada figura a la següent.','bad');draw();});
+    root.querySelector('.info').innerHTML=`Sanefes resoltes: <b>${score[0]}</b>`;}
+  RENDERERS.push(()=>{if(items)draw();});newFrieze();
+}
+
+/* ============ S2 · Calidoscopi (quadrat i hexagonal) ============ */
+function demoKal(root){
+  const COL=['#f4f1ea','#2f6fd0','#e8743b'];
+  // ---- quadrat
+  const SB=DATA.kal.B,SH=SB.length,SW=SB[0].length,n=4,WEDGE=[];for(let r=0;r<n;r++)for(let c=0;c<=r;c++)WEDGE.push([r,c]);
+  const trS=(g,x,y)=>{if(g>=4)x=-x;for(let i=0;i<g%4;i++)[x,y]=[-y,x];return [x,y];};
+  const sqCells=pl=>WEDGE.map(([r,c])=>{const [x,y]=trS(pl.g,c+.5,r+.5);return [Math.round(pl.ay+y-.5),Math.round(pl.ax+x-.5)];});
+  const sqOK=pl=>sqCells(pl).every(([r,c])=>r>=0&&r<SH&&c>=0&&c<SW);
+  const widx=new Map(WEDGE.map((w,i)=>[w.join(','),i]));
+  function sqImage(pl){const cs=sqCells(pl),img=[];for(let i=-n;i<n;i++)for(let j=-n;j<n;j++){const x=Math.abs(j+.5),y=Math.abs(i+.5),a=Math.max(x,y),b=Math.min(x,y);const [r,c]=cs[widx.get(Math.round(a-.5)+','+Math.round(b-.5))];img.push(SB[r][c]);}return img;}
+  // ---- hexagonal
+  const HX=DATA.hex,HCOL=new Map(HX.color.map(([[q,r],v])=>[q+','+r,v])),HW=HX.wedge;
+  const rot6=([x,y,z])=>[-z,-x,-y],ref6=([x,y,z])=>[x,z,y];
+  const trH=(g,p)=>{if(g>=6)p=ref6(p);for(let i=0;i<g%6;i++)p=rot6(p);return p;};
+  const ALL=[];for(let x=-4;x<=4;x++)for(let y=-4;y<=4;y++){const z=-x-y;if(Math.max(Math.abs(x),Math.abs(y),Math.abs(z))<=4)ALL.push([x,y,z]);}
+  const repOf=p=>{let best=null;for(let g=0;g<12;g++){const c=trH(g,p);if(c[0]>=c[1]&&c[1]>=c[2]&&c[1]>=0){if(!best||c[0]>best[0]||(c[0]===best[0]&&(c[1]>best[1]||(c[1]===best[1]&&c[2]>best[2]))))best=c;}}return best;};
+  const hidx=new Map(HW.map((w,i)=>[w.join(','),i])),ALLREP=ALL.map(p=>hidx.get(repOf(p).join(',')));
+  const hxCells=pl=>{const cx=pl.q,cz=pl.r,cy=-cx-cz;return HW.map(w=>{const [x,y,z]=trH(pl.g,w);return [cx+x,cz+z];});};
+  const hxOK=pl=>hxCells(pl).every(([q,r])=>HCOL.has(q+','+r));
+  const hxImage=pl=>{const cs=hxCells(pl);return ALLREP.map(i=>HCOL.get(cs[i].join(',')));};
+  let mode='sq',ti=0,spl,hpl,say;
+  window.__kal={sqImage:p=>sqImage(p),hxImage:p=>hxImage(p),sqOK:p=>sqOK(p),hxOK:p=>hxOK(p)};
+  const SQT=DATA.kal.targets.map(t=>sqImage({ax:t.apex[0],ay:t.apex[1],g:t.g})),HXT=HX.targets.map(t=>hxImage({q:t.c[0],r:t.c[1],g:t.g}));
+  function reset(){spl={ax:2,ay:4,g:0};if(!sqOK(spl))spl={ax:0,ay:4,g:0};hpl={q:3,r:4,g:0};if(!hxOK(hpl)){for(const [q,r] of HX.color.map(x=>x[0])){if(hxOK({q,r,g:0})){hpl={q,r,g:0};break;}}}
+    say('Mou la plantilla fins que la imatge de l\'esquerra sigui igual que la carta.');draw();}
+  root.innerHTML=`<h4>Demo · fes la imatge de la carta</h4>
+   <div class="row2"><button class="btn on" data-mode="sq">Quadrat · 8 còpies</button><button class="btn" data-mode="hx">Hexagonal · flocs de neu</button></div>
+   <div class="row2"><span class="small">Carta:</span>${[0,1,2].map(i=>`<button class="btn${i===0?' on':''}" data-t="${i}">${i+1}</button>`).join('')}</div>
+   <div class="duo"><div><span class="small">El teu calidoscopi</span><div class="pv-now"></div></div><div><span class="small">La carta</span><div class="pv-tgt"></div></div></div>
+   <div class="msg"></div><div class="board"></div><div class="ctrl"></div>
+   <div class="row2"><button class="btn" data-a="chk">Comprova</button><button class="btn" data-a="reset">Torna a començar</button></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>{mode=b.dataset.mode;root.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('on',x===b));say('');draw();});
+  root.querySelectorAll('[data-t]').forEach(b=>b.onclick=()=>{ti=+b.dataset.t;root.querySelectorAll('[data-t]').forEach(x=>x.classList.toggle('on',x===b));say('');draw();});
+  root.querySelector('[data-a="reset"]').onclick=reset;
+  root.querySelector('[data-a="chk"]').onclick=()=>{const a=mode==='sq'?sqImage(spl):hxImage(hpl),t=mode==='sq'?SQT[ti]:HXT[ti];
+    if(a.every((v,i)=>v===t[i]))say('Exacte! Has trobat el tros que el calidoscopi multiplica.','good');else{const d=a.filter((v,i)=>v!==t[i]).length;say(`Encara no: hi ha ${d} de ${a.length} ${mode==='sq'?'caselles':'hexàgons'} diferents.`,'bad');}};
+  function sqPreview(img,sz){const N=2*n;let g='';for(let i=0;i<N;i++)for(let j=0;j<N;j++)g+=`<rect x="${j}" y="${i}" width="1" height="1" fill="${COL[img[i*N+j]]}" stroke="#d6d3cb" stroke-width=".03"/>`;
+    g+=`<g stroke="#64748b" stroke-width=".05" stroke-dasharray=".18 .12"><line x1="${n}" y1="0" x2="${n}" y2="${N}"/><line x1="0" y1="${n}" x2="${N}" y2="${n}"/><line x1="0" y1="0" x2="${N}" y2="${N}"/><line x1="${N}" y1="0" x2="0" y2="${N}"/></g>`;
+    g+=`<polygon points="${n},${n} ${n},${N} ${N},${N}" fill="none" stroke="#0f766e" stroke-width=".1"/>`;
+    return `<svg viewBox="-.1 -.1 ${N+.2} ${N+.2}" width="${sz}" height="${sz}">${g}</svg>`;}
+  const hexPts=(cx,cy,s)=>{let p=[];for(let i=0;i<6;i++){const a=Math.PI/180*(60*i-30);p.push((cx+s*Math.cos(a)).toFixed(3)+','+(cy+s*Math.sin(a)).toFixed(3));}return p.join(' ');};
+  function hxPreview(img,sz){const s=1;let g='';const pos=ALL.map(([x,y,z])=>[Math.sqrt(3)*(x+z/2),1.5*z]);
+    ALL.forEach((p,i)=>{const [cx,cy]=pos[i];const isW=HW.some(w=>w[0]===p[0]&&w[1]===p[1]);g+=`<polygon points="${hexPts(cx,cy,s*.98)}" fill="${COL[img[i]]}" stroke="${isW?'#0f766e':'#d6d3cb'}" stroke-width="${isW?.12:.04}"/>`;});
+    const R=4*Math.sqrt(3)+1.2;return `<svg viewBox="${-R} ${-R} ${2*R} ${2*R}" width="${sz}" height="${sz}">${g}</svg>`;}
+  function draw(){const pw=Math.min(170,Math.floor(((root.clientWidth||320)-40)/2));
+    if(mode==='sq'){
+      root.querySelector('.pv-now').innerHTML=sqPreview(sqImage(spl),pw);root.querySelector('.pv-tgt').innerHTML=sqPreview(SQT[ti],pw);
+      const cs=sqCells(spl),hs=new Set(cs.map(x=>x.join(','))),sz=cellSize(root,SW,34);let r0=1e9,r1=-1,c0=1e9,c1=-1;cs.forEach(([r,c])=>{r0=Math.min(r0,r);r1=Math.max(r1,r);c0=Math.min(c0,c);c1=Math.max(c1,c);});
+      root.querySelector('.board').innerHTML='<span class="small">Full 1 i plantilla (el vèrtex del triangle és on es toquen els dos miralls)</span>'+gridHTML(SH,SW,sz,(r,c)=>{const k=r+','+c;let cls='k'+SB[r][c];
+        if(hs.has(k))cls+=' hole';else if(r>=r0&&r<=r1&&c>=c0&&c<=c1)cls+=' dim';return {k:cls,t:''};});
+      root.querySelector('.ctrl').innerHTML=PAD(true);
+      root.querySelectorAll('.ctrl .pad button').forEach(b=>b.onclick=()=>{const m=b.dataset.m;let q={...spl};
+        if(m==='u')q.ay--;else if(m==='d')q.ay++;else if(m==='l')q.ax--;else if(m==='r')q.ax++;
+        else if(m==='cw')q.g=q.g<4?(q.g+1)%4:4+((q.g-4+1)%4);else if(m==='ccw')q.g=q.g<4?(q.g+3)%4:4+((q.g-4+3)%4);else q.g=q.g<4?4+((4-q.g)%4):((4-(q.g-4))%4);
+        if(!sqOK(q)){say('La plantilla sortiria del full.','bad');return;}spl=q;say('');draw();});
+    }else{
+      root.querySelector('.pv-now').innerHTML=hxPreview(hxImage(hpl),pw);root.querySelector('.pv-tgt').innerHTML=hxPreview(HXT[ti],pw);
+      const cs=hxCells(hpl),hs=new Set(cs.map(x=>x.join(','))),s=1;let g='',mxx=0,mxy=0;
+      HX.color.forEach(([[q,r],v])=>{const cx=Math.sqrt(3)*(q+r/2)+1,cy=1.5*r+1;mxx=Math.max(mxx,cx);mxy=Math.max(mxy,cy);const h=hs.has(q+','+r);
+        g+=`<polygon points="${hexPts(cx,cy,s*.97)}" fill="${COL[v]}" stroke="${h?'#0f766e':'#cfcac0'}" stroke-width="${h?.16:.05}" ${h?'':'opacity=".55"'}/>`;});
+      const W=Math.min(400,(root.clientWidth||320)-22);
+      root.querySelector('.board').innerHTML='<span class="small">Full de rusc i plantilla (els hexàgons remarcats són els forats)</span><div class="svgwrap"><svg viewBox="0 0 '+(mxx+1.2)+' '+(mxy+1.2)+'" width="'+W+'" height="'+(W*(mxy+1.2)/(mxx+1.2))+'">'+g+'</svg></div>';
+      const D6=[['↖',0,-1],['↗',1,-1],['←',-1,0],['→',1,0],['↙',-1,1],['↘',0,1]];
+      root.querySelector('.ctrl').innerHTML='<div class="pad" style="grid-template-columns:repeat(2,52px)">'+D6.map(([t,dq,dr])=>`<button data-hq="${dq}" data-hr="${dr}">${t}</button>`).join('')+'</div><div class="row2"><button class="btn" data-hm="rot">⟳ Gira 60°</button><button class="btn" data-hm="flip">⇋ Capgira</button></div>';
+      root.querySelectorAll('.ctrl [data-hq]').forEach(b=>b.onclick=()=>{const q={...hpl,q:hpl.q+(+b.dataset.hq),r:hpl.r+(+b.dataset.hr)};if(!hxOK(q)){say('La plantilla sortiria del full.','bad');return;}hpl=q;say('');draw();});
+      root.querySelectorAll('.ctrl [data-hm]').forEach(b=>b.onclick=()=>{let q={...hpl};if(b.dataset.hm==='rot')q.g=q.g<6?(q.g+1)%6:6+((q.g-6+1)%6);else q.g=q.g<6?6+((6-q.g)%6):((6-(q.g-6))%6);
+        if(!hxOK(q)){say('Així la plantilla sortiria del full.','bad');return;}hpl=q;say('');draw();});
+    }}
+  RENDERERS.push(draw);reset();
+}
+
+const DEMOS={salt:demoSalt,pluja:demoPluja,dau:demoDau,sanefa:demoSanefa,kal:demoKal};
+
+/* ============ revisió ============ */
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state={answers:{},replies:{},filter:'all'};let db=null;const queues={},timers={};
+function cardHTML(it){
+  let s=`<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ provar primer</span>':''}</div>`;
+  s+=`<div class="tags">${it.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<span class="tag lvl">${esc(it.lvl)}</span></div>`;
+  s+=`<div class="frase">${esc(it.frase)}</div>`;
+  s+=`<div class="sec"><b>Com es juga</b><p>${esc(it.joc)}</p></div>`;
+  s+=`<div class="demo" data-demo="${it.demo}"></div>`;
+  s+=`<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  s+=`<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  s+=`<div class="box nou"><b>Què té de nou</b>${esc(it.nou)}</div>`;
+  s+=`<div class="box chk"><b>Què he comprovat</b>${esc(it.chk)}</div>`;
+  s+=`<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s+=`<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s+=`<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea><div class="st"></div>`;
+  s+=`<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;}
+function build(){const list=document.getElementById('list');
+  CATS.forEach(c=>{const sec=document.createElement('section');sec.dataset.cat=c.id;
+    sec.innerHTML=`<h2 class="catt">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{const card=document.createElement('article');card.className='card';card.id='item-'+it.id;card.innerHTML=cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{const cur=(state.answers[it.id]||{}).decision||'';save(it.id,{decision:cur===b.dataset.v?'':b.dataset.v});});
+      const ta=card.querySelector('textarea');
+      ta.oninput=()=>{clearTimeout(timers[it.id]);setSt(it.id,'Escrivint…');timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200);};
+      ta.onblur=()=>{clearTimeout(timers[it.id]);commitComment(it.id,ta.value);};
+      sec.appendChild(card);});
+    list.appendChild(sec);});
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b));applyFilter();});
+  document.querySelectorAll('.demo').forEach(el=>{try{DEMOS[el.dataset.demo](el);}catch(e){el.innerHTML='<span class="small">No s\'ha pogut carregar la demo.</span>';console.error(e);}});
+  ITEMS.forEach(it=>updateCard(it.id));updateCount();}
+function isAnswered(id){const a=state.answers[id];return !!(a&&(a.decision||(a.comment&&a.comment.trim())));}
+function commitComment(id,val){const cur=(state.answers[id]||{}).comment||'';if(val===cur){setSt(id,isAnswered(id)?'Desat ✓':'');return;}save(id,{comment:val});}
+function setSt(id,t){const c=document.getElementById('item-'+id);if(c)c.querySelector('.st').textContent=t;}
+function updateCard(id){const c=document.getElementById('item-'+id);if(!c)return;const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');if(document.activeElement!==ta&&ta.value!==(a.comment||''))ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id],rb=c.querySelector('.reply');if(r&&r.text){rb.style.display='block';rb.querySelector('.rt').textContent=r.text;}else rb.style.display='none';}
+function updateCount(){const n=ITEMS.filter(i=>isAnswered(i.id)).length;document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';}
+function applyFilter(){ITEMS.forEach(it=>{const c=document.getElementById('item-'+it.id);let show=true;
+  if(state.filter==='pending')show=!isAnswered(it.id);if(state.filter==='star')show=!!it.star;c.classList.toggle('hide',!show);});
+  document.querySelectorAll('section[data-cat]').forEach(s=>s.classList.toggle('hide',!s.querySelector('.card:not(.hide)')));}
+function save(id,patch){const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});state.answers[id]=cur;updateCard(id);updateCount();
+  if(!db){setSt(id,'No es pot desar en aquesta vista');return;}setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body)).then(()=>setSt(id,'Desat ✓')).catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));}
+function banner(t){const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none';}
+build();applyFilter();
+(async()=>{
+  if(!window.claude||typeof window.claude.use!=='function'){banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.');return;}
+  try{db=await window.claude.use('db');}catch(e){db=null;}
+  if(!db){banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).');return;}
+  const t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{if(!snap.metadata.fromCache){clearTimeout(t);banner('');}
+    const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});
+    ITEMS.forEach(it=>{if(!(it.id in next)&&state.answers[it.id]&&queues[it.id])next[it.id]=state.answers[it.id];});
+    state.answers=next;ITEMS.forEach(it=>updateCard(it.id));updateCount();},e=>{clearTimeout(t);banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').');});
+  db.collection('replies').onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});state.replies=next;ITEMS.forEach(it=>updateCard(it.id));},()=>{});
+})();
+</script>
+</body>
+</html>

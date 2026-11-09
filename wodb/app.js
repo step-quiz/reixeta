@@ -3,7 +3,7 @@
 'use strict';
 const W=window.WODB,BANCS=window.BANCS,ORDRE=window.BANCS_ORDRE;
 const $=s=>document.querySelector(s);
-const CEL=26,FORAT=23,MARGE=(CEL-FORAT)/2;
+const CEL=26,FORAT=23,MARGE=(CEL-FORAT)/2,ITEM=18,MARC=15;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
 const generats={};               // 'NUM-4821' -> tauler
 const st={banc:'NUM',ver:'A',vista:'full',solu:new Set(ORDRE.map(c=>c+'-A'))};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -16,20 +16,20 @@ function fullSVG(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]
   for(let c=0;c<C;c++)o+=`<text x="${x0+c*CEL+CEL/2}" y="${y0-4}" font-size="5.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=x0+c*CEL,y=y0+r*CEL;
     o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".3"/>`;
-    o+=`<svg x="${x+MARGE+.6}" y="${y+MARGE+.6}" width="${FORAT-1.2}" height="${FORAT-1.2}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
+    o+=`<svg x="${x+(CEL-ITEM)/2}" y="${y+(CEL-ITEM)/2}" width="${ITEM}" height="${ITEM}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
   o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".7"/></svg>`;return o;}
 /* ---------- plantilla ---------- */
 function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
-function plantillaCos(ox,oy,laser){const S=4*CEL,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
-  let holes='';for(let i=0;i<2;i++)for(let j=0;j<2;j++){const x=ox+CEL+j*CEL+MARGE,y=oy+CEL+i*CEL+MARGE;holes+=` M${x},${y} h${FORAT} v${FORAT} h${-FORAT} Z`;}
+function plantillaCos(ox,oy,laser){const S=2*CEL+2*MARC,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
+  let holes='';for(let i=0;i<2;i++)for(let j=0;j<2;j++){const x=ox+MARC+j*CEL+MARGE,y=oy+MARC+i*CEL+MARGE;holes+=` M${x},${y} h${FORAT} v${FORAT} h${-FORAT} Z`;}
   let o=laser?`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" ${cut}/>`:`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" fill="#d4d4d4" fill-rule="evenodd" ${cut}/>`;
-  const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"';
-  for(const k of [1,2,3]){const t=k*CEL;
-    o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+8}" ${g}/><line x1="${ox+t}" y1="${oy+S-8}" x2="${ox+t}" y2="${oy+S}" ${g}/>`;
-    o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+8}" y2="${oy+t}" ${g}/><line x1="${ox+S-8}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
-  o+=`<polygon points="${estrella(ox+19,oy+19,3.6)}" fill="#000"/>`;return o;}
-function plantillaSVG(){return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(53,28,false)}${plantillaCos(53,165,false)}</svg>`;}
-function plantillaLaser(){return `<svg xmlns="http://www.w3.org/2000/svg" width="104mm" height="104mm" viewBox="0 0 104 104">${plantillaCos(0,0,true)}</svg>`;}
+  const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=6;
+  for(const k of [0,1,2]){const t=MARC+k*CEL;   // marques guia: continuen les línies de la graella
+    o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/>`;
+    o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
+  o+=`<polygon points="${estrella(ox+MARC/2+1,oy+MARC/2+1,3)}" fill="#000"/>`;return o;}
+function plantillaSVG(){const S=2*CEL+2*MARC,x=(210-S)/2;return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,14,false)}${plantillaCos(x,107.5,false)}${plantillaCos(x,201,false)}</svg>`;}
+function plantillaLaser(){const S=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true)}</svg>`;}
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];
 function soluHTML(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]=W.dims(B);

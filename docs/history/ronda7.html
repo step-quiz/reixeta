@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — posem-nos d'acord</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --cell:#ffffff; --cellink:#1f2328; --a:#e8743b; --ok:#15803d; --bad:#b91c1c;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26; --cell:#f4f1ea; --cellink:#1f2328; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 6px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.catt{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.1rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.frase{font-size:1.02rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.box{border-radius:10px;padding:8px 11px;margin:8px 0;font-size:.92rem}
+.box b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.box.nou{background:var(--accent-soft)} .box.nou b{color:var(--accent)}
+.box.chk{background:transparent;border:1px dashed var(--line)} .box.chk b{color:var(--muted)}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+/* demos */
+.demo{margin:12px 0 6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.demo h4{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:.85rem;padding:7px 11px;cursor:pointer}
+.btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:disabled{opacity:.4}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.msg{font-size:.9rem;min-height:1.3em;color:var(--muted);margin:6px 0}
+.msg.bad{color:var(--bad)} .msg.good{color:var(--ok);font-weight:600}
+.small{font-size:.8rem;color:var(--muted)}
+.board{display:grid;gap:2px;padding:2px;background:var(--line);border-radius:6px;width:max-content;max-width:100%;user-select:none;-webkit-user-select:none}
+.board .bc{display:flex;align-items:center;justify-content:center;background:var(--cell);color:var(--cellink);border-radius:3px;overflow:hidden;cursor:pointer;line-height:1}
+.board .bc.dim{opacity:.32}
+.board .bc.in{box-shadow:inset 0 0 0 2.5px var(--accent)}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;max-width:420px;padding:10px;border-radius:14px;background:repeating-linear-gradient(45deg,#3a3f46,#3a3f46 6px,#30353b 6px,#30353b 12px)}
+.tile{background:#fff;color:#1f2328;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;padding:6px;cursor:pointer;position:relative;border:3px solid transparent}
+.tile.sel{border-color:var(--a)}
+.tile.pick{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.25)}
+.tile.ok{border-color:var(--ok)}
+.tile{min-width:0}
+.tile svg{max-width:100%;height:auto}
+.board .bc svg{display:block}
+.tile .rs{font-size:.72rem;color:#0f766e;text-align:center;margin-top:4px;line-height:1.25}
+.tile .rs.none{color:#b91c1c}
+.tile .tick{position:absolute;top:4px;right:6px;font-size:.9rem}
+.it-t{font-weight:700;font-variant-numeric:tabular-nums}
+.it-l{font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.fr{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;line-height:1.05}
+.fr span:first-child{border-bottom:.09em solid currentColor;padding:0 .15em}
+.props{font-size:.82rem;color:var(--muted);margin:4px 0 0;padding-left:18px}
+.timer{font:700 1.1rem ui-monospace,Menlo,monospace;color:var(--accent)}
+.bingo{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:420px;margin:8px 0}
+.bingo div{border:1.5px solid var(--line);border-radius:8px;padding:6px;font-size:.72rem;line-height:1.2;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--card);cursor:pointer}
+.bingo div.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cands{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:420px}
+.cands button{background:#fff;color:#1f2328;border:2px solid var(--line);border-radius:10px;min-height:64px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cands button.ok{border-color:var(--ok)} .cands button.ko{border-color:var(--bad);opacity:.6}
+.palette{display:grid;gap:3px;max-height:260px;overflow:auto;padding:3px;background:var(--line);border-radius:8px}
+.palette button{background:#fff;color:#1f2328;border:2px solid transparent;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.palette button.on{border-color:var(--a)}
+select{font:inherit;font-size:.85rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
+.log{font-size:.82rem;margin:6px 0;padding-left:18px;color:var(--ink)}
+.log li.cpu{color:#2f6fd0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Posem-nos d'acord</h1>
+    <p>He llegit les teves respostes dels sis artifacts i he contestat cada punt dins de cada artifact. Aquí hi ha les preguntes que em queden abans de fabricar res.</p>
+    <p>A cada punt et dic què proposo. «Sí, fes-ho» vol dir que acceptes la proposta tal com està; si vols una altra cosa, escriu-ho al comentari.</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐ Els que provaria primer</button>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const DD = {};
+const KEYS=[];
+const CATS=[{"id": "A", "name": "Abast i manera de treballar", "desc": "Què fem, en quin ordre i on viu."}, {"id": "B", "name": "Format d'impressió", "desc": "Com seran els fulls, la plantilla i el solucionari."}, {"id": "C", "name": "Fulls WODB", "desc": "Decisions concretes que han sortit de les rondes 5 i 6."}, {"id": "D", "name": "Els altres jocs aprovats", "desc": "El generador de WODB, «Pinta per sumes», «Sanefa trencada» i la teva idea de comptar."}];
+const ITEMS=[{"id": "Q1", "cat": "A", "title": "Què està aprovat i en quin ordre", "tags": [], "lvl": "", "frase": "Proposo fer primer els fulls WODB per imprimir.", "joc": "Aprovat fins ara: (1) els fulls WODB per imprimir, amb el solucionari a part; (2) el generador web de WODB per al professorat; (3) «Pinta per sumes», amb un generador on dissenyes els teus dibuixos; (4) «Sanefa trencada», sense la versió creativa; (5) la teva idea de comptar primers, múltiples o quadrats. Aparcats: «El robot llaminer» i «El dau amagat». Proposo fer-ho en aquest ordre, i que cada lliurament estigui acabat i provat abans de començar el següent.", "pregunta": "Aquest és l'ordre que vols? Si no, digues-me el teu.", "star": true}, {"id": "Q2", "cat": "A", "title": "On viu el projecte", "tags": [], "lvl": "", "frase": "Un repositori de GitHub publicat amb Cloudflare Pages.", "joc": "Proposo un repositori únic per a tot: una web estàtica (HTML, CSS i JS purs, sense llibreries) amb una pàgina per joc. Cada pàgina genera els fulls, la plantilla i el solucionari i els imprimeix o els desa en PDF des del navegador. T'ho lliuraria en ZIP per pujar a _upload, amb l'arrel del ZIP igual que l'arrel del repo.", "pregunta": "Ja tens un repo per a això, o en creem un de nou? Si és nou, quin nom li posem?", "star": false}, {"id": "Q3", "cat": "A", "title": "Fulls fixos o generats", "tags": [], "lvl": "", "frase": "Proposo els dos: fulls fixos revisats i un botó per generar-ne de nous.", "joc": "Els fulls que hem revisat junts (els de les rondes 5 i 6) quedarien fixos, perquè ja estan comprovats. A més, la mateixa pàgina tindria un botó «Full nou» que en busca un d'altre amb la mateixa garantia (les 36 posicions vàlides). Així pots tenir el full A, el full B… per a grups diferents.", "pregunta": "Vols també el botó «Full nou», o només els fulls fixos?", "star": false}, {"id": "Q4", "cat": "B", "title": "Mida del full i de les caselles", "tags": [], "lvl": "", "frase": "A4 horitzontal amb caselles d'uns 26 mm.", "joc": "El full 1 (10×5) en A4 horitzontal, amb caselles d'uns 26 mm: el quadre fa 260×130 mm i queda marge per al títol. A la vora, coordenades (files A-E, columnes 1-10) perquè es pugui dir «posa la plantilla a B4». En A5, les caselles farien uns 18 mm, poc per als dibuixos de geometria.", "pregunta": "A4 horitzontal amb caselles de 26 mm? Vols les coordenades a la vora?", "star": false}, {"id": "Q5", "cat": "B", "title": "La plantilla de 4 forats", "tags": [], "lvl": "", "frase": "Un full a part per retallar, amb els forats una mica més petits que la casella.", "joc": "La plantilla s'imprimiria en un full a part: un quadrat amb 4 forats de 2×2 caselles, amb línies de tall i un marge per agafar-la. Proposo que cada forat sigui 2 mm més petit que la casella, perquè no es vegi res de les caselles veïnes encara que la plantilla no quedi ben centrada.", "pregunta": "Et va bé així? La plastificaràs i després en retallaràs els forats, o la vols fer en un altre material (cartolina, acetat…)?", "star": false}, {"id": "Q6", "cat": "B", "title": "El solucionari", "tags": [], "lvl": "", "frase": "Un document a part titulat «Motius garantits».", "joc": "Per a cada posició (de A1 a D9), els quatre elements i, per a cadascun, els motius de la llista que el fan diferent dels altres tres. A dalt hi diria clarament que n'hi pot haver d'altres i que qualsevol argument correcte val.", "pregunta": "Et sembla bé el format? Vols el solucionari en una o dues pàgines per full?", "star": false}, {"id": "Q7", "cat": "C", "title": "Angles: només tipus d'angles", "tags": [], "lvl": "", "frase": "Amb només 5 tipus, totes les posicions acaben sent «quatre tipus diferents».", "joc": "Si deixo només agut, recte, obtús, pla i còncau, cada angle té exactament un tipus. A cada posició hi hauria quatre tipus diferents, i el motiu sempre seria «és l'únic agut», «és l'únic recte»… Funciona, però és poc variat. Alternativa: afegir dues propietats de mida que també són de l'angle i es poden comprovar comparant amb l'angle recte: «més petit que mig angle recte (45°)» i «més gran que tres angles rectes (270°)».", "pregunta": "Prefereixes només els 5 tipus, o hi afegim aquestes dues propietats de mida?", "star": false}, {"id": "Q8", "cat": "C", "title": "Blocs lògics en blanc i negre", "tags": [], "lvl": "", "frase": "Els 3 colors passen a ser 3 trames.", "joc": "En blanc i negre, cada color passaria a ser una trama: ratlles, quadrícula i punts. Hi ha un problema: un bloc «buit» (només el contorn) no pot mostrar la trama, i es perdria el color. Proposo que, en aquesta versió, «ple / buit» passi a ser «contorn gruixut / contorn prim», i que la trama sempre ompli la figura.", "pregunta": "D'acord amb trames per als colors i amb «contorn gruixut / prim» en lloc de «ple / buit»?", "star": false}, {"id": "Q9", "cat": "C", "title": "Si un full no arriba a les 36 posicions", "tags": [], "lvl": "", "frase": "Per a les lletres vas acceptar un taulell més petit. Ho faig igual per a tots?", "joc": "Amb menys propietats (per exemple, els quadrilàters amb les 7 que has triat, o els cossos sense icosaedre ni dodecaedre), pot passar que no surtin les 36 posicions. Tinc dues opcions: (a) fer un taulell més petit on totes les posicions siguin vàlides, o (b) mantenir els 10×5 i marcar al solucionari les poques posicions que no són WODB. Proposo la (a).", "pregunta": "La (a) per a tots els fulls?", "star": false}, {"id": "Q10", "cat": "C", "title": "Llista definitiva de fulls WODB", "tags": [], "lvl": "", "frase": "12 fulls.", "joc": "Nombres; figures geomètriques; fraccions i decimals; blocs lògics (en color i en blanc i negre); lletres (sense «d'un sol traç»); angles; triangles a la trama de 5×5; triangles a la trama de 4×4; quadrilàters a la trama (amb 7 propietats); poliòmins; cossos geomètrics (sense icosaedre ni dodecaedre). Descartats: desenvolupaments del cub i mosaics.", "pregunta": "Hi falta o hi sobra res?", "star": false}, {"id": "Q11", "cat": "D", "title": "Generador de WODB per al professorat", "tags": [], "lvl": "", "frase": "Tres parts dins d'una pàgina estàtica.", "joc": "(1) Tries un banc (nombres, figures, angles…) i quatre elements, i la pàgina et diu quins motius té cadascun. (2) Tries un banc i generes un full de 10×5 amb totes les posicions vàlides, llest per imprimir amb el solucionari. (3) Banc propi: escrius els teus elements (text, nombres o dibuixos senzills) i marques en una taula quines propietats té cadascun, i la pàgina fa la resta.", "pregunta": "Vols les tres parts? La tercera és la més potent, però també la més laboriosa.", "star": false}, {"id": "Q12", "cat": "D", "title": "Pinta per sumes: el generador", "tags": [], "lvl": "", "frase": "Un editor on pintes caselles per fer el teu dibuix.", "joc": "Dibuixes el dibuix en una graella clicant caselles (blanc o negre), tries la regla (suma parell, múltiple de 3 o múltiple de 5) i la pàgina genera el full de nombres, la plantilla, el full de respostes en blanc i el solucionari. Amb un full de nombres de 10×10 i la plantilla 2×2, el dibuix fa 9×9. Fins a 3 dibuixos al mateix full, un per orientació de la plantilla.", "pregunta": "Quina mida de dibuix vols (9×9 o més gran)? En vols un o fins a tres per full?", "star": false}, {"id": "Q13", "cat": "D", "title": "Sanefa trencada: format", "tags": [], "lvl": "", "frase": "Un full amb 7 sanefes, una de cada tipus, i un error a cadascuna.", "joc": "Cada full tindria 7 sanefes (els 7 tipus), cadascuna amb una sola figura errònia (girada o reflectida), i una plantilla amb la forma del motiu per comprovar-ho. El motiu el dissenyaria jo, sense cap simetria, perquè qualsevol error es pugui detectar. Generaria diversos fulls diferents.", "pregunta": "Et sembla bé? El motiu ha de ser sempre el mateix o diferent a cada full?", "star": false}, {"id": "Q14", "cat": "D", "title": "La teva idea: comptar i sumar", "tags": [], "lvl": "", "frase": "Plantilla de 2×2 o de 3×2, i joc d'equips A contra B.", "joc": "Un full de nombres i una plantilla de 4 o 6 forats. La consigna: «quants primers veus?» (o múltiples de 3, o quadrats perfectes), o bé «suma'ls». Juguen dos equips: el primer que creu saber la resposta la diu, guanya 5 punts si l'encerta i en perd 10 si falla; tothom comença amb 40 i guanya qui arriba a 100. Faria el full equilibrat perquè totes les respostes possibles (de 0 a 4, o de 0 a 6) surtin amb freqüències semblants i no es pugui endevinar.", "pregunta": "Dues coses: «suma'ls» vol dir sumar tots els nombres visibles o només els que compleixen la propietat? I quin interval de nombres vols (de l'1 al 99, del 2 al 120…)?", "star": false}];
+/* ============ motor WODB ============ */
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const rnd=n=>Math.floor(Math.random()*n);
+const RC=d=>[DD[d].rows,DD[d].cols];
+const winIds=(d,r,c)=>{const B=DD[d].board,C=DD[d].cols;return [B[r*C+c],B[r*C+c+1],B[(r+1)*C+c],B[(r+1)*C+c+1]];};
+const bit=(d,id,j)=>(DD[d].items[id].p>>j)&1;
+function reasons(d,ids,k){const out=[];DD[d].props.forEach((p,j)=>{const m=bit(d,ids[k],j);for(let i=0;i<4;i++)if(i!==k&&bit(d,ids[i],j)===m)return;out.push({j,dir:m,key:j+':'+m,text:m?p.yes:p.no});});return out;}
+function itemHTML(d,id,px){const it=DD[d].items[id];return `<svg viewBox="0 0 100 100" width="${Math.round(px)}" height="${Math.round(px)}" aria-hidden="true">${it.v}</svg>`;}
+function boardHTML(d,r0,c0,root){const [R,C]=RC(d),w=(root.clientWidth||320)-24,sz=Math.max(22,Math.min(58,Math.floor((w-2*(C-1)-4)/C)));const B=DD[d].board;
+  let h=`<div class="board" style="grid-template-columns:repeat(${C},${sz}px);grid-auto-rows:${sz}px">`;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const inw=r>=r0&&r<=r0+1&&c>=c0&&c<=c0+1;h+=`<div class="bc ${inw?'in':'dim'}" data-r="${r}" data-c="${c}">${itemHTML(d,B[r*C+c],sz-2)}</div>`;}
+  return h+'</div>';}
+const tilePx=root=>Math.max(90,Math.min(170,Math.floor(((root.clientWidth||320)-84)/2)));
+function msgr(root){const el=root.querySelector('.msg');return (t,k)=>{el.innerHTML=t;el.className='msg '+(k||'');};}
+const RENDERERS=[];window.addEventListener('resize',()=>RENDERERS.forEach(f=>f()));
+const ARROWS=`<button class="btn" data-mv="l" aria-label="Esquerra">←</button><button class="btn" data-mv="u" aria-label="Amunt">↑</button><button class="btn" data-mv="d" aria-label="Avall">↓</button><button class="btn" data-mv="r" aria-label="Dreta">→</button>`;
+const step=(d,r,c,m)=>{const [R,C]=RC(d);if(m==='l')c--;else if(m==='r')c++;else if(m==='u')r--;else if(m==='d')r++;return (r<0||r>R-2||c<0||c>C-2)?null:[r,c];};
+function demoExp(root,d){const [R,C]=RC(d);let r=rnd(R-1),c=rnd(C-1),show=false,showP=false,say;
+  root.innerHTML=`<h4>Demo · mou la plantilla pel full</h4><div class="bigw"></div><div class="msg"></div>
+   <div class="row2">${ARROWS}<button class="btn" data-a="rand">A l'atzar</button></div>
+   <div class="row2"><button class="btn" data-a="show">Mostra els motius</button><button class="btn" data-a="props">Propietats del full</button></div>
+   <div class="plist"></div><div class="small" style="margin-top:6px">El full sencer, tal com s'imprimiria (toca una casella per portar-hi la plantilla):</div><div class="bw"></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const s=step(d,r,c,b.dataset.mv);if(!s){say('La plantilla sortiria del full.','bad');return;}[r,c]=s;say('');draw();});
+  root.querySelector('[data-a="rand"]').onclick=()=>{r=rnd(R-1);c=rnd(C-1);say('');draw();};
+  root.querySelector('[data-a="show"]').onclick=e=>{show=!show;e.target.classList.toggle('on',show);draw();};
+  root.querySelector('[data-a="props"]').onclick=e=>{showP=!showP;e.target.classList.toggle('on',showP);draw();};
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,k)=>{const rs=reasons(d,ids,k);return `<div class="tile">${itemHTML(d,id,px)}${show?`<div class="rs ${rs.length?'':'none'}">${rs.length?rs.map(x=>esc(x.text)).join('<br>'):'Sense motiu a la llista'}</div>`:''}</div>`;}).join('')}</div>`;
+    root.querySelector('.plist').innerHTML=showP?`<ul class="props">${DD[d].props.map(p=>`<li>${esc(p.yes)} / ${esc(p.no.replace(/^És /,''))}</li>`).join('')}</ul>`:'';
+    root.querySelector('.bw').innerHTML=boardHTML(d,r,c,root);
+    root.querySelectorAll('.bw .bc').forEach(el=>el.onclick=()=>{r=Math.min(R-2,+el.dataset.r);c=Math.min(C-2,+el.dataset.c);say('');draw();});
+    if(!root.querySelector('.msg').textContent)say(`Posició ${r*(C-1)+c+1} de ${(R-1)*(C-1)}. Quin no hi encaixa? Busca un motiu per a cadascun.`);}
+  RENDERERS.push(draw);draw();}
+const DEMOS={exp:demoExp};
+
+/* ============ revisió ============ */
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state={answers:{},replies:{},filter:'all'};let db=null;const queues={},timers={};
+function cardHTML(it){
+  let s=`<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ provar primer</span>':''}</div>`;
+  s+=`<div class="tags">${it.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}${it.lvl?`<span class="tag lvl">${esc(it.lvl)}</span>`:''}</div>`;
+  s+=`<div class="frase">${esc(it.frase)}</div>`;
+  s+=`<div class="sec"><b>${'Què proposo'}</b><p>${esc(it.joc)}</p></div>`;
+  if(it.demo)s+=`<div class="demo" data-demo="${it.demo}" data-dom="${it.dom||''}"></div>`;
+  if(it.enganxa)s+=`<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  if(it.mates)s+=`<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  if(it.nou)s+=`<div class="box nou"><b>Què té de nou</b>${esc(it.nou)}</div>`;
+  if(it.chk)s+=`<div class="box chk"><b>Què he comprovat</b>${esc(it.chk)}</div>`;
+  s+=`<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s+=`<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s+=`<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea><div class="st"></div>`;
+  s+=`<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;}
+function build(){const list=document.getElementById('list');
+  CATS.forEach(c=>{const sec=document.createElement('section');sec.dataset.cat=c.id;
+    sec.innerHTML=`<h2 class="catt">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{const card=document.createElement('article');card.className='card';card.id='item-'+it.id;card.innerHTML=cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{const cur=(state.answers[it.id]||{}).decision||'';save(it.id,{decision:cur===b.dataset.v?'':b.dataset.v});});
+      const ta=card.querySelector('textarea');
+      ta.oninput=()=>{clearTimeout(timers[it.id]);setSt(it.id,'Escrivint…');timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200);};
+      ta.onblur=()=>{clearTimeout(timers[it.id]);commitComment(it.id,ta.value);};
+      sec.appendChild(card);});
+    list.appendChild(sec);});
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b));applyFilter();});
+  document.querySelectorAll('.demo').forEach(el=>{try{const f=DEMOS[el.dataset.demo];if(el.dataset.dom)f(el,el.dataset.dom);else f(el);}catch(e){el.innerHTML='<span class="small">No s\'ha pogut carregar la demo.</span>';console.error(e);}});
+  ITEMS.forEach(it=>updateCard(it.id));updateCount();}
+function isAnswered(id){const a=state.answers[id];return !!(a&&(a.decision||(a.comment&&a.comment.trim())));}
+function commitComment(id,val){const cur=(state.answers[id]||{}).comment||'';if(val===cur){setSt(id,isAnswered(id)?'Desat ✓':'');return;}save(id,{comment:val});}
+function setSt(id,t){const c=document.getElementById('item-'+id);if(c)c.querySelector('.st').textContent=t;}
+function updateCard(id){const c=document.getElementById('item-'+id);if(!c)return;const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');if(document.activeElement!==ta&&ta.value!==(a.comment||''))ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id],rb=c.querySelector('.reply');if(r&&r.text){rb.style.display='block';rb.querySelector('.rt').textContent=r.text;}else rb.style.display='none';}
+function updateCount(){const n=ITEMS.filter(i=>isAnswered(i.id)).length;document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';}
+function applyFilter(){ITEMS.forEach(it=>{const c=document.getElementById('item-'+it.id);let show=true;
+  if(state.filter==='pending')show=!isAnswered(it.id);if(state.filter==='star')show=!!it.star;c.classList.toggle('hide',!show);});
+  document.querySelectorAll('section[data-cat]').forEach(s=>s.classList.toggle('hide',!s.querySelector('.card:not(.hide)')));}
+function save(id,patch){const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});state.answers[id]=cur;updateCard(id);updateCount();
+  if(!db){setSt(id,'No es pot desar en aquesta vista');return;}setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body)).then(()=>setSt(id,'Desat ✓')).catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));}
+function banner(t){const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none';}
+build();applyFilter();
+(async()=>{
+  if(!window.claude||typeof window.claude.use!=='function'){banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.');return;}
+  try{db=await window.claude.use('db');}catch(e){db=null;}
+  if(!db){banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).');return;}
+  const t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{if(!snap.metadata.fromCache){clearTimeout(t);banner('');}
+    const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});
+    ITEMS.forEach(it=>{if(!(it.id in next)&&state.answers[it.id]&&queues[it.id])next[it.id]=state.answers[it.id];});
+    state.answers=next;ITEMS.forEach(it=>updateCard(it.id));updateCount();},e=>{clearTimeout(t);banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').');});
+  db.collection('replies').onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});state.replies=next;ITEMS.forEach(it=>updateCard(it.id));},()=>{});
+})();
+</script>
+</body>
+</html>

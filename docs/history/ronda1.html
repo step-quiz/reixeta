@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — revisió</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --cov:#3a3f46; --cov2:#30353b; --hole:#ffffff; --black:#1f2328;
+  --a:#e8743b; --a-soft:#fbe1d3; --b:#2f6fd0; --b-soft:#d9e6fa; --tie:#efece4;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26;
+    --cov:#4a5059; --cov2:#40454d; --hole:#f4f1ea; --tie:#d9d5cb; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 8px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+select.jump{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 10px;font-size:.88rem}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.cat{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.08rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.frase{font-size:1rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.ex{margin:10px 0 6px;display:flex;flex-direction:column;align-items:flex-start;gap:6px}
+.grid{display:grid;gap:2px;padding:2px;background:var(--cov2);border-radius:6px}
+.cell{position:relative;display:flex;align-items:center;justify-content:center;font-weight:650;border-radius:3px}
+.cell.cov{background:repeating-linear-gradient(45deg,var(--cov),var(--cov) 4px,var(--cov2) 4px,var(--cov2) 8px)}
+.cell.hole{background:var(--hole);color:#1f2328}
+.cell.black{background:var(--black);}
+.cell.hole.black{background:#1f2328;box-shadow:inset 0 0 0 2px #fff}
+.cell.center{box-shadow:inset 0 0 0 3px var(--a)}
+.cell.A{background:var(--a);color:#fff}
+.cell.B{background:var(--b);color:#fff}
+.cell.a{background:var(--a-soft);color:#7a3412}
+.cell.b{background:var(--b-soft);color:#1e3a8a}
+.cell.tie{background:var(--tie);color:#888}
+.cell .lab{position:absolute;top:1px;left:3px;font-size:.6rem;font-weight:700;color:var(--a)}
+.cell.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:1.4rem;font-weight:400}
+.cap{font-size:.85rem;color:var(--muted);max-width:520px}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Jocs amb plantilla: propostes per revisar</h1>
+    <p>Tots els jocs fan servir el <b>full 1</b> (la graella) i el <b>full 2</b> (la plantilla amb forats), excepte K4. Les ⭐ marquen els 5 jocs que jo provaria primer.</p>
+    <p>Als exemples, la part ratllada és la que tapa la plantilla i les caselles blanques són els forats. Respon amb els botons i, si vols, amb un comentari: tot es desa sol. Quan acabis, escriu-me «Revisa artifact».</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐</button>
+      <select class="jump" id="jump" aria-label="Ves a la categoria"></select>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const CATS = [
+  {id:'C', name:'Càlcul mental i operacions', desc:'Jocs de cursa i d\'estimació amb nombres visibles.'},
+  {id:'N', name:'Sistemes de numeració: base 2 i explosions', desc:'Llegir, construir i fer servir nombres en altres bases.'},
+  {id:'G', name:'Geometria i simetries', desc:'Perímetres, girs mentals i el grup de simetries de la plantilla.'},
+  {id:'E', name:'Estratègia per a dos', desc:'Jocs per torns en què la plantilla és la peça que es juga.'},
+  {id:'L', name:'Lògica i deducció', desc:'Trobar la col·locació única amb raonament, no a cegues.'},
+  {id:'M', name:'Memòria', desc:'Recordar posicions, orientacions i nombres.'},
+  {id:'K', name:'Els clàssics: Conway i Dudeney', desc:'Idees de grans divulgadors adaptades a la plantilla.'},
+  {id:'T', name:'Decisions transversals', desc:'Coses que afecten tots els jocs: notació, material, eines.'}
+];
+const R = (w,h,o)=>Object.assign({w,h},o);
+const ITEMS = [
+ {id:'C1',cat:'C',star:true,title:'Fes 200',tags:['Càlcul mental','Valor posicional','Àlgebra'],lvl:'1r ESO → 4t ESO',
+  frase:'Troba la col·locació on les files i les columnes sumen 200.',
+  joc:'Full 1 amb xifres de l\'1 al 9. La plantilla té 4 forats en quadrat i una ★ a la cantonada des d\'on es llegeix. Les dues files i les dues columnes es llegeixen com a nombres de dues xifres i se sumen. El primer equip que troba una col·locació que fa exactament 200 guanya la ronda.',
+  enganxa:'Si gires o capgires la plantilla, les mateixes 4 xifres donen 8 sumes diferents, de manera que sempre hi ha una altra prova per fer. I l\'objectiu és clar i rodó.',
+  mates:'És el problema «Make 200» de l\'NRICH. Si el quadrat és a b / c d (amb a a la ★), la suma és 20a + 11b + 11c + 2d: la xifra de la ★ val 20 vegades i la del costat oposat, només 2. Qui ho descobreix deixa de provar a cegues i comença a raonar.',
+  pregunta:'El veus com a joc estrella per començar? Hi vols un objectiu fix (200) o un objectiu diferent a cada ronda?',
+  ex:R(4,3,{holes:[1,2,5,6],cells:{1:'7',2:'3',5:'1',6:'9'},lab:{1:'★'},cap:'Files: 73 + 19. Columnes: 71 + 39. Total: 202. Gairebé!'})},
+ {id:'C2',cat:'C',title:'Expressió amagada',tags:['Prioritat d\'operacions','Càlcul mental'],lvl:'1r ESO → 3r ESO',
+  frase:'Llegeix l\'operació que queda a la vista i calcula-la bé.',
+  joc:'El full 1 està pintat com un tauler d\'escacs: les caselles d\'un color tenen xifres i les de l\'altre, operacions (+, −, ×). La plantilla és un camí de 7 forats numerats. L\'expressió es llegeix en l\'ordre dels forats, i qui en diu primer el resultat correcte guanya. Modalitat estratègica: 1 minut per trobar la col·locació que dona el resultat més gran.',
+  enganxa:'Amb les trampes de prioritat és molt fàcil equivocar-se per anar de pressa. Amb la teva puntuació (−10 si falles), la tensió està servida.',
+  mates:'Dues caselles veïnes sempre tenen colors diferents. Per tant, qualsevol camí de forats alterna xifra, operació, xifra… sempre que el forat 1 caigui en una xifra. És una propietat de paritat que l\'alumnat pot descobrir.',
+  pregunta:'Hi afegim la divisió (només exacta) i parèntesis, o ens quedem amb +, −, ×?',
+  ex:R(7,2,{holes:[0,1,2,3,4,5,6],cells:{0:'3',1:'+',2:'4',3:'×',4:'2',5:'−',6:'5'},lab:{0:'1',1:'2',2:'3',3:'4',4:'5',5:'6',6:'7'},cap:'3 + 4 × 2 − 5 = 6 (i no 9!).'})},
+ {id:'C3',cat:'C',star:true,title:'Diana',tags:['Estimació','Suma mental','Optimització'],lvl:'1r ESO → Batx.',
+  frase:'Acosta\'t a l\'objectiu tant com puguis sense passar-te\'n.',
+  joc:'Full 1 amb nombres del 10 al 99. S\'anuncia un objectiu (per exemple, 250). Cada equip té 60 segons per escriure en secret una col·locació de la plantilla de 5 forats. Després es destapen totes: guanya l\'equip que suma més a prop de l\'objectiu sense passar-se\'n.',
+  enganxa:'Tothom juga alhora, cap ronda dura més d\'un minut, i quedar-se a 1 punt o passar-se\'n per 1 és dramàtic.',
+  mates:'Estimació ràpida, suma mental i una primera idea d\'optimització: com triar bé quan no es pot provar tot.',
+  pregunta:'Regla «sense passar-se\'n» (com a El preu just) o simplement guanya el més proper?',
+  ex:R(4,3,{holes:[1,4,5,6,10],cells:{1:'47',4:'62',5:'18',6:'85',10:'33'},cap:'Objectiu: 250. Aquesta col·locació suma 245. Algú ho millora?'})},
+
+ {id:'N1',cat:'N',star:true,title:'Binari amagat',tags:['Base 2','Valor posicional'],lvl:'1r ESO → Batx.',
+  frase:'Llegeix les bombetes en binari i digues quin nombre és.',
+  joc:'Al full 1, cada casella és una bombeta encesa (●) o apagada (○). La plantilla té 5 forats en fila, etiquetats 16, 8, 4, 2 i 1. Joc A: es col·loca la plantilla i qui diu primer el nombre guanya. Joc B: «Trobeu el 19!». Guanya el primer equip que troba una col·locació que el mostri.',
+  enganxa:'Al principi es compta a poc a poc; després de deu rondes, ja es llegeix d\'una ullada. Es nota tan de pressa que millores que vols continuar jugant.',
+  mates:'Valor posicional en base 2. I simetria: si gires la plantilla 180°, el mateix tros de full es llegeix al revés. Quins nombres es llegeixen igual en tots dos sentits?',
+  pregunta:'Comencem amb 4 bombetes (del 0 al 15) a 1r ESO i n\'afegim als cursos superiors?',
+  ex:R(5,2,{holes:[0,1,2,3,4],cells:{0:'●',1:'○',2:'●',3:'●',4:'○'},lab:{0:'16',1:'8',2:'4',3:'2',4:'1'},cap:'16 + 4 + 2 = 22. Si la gires 180°, es llegeix 01101 = 13.'})},
+ {id:'N2',cat:'N',title:'Màquina d\'explosions',tags:['Bases de numeració','Exploding Dots'],lvl:'1r ESO → Batx.',
+  frase:'Fes explotar els punts i digues quin nombre és.',
+  joc:'Al full 1, cada casella té de 0 a 3 punts. La plantilla té 5 forats en fila, que són les caixes d\'una màquina «1 ← 2» de James Tanton: dos punts d\'una caixa exploten i en fan un a la caixa de l\'esquerra. Guanya qui diu primer quin nombre hi ha, o qui diu primer com queda la fila després de totes les explosions.',
+  enganxa:'Les explosions són visuals i sorprenents. Si canvies la màquina (1 ← 3, 1 ← 10), el joc canvia sense canviar les regles.',
+  mates:'Sistemes de numeració en qualsevol base. Amb la màquina 1 ← 10 s\'entén el «me\'n porto una». Per a Batxillerat, la màquina 2 ← 3 (base 3/2) és un repte sorprenent.',
+  pregunta:'El fem un joc a part o el «nivell 2» del binari amagat (N1)?',
+  ex:R(5,2,{holes:[0,1,2,3,4],cells:{0:'•',1:'•••',2:'',3:'••',4:'•'},lab:{0:'16',1:'8',2:'4',3:'2',4:'1'},cap:'1·16 + 3·8 + 0·4 + 2·2 + 1 = 45, que en binari és 101101. Calen 6 caixes!'})},
+ {id:'N3',cat:'N',title:'Nim amagat',tags:['Base 2','Estratègia'],lvl:'2n ESO → Batx.',
+  frase:'Treu fitxes d\'una pila; qui agafa l\'última, guanya.',
+  joc:'Full 1 amb nombres de l\'1 al 7. El jugador A col·loca la plantilla de 3 forats, i els 3 nombres visibles són 3 piles de fitxes (o de cigrons). Comença B. Per torns, cada jugador treu tantes fitxes com vulgui d\'una sola pila. Qui agafa l\'última fitxa guanya.',
+  enganxa:'Sembla un joc d\'atzar fins que algú comença a guanyar sempre. Llavors tothom vol saber el secret.',
+  mates:'El secret és en base 2. Escriu les piles en binari: si cada columna té un nombre parell d\'uns, qui ha de jugar perd (si l\'altre sap jugar). Per tant, A busca col·locacions que compleixin això. És la teoria de Bouton (1901), la base de la teoria de jocs combinatoris que després va desenvolupar Conway.',
+  pregunta:'El jugaries en parelles (A contra B) o equip contra equip?',
+  ex:R(4,3,{holes:[1,6,8],cells:{1:'3',6:'5',8:'6'},cap:'3 = 011, 5 = 101, 6 = 110: cada columna té dos uns. Qui comença, perd.'})},
+
+ {id:'G1',cat:'G',title:'Perímetre exprés',tags:['Perímetres','Camins connexos'],lvl:'1r ESO → 4t ESO',
+  frase:'Digues el perímetre de la figura negra que queda a la vista.',
+  joc:'Full 1 amb caselles blanques i negres. La plantilla és una finestra de 3×3. Les caselles negres visibles formen una figura, i qui en diu primer el perímetre (en costats de casella) guanya. Variant: «quantes illes hi ha?», és a dir, quantes peces negres connectades per un costat.',
+  enganxa:'Comptar costats és lent i és fàcil equivocar-se… fins que algú troba la drecera. A partir d\'aquí, el premi és la drecera.',
+  mates:'La drecera: P = 4 × (caselles negres) − 2 × (costats compartits). Descobrir-la i justificar-la és una petita demostració. La variant de les illes introdueix la connexió.',
+  pregunta:'Per a quin curs el veus? Hi afegim l\'àrea com a segona pregunta?',
+  ex:R(3,3,{holes:[0,1,2,3,4,5,6,7,8],black:[0,1,4,6,8],cap:'5 caselles i 2 costats compartits: P = 4·5 − 2·2 = 16. Hi ha 3 illes.'})},
+ {id:'G2',cat:'G',title:'On és?',tags:['Visualització espacial','Girs i simetries'],lvl:'1r ESO → 4t ESO',
+  frase:'Et dic què es veu; troba on és la plantilla.',
+  joc:'Full 1 amb símbols (★ ● ▲ ◆) i colors. L\'equip A col·loca la plantilla en secret i diu en veu alta què es veu, en l\'ordre dels forats. L\'equip B només té el full 1 i un dibuix de la plantilla, que no pot moure, i ha de trobar la col·locació. Guanya qui l\'encerta primer.',
+  enganxa:'És com «On és en Wally?», però fent servir la geometria: quan la trobes, l\'«ajà!» és immediat.',
+  mates:'Gir mental i simetria: cal imaginar la plantilla girada i capgirada. És una habilitat que s\'entrena i que millora molt de pressa.',
+  pregunta:'B pot tenir la plantilla a la mà (més fàcil) o només el dibuix (més difícil)?',
+  ex:R(4,3,{holes:[0,1,5,9,10],cells:{0:'★',1:'●',5:'▲',9:'◆',10:'●'},lab:{0:'1',1:'2',5:'3',9:'4',10:'5'},cap:'A diu: «estrella, cercle, triangle, rombe, cercle». On és?'})},
+ {id:'G3',cat:'G',title:'La teva reixeta secreta',tags:['Simetries','Combinatòria','Criptografia'],lvl:'2n ESO → Batx.',
+  frase:'Dissenya una plantilla per escriure missatges secrets.',
+  joc:'Repte creatiu. Cal fer una plantilla que, posada de 4 maneres sobre el full (tal com és, girada 180°, capgirada d\'esquerra a dreta i capgirada de dalt a baix), destapi cada casella exactament una vegada. Llavors serveix per enviar missatges: escrius les lletres pels forats, canvies de posició, continues, i omples la resta de caselles amb lletres a l\'atzar. Només qui té la plantilla el pot llegir.',
+  enganxa:'Missatges secrets entre companys: no cal convèncer ningú. I la plantilla de cadascú és única.',
+  mates:'Les caselles s\'agrupen de 4 en 4 (cada casella i les seves 3 imatges), i la plantilla ha de tenir un forat de cada grup. En un full de 10×6 hi ha 15 grups, i per tant 4¹⁵ plantilles possibles: més de mil milions. És el grup de simetries del rectangle (el grup de Klein). En un full quadrat, és la reixeta de Cardano clàssica, amb girs de 90°.',
+  pregunta:'Acceptes que aquest joc faci servir un full de 10×6 (calen dimensions parells) i una plantilla de la mateixa mida que el full?',
+  ex:R(4,4,{holes:[0,2,5,8],cells:{0:'H',2:'O',5:'L',8:'A'},cap:'Posició 1 de 4: H, O, L, A. Les altres 3 posicions destapen la resta del missatge.'})},
+ {id:'G4',cat:'G',title:'Quantes col·locacions?',tags:['Simetries','Recompte'],lvl:'4t ESO → Batx.',
+  frase:'De quantes maneres diferents es pot posar aquesta plantilla?',
+  joc:'Repte de la setmana, no de velocitat. Donades una plantilla i el full de 10×5, quantes col·locacions diferents hi ha? Depèn de la simetria de la plantilla: una L de 4 forats té 8 orientacions diferents; una L de 3, només 4; una fila recta, 2, i una creu, 1.',
+  enganxa:'La resposta sembla senzilla i no ho és: sempre hi ha algú que compta dues vegades la mateixa posició.',
+  mates:'El grup de simetries del quadrat (8 elements) i, a Batxillerat, una versió senzilla del lema de Burnside. És un bon pont entre la geometria i la combinatòria.',
+  pregunta:'L\'incloem com a «repte de la setmana», en paral·lel als jocs?'},
+
+ {id:'E1',cat:'E',star:true,title:'L\'últim que col·loca',tags:['Estratègia','Simetria central'],lvl:'1r ESO → Batx.',
+  frase:'Pinta les caselles dels forats; qui ja no pot col·locar la plantilla, perd.',
+  joc:'Full 1 en blanc. Per torns, cada jugador col·loca la plantilla de manera que tots els forats caiguin en caselles buides i les pinta del seu color. Qui no la pot col·locar, perd. Comenceu amb una plantilla de 2 forats veïns (un dòmino) i després passeu a formes més grans.',
+  enganxa:'Regles que s\'expliquen en 10 segons, partides de 3 minuts i un final sempre tens. I hi ha un secret per descobrir.',
+  mates:'És el joc Cram, de la família que estudien Berlekamp, Conway i Guy a Winning Ways. El secret: amb el dòmino al full de 10×5, el primer jugador sempre guanya si col·loca la primera peça just al centre i després copia cada jugada del rival girada 180°. Amb plantilles més grans, la cosa es complica i cal investigar.',
+  pregunta:'Regla normal («qui no pot jugar, perd») o també la versió inversa («qui no pot jugar, guanya»)?',
+  ex:R(5,4,{open:true,cells:{0:'A',5:'A',1:'B',2:'B',8:'A',13:'A',17:'B',18:'B'},cap:'Partida a mitges amb el dòmino. Taronja: A. Blau: B.'})},
+ {id:'E2',cat:'E',title:'Botigues (joc de Voronoi)',tags:['Distàncies','Voronoi','Optimització'],lvl:'2n ESO → Batx.',
+  frase:'Obre les teves botigues on tinguis més clients.',
+  joc:'Full 1 en blanc. A col·loca la plantilla i marca els forats: són les seves botigues. Després B fa el mateix, sense trepitjar-les. Cada casella és clienta de la botiga més propera, comptant passos horitzontals i verticals (com un taxi pels carrers). Si hi ha empat, la casella no és de ningú. Guanya qui té més clients.',
+  enganxa:'Dues jugades i a comptar. La segona partida ja la jugues d\'una altra manera: és un joc que t\'ensenya mentre perds.',
+  mates:'Distància del taxista, regions de Voronoi i optimització. És un problema de recerca real, el «joc de Voronoi»: on obrir una botiga quan la competència ja hi és. Bona pregunta: és millor jugar primer o segon?',
+  pregunta:'El full de 10×5 (50 caselles) és prou petit per comptar, o fem servir un tauler més petit?',
+  ex:R(6,4,{open:true,cells:{0:'a',1:'A',2:'a',3:'.',4:'.',5:'.',6:'a',7:'a',8:'A',9:'.',10:'.',11:'.',12:'.',13:'.',14:'.',15:'B',16:'b',17:'b',18:'.',19:'.',20:'.',21:'b',22:'B',23:'b'},cap:'Plantilla de 2 forats en diagonal. Resultat: 6 a 6, amb 12 caselles empatades. Es podia fer millor?'})},
+
+ {id:'L1',cat:'L',star:true,title:'Plantilla secreta',tags:['Lògica','Deducció','Simetries'],lvl:'1r ESO → Batx.',
+  frase:'Endevina on he amagat la plantilla fent el mínim de preguntes.',
+  joc:'L\'equip A tria una col·locació secreta i marca al seu full 1 les caselles dels forats. L\'equip B diu col·locacions («C3, girada 90°»). A posa la plantilla en aquesta col·locació sobre el seu full i respon quants forats deixen veure una casella marcada. B guanya quan l\'endevina, i la puntuació és el nombre de preguntes (com al golf: com menys, millor).',
+  enganxa:'És un Wordle espacial: cada resposta elimina possibilitats i sempre sembla que la pregunta següent ho resoldrà.',
+  mates:'Lògica, eliminació de casos i simetries. A Batxillerat: quina pregunta dona més informació? És una porta d\'entrada a la teoria de la informació.',
+  pregunta:'El vols en parelles, per equips o tota la classe contra tu?',
+  ex:R(5,3,{holes:[1,2,6,7,12],cells:{2:'●',7:'●'},cap:'B pregunta una col·locació. Sota dos dels forats hi ha caselles marcades, i A respon «2».'})},
+ {id:'L2',cat:'L',title:'Equació amagada',tags:['Càlcul mental','Criptaritmes','Lògica'],lvl:'1r ESO → 4t ESO',
+  frase:'Troba l\'única col·locació que fa certa l\'equació.',
+  joc:'Full 1 amb xifres. La plantilla té 5 forats etiquetats A, B, C, D i E. Al peu del full hi ha una equació, per exemple AB + C = DE (AB és el nombre de dues xifres). Cal trobar la col·locació que la fa certa. El generador garanteix que només n\'hi ha una.',
+  enganxa:'Hi ha una sola resposta i se sap quan la tens: l\'«ajà!» de trobar-la és inconfusible.',
+  mates:'Càlcul mental i raonament («si E ha de ser… llavors…»). Està inspirat en els criptaritmes de Dudeney, l\'autor del famós SEND + MORE = MONEY (1924).',
+  pregunta:'Una equació nova a cada ronda sobre el mateix full 1, o un full 1 per a cada equació?',
+  ex:R(4,3,{holes:[0,1,6,8,9],cells:{0:'4',1:'7',6:'8',8:'5',9:'5'},lab:{0:'A',1:'B',6:'C',8:'D',9:'E'},cap:'AB + C = DE → 47 + 8 = 55 ✓'})},
+ {id:'L3',cat:'L',title:'Canonades',tags:['Camins connexos','Orientació'],lvl:'1r ESO → 2n ESO',
+  frase:'Troba on l\'aigua va de l\'entrada a la sortida.',
+  joc:'Al full 1, cada casella té un tros de canonada (recta, corba o encreuament). La plantilla té 5 o 6 forats que formen un camí, amb una entrada (E) i una sortida (S). Cal trobar la col·locació on l\'aigua passa de l\'entrada a la sortida per les canonades visibles sense vessar. Les canonades no giren: només gira la plantilla.',
+  enganxa:'Els puzles de canonades són un clàssic dels jocs de mòbil. Aquí, a més, s\'hi afegeix el repte de girar la plantilla.',
+  mates:'Connexió i camins en una graella, i orientació: com canvia el camí quan la plantilla gira però el full no.',
+  pregunta:'El veus per a 1r ESO, o massa visual i poc matemàtic?',
+  ex:R(3,3,{holes:[0,1,2,5,8],mono:true,cells:{0:'═',1:'═',2:'╗',5:'║',8:'║'},lab:{0:'E',8:'S'},cap:'L\'aigua entra per l\'esquerra, gira avall i surt per baix.'})},
+
+ {id:'M1',cat:'M',title:'Simon de plantilles',tags:['Memòria visual','Orientació'],lvl:'1r ESO → Batx.',
+  frase:'Recorda on era la plantilla i torna-la a posar igual.',
+  joc:'Una persona fa de «Simon»: col·loca la plantilla en una posició durant 3 segons i la treu. Qui juga l\'ha de tornar a posar exactament igual (lloc i orientació). Si l\'encerta, Simon en mostra dues de seguides; després, tres… Guanya qui recorda la seqüència més llarga.',
+  enganxa:'L\'estructura del Simon (a cada ronda, un pas més) ja és addictiva per si mateixa. I recordar si estava capgirada és més difícil del que sembla.',
+  mates:'Memòria visual i espacial, i les 8 orientacions de la plantilla. Un full 1 amb dibuixos variats dona punts de referència.',
+  pregunta:'El vols com a escalfament de 5 minuts o com a joc complet?'},
+ {id:'M2',cat:'M',title:'Flaix',tags:['Memòria','Càlcul mental'],lvl:'1r ESO → 4t ESO',
+  frase:'Mira-ho 5 segons i digues quant sumaven.',
+  joc:'Es mostra una col·locació durant 5 segons (sobre paper o projectada) i es treu. Preguntes possibles: quant sumaven els nombres visibles? Quin era el més gran? Quants n\'hi havia de parells? Es pot combinar amb el teu joc dels primers: quants primers hi havia?',
+  enganxa:'És ràpid i curt, i la pressió del temps el fa emocionant.',
+  mates:'Memòria de treball i càlcul mental. Projectat a la pissarra digital, funciona molt bé com a escalfament.',
+  pregunta:'T\'interessa una versió web per projectar-lo (vegeu T4)?'},
+
+ {id:'K1',cat:'K',title:'Doomsday',tags:['Càlcul mental','Mòdul 7','Conway'],lvl:'2n ESO → Batx.',
+  frase:'Digues en quin dia de la setmana cau cada data.',
+  joc:'Al full 1, cada casella té una data. La plantilla té 4 forats. Qui diu primer el dia de la setmana de les 4 dates visibles guanya. Variant: trobeu la col·locació on totes 4 cauen en divendres.',
+  enganxa:'És un superpoder que l\'alumnat pot ensenyar a casa: «digues-me quan vas néixer i et diré quin dia de la setmana era».',
+  mates:'És el mètode del «dia del judici» (doomsday) de Conway: cada any, les dates 4/4, 6/6, 8/8, 10/10 i 12/12 cauen en el mateix dia de la setmana. El 2026 és dissabte. La resta és sumar i restar mòdul 7.',
+  pregunta:'Només dates del 2026 (més fàcil) o de diversos anys (cal aprendre la regla de l\'any)?',
+  ex:R(4,2,{holes:[0,1,2,3],size:54,cells:{0:'11/9',1:'25/12',2:'23/4',3:'4/4'},cap:'El 2026, la Diada i Nadal cauen en divendres, Sant Jordi en dijous i el 4/4 en dissabte (el «dia del judici» de l\'any).'})},
+ {id:'K2',cat:'K',title:'Vida amagada',tags:['Conway','Comptar veïns','Regles'],lvl:'1r ESO → Batx.',
+  frase:'Què passarà a la casella del centre: viurà, morirà o naixerà?',
+  joc:'Al full 1, cada casella és viva (●) o morta. La plantilla és una finestra de 3×3 amb el forat central remarcat. Qui diu primer què passarà a la casella central en la generació següent guanya. Variant: trobeu una col·locació on el centre neixi.',
+  enganxa:'Les regles caben en una línia, i després es pot veure el Joc de la Vida en moviment a l\'ordinador: l\'efecte «uau!» està garantit.',
+  mates:'Les regles de Conway: una casella viva amb 2 o 3 veïnes vives sobreviu; una de morta amb exactament 3 veïnes vives neix; la resta mor o continua morta. Es practica a comptar veïns i aplicar regles, i més endavant es pot programar.',
+  pregunta:'T\'interessa enllaçar-ho amb una sessió de programació en JS?',
+  ex:R(3,3,{holes:[0,1,2,3,4,5,6,7,8],center:4,cells:{0:'●',4:'●',5:'●'},cap:'El centre és viu i té 2 veïnes vives: sobreviu.'})},
+ {id:'K3',cat:'K',title:'Topswops',tags:['Permutacions','Conway'],lvl:'2n ESO → Batx.',
+  frase:'Inverteix les primeres xifres fins que l\'1 quedi davant. Quants passos calen?',
+  joc:'Full 1 amb xifres de l\'1 al 5. La plantilla té 5 forats numerats. Quan les 5 xifres visibles són diferents, formen una permutació. Regla: mira la primera xifra (k) i inverteix l\'ordre de les k primeres. Repeteix-ho fins que l\'1 quedi al davant. Guanya qui troba la col·locació que necessita més passos.',
+  enganxa:'És imprevisible: algunes permutacions acaben en 1 pas i d\'altres semblen no acabar mai. Caçar el rècord enganxa.',
+  mates:'Permutacions i un problema de Conway encara sense resoldre del tot: no es coneix cap fórmula per al màxim de passos. Amb 5 xifres, el màxim és 7; amb 4, és 4.',
+  pregunta:'Per a 1r ESO, millor amb 4 xifres?',
+  ex:R(5,2,{holes:[0,1,2,3,4],cells:{0:'3',1:'1',2:'4',3:'5',4:'2'},lab:{0:'1',1:'2',2:'3',3:'4',4:'5'},cap:'3 1 4 5 2 → 7 passos fins a 1 2 3 4 5: el màxim possible amb 5 xifres!'})},
+ {id:'K4',cat:'K',title:'Cap tres en línia',tags:['Alineació','Pendent','Estratègia'],lvl:'3r ESO → Batx.',
+  frase:'Marca caselles per torns; qui forma tres punts alineats, perd.',
+  joc:'Aquest joc no fa servir la plantilla, només el full 1. Per torns, cada jugador marca el centre d\'una casella. Qui forma tres punts alineats perd, en qualsevol direcció, també en diagonals «estranyes» com 1 amunt i 2 a la dreta.',
+  enganxa:'Les alineacions amagades sorprenen: sovint perds per una recta que no havies vist.',
+  mates:'Es basa en el problema «cap tres en línia» de Dudeney (1917). Es practica el concepte de pendent: tres punts estan alineats si els passos entre ells són proporcionals.',
+  pregunta:'Acceptes algun joc que només faci servir el full 1?'},
+
+ {id:'T1',cat:'T',title:'Notació de les col·locacions',tags:['Tots els jocs'],
+  frase:'Una manera curta i única d\'escriure on és la plantilla.',
+  prop:'Al full 1, columnes de la A a la E i files de l\'1 al 10. La plantilla té un forat marcat amb ★. Una col·locació s\'escriu amb la casella on cau la ★, el gir (0, 90, 180 o 270, en sentit horari) i una R si la plantilla va del revés. Exemple: C7·90R. Les 8 orientacions són el grup de simetries del quadrat.',
+  pregunta:'T\'agrada aquesta notació o en prefereixes una altra?'},
+ {id:'T2',cat:'T',title:'Material de la plantilla',tags:['Fabricació'],
+  frase:'Fer plantilles ràpides, resistents i que es puguin capgirar.',
+  prop:'En lloc de retallar forats, imprimir la plantilla en acetat (transparència): tota negra excepte els forats, que queden transparents. És ràpida de fer, resisteix i es pot capgirar. Les etiquetes es veuran en mirall, i això també forma part del joc. Alternativa: cartolina i cúter.',
+  pregunta:'Quin material tens a l\'abast a l\'institut?'},
+ {id:'T3',cat:'T',title:'Generador i solucionari',tags:['Programació'],
+  frase:'Un programa que fabriqui els fulls amb garanties.',
+  prop:'Un programa que generi els fulls 1 i les plantilles amb garanties (solució única a L2 i L3, totes les dianes possibles a N1, etc.) i un solucionari per a tu. Pot ser en C (el teu terreny) o en JS dins d\'una web.',
+  pregunta:'C o JS? I la sortida: un PDF per imprimir o una pàgina web?'},
+ {id:'T4',cat:'T',title:'Versió digital per projectar',tags:['Web','Cloudflare Pages'],
+  frase:'Jugar tota la classe alhora a la pissarra digital.',
+  prop:'Una web publicada amb Cloudflare Pages, amb el full 1 a la pantalla i una plantilla que es mou amb el ratolí o amb les tecles (fletxes per moure-la, R per girar-la, F per capgirar-la). Ideal per a M2 (Flaix) i per jugar tota la classe alhora.',
+  pregunta:'Prioritat alta o més endavant?'},
+ {id:'T5',cat:'T',title:'Reglament comú de competició',tags:['Puntuació'],
+  frase:'La teva puntuació, com a sistema per a tots els jocs de velocitat.',
+  prop:'La teva puntuació (tothom comença amb 40, +5 si encertes, −10 si falles, i guanya qui arriba a 100) serveix per a tots els jocs de velocitat: C1, C2, N1, N2, G1, K1, K2 i el teu joc dels primers. Amb aquests valors, només surt a compte respondre si n\'estàs segur almenys en 2/3.',
+  pregunta:'L\'adoptem com a sistema comú?'},
+ {id:'T6',cat:'T',title:'Mida dels fulls',tags:['A4 / A5'],
+  frase:'A4 per jugar en grup, A5 per jugar sol o en parella.',
+  prop:'Un full de 10×5 en A4 dona caselles d\'uns 2,7 cm; en A5, d\'uns 1,9 cm. L\'A4 va bé per jugar en grup sobre la taula, i l\'A5, per a jocs individuals o en parella.',
+  pregunta:'Et sembla bé aquest repartiment entre A4 i A5?'}
+];
+
+const DECS = [['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state = {answers:{}, replies:{}, filter:'all'};
+let db = null;
+const queues = {}, timers = {};
+
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));}
+
+function exHTML(ex){
+  const sz = ex.size || 42, holes = new Set(ex.holes||[]), black = new Set(ex.black||[]);
+  let h = `<div class="grid" style="grid-template-columns:repeat(${ex.w},${sz}px);grid-auto-rows:${sz}px">`;
+  for(let i=0;i<ex.w*ex.h;i++){
+    const vis = ex.open || holes.has(i);
+    const c = (ex.cells && ex.cells[i]!==undefined) ? ex.cells[i] : '';
+    let cls = 'cell ' + (vis ? 'hole' : 'cov');
+    let txt = vis ? c : '';
+    if(vis && black.has(i)) cls += ' black';
+    if(ex.center===i) cls += ' center';
+    if(ex.open){
+      if(c==='A'||c==='B'){cls+=' '+c;}
+      else if(c==='a'||c==='b'){cls+=' '+c; txt='';}
+      else if(c==='.'){cls+=' tie'; txt='·';}
+    }
+    if(ex.mono) cls += ' mono';
+    const fs = (!ex.mono && String(txt).length>3) ? 'style="font-size:.78rem"' : '';
+    const lab = (ex.lab && ex.lab[i]) ? `<span class="lab">${esc(ex.lab[i])}</span>` : '';
+    h += `<div class="${cls}" ${fs}>${lab}${esc(txt)}</div>`;
+  }
+  h += '</div>';
+  if(ex.cap) h += `<div class="cap">${esc(ex.cap)}</div>`;
+  return `<div class="ex">${h}</div>`;
+}
+
+function cardHTML(it){
+  let s = `<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ recomanat</span>':''}</div>`;
+  s += `<div class="tags">${(it.tags||[]).map(t=>`<span class="tag">${esc(t)}</span>`).join('')}${it.lvl?`<span class="tag lvl">${esc(it.lvl)}</span>`:''}</div>`;
+  s += `<div class="frase">${esc(it.frase)}</div>`;
+  if(it.ex) s += exHTML(it.ex);
+  if(it.joc) s += `<div class="sec"><b>Com es juga</b><p>${esc(it.joc)}</p></div>`;
+  if(it.enganxa) s += `<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  if(it.mates) s += `<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  if(it.prop) s += `<div class="sec"><b>Proposta</b><p>${esc(it.prop)}</p></div>`;
+  s += `<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s += `<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s += `<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea>`;
+  s += `<div class="st"></div>`;
+  s += `<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;
+}
+
+function build(){
+  const list = document.getElementById('list'), jump = document.getElementById('jump');
+  jump.innerHTML = '<option value="">Ves a…</option>' + CATS.map(c=>`<option value="cat-${c.id}">${esc(c.name)}</option>`).join('');
+  jump.onchange = ()=>{ if(jump.value){ document.getElementById(jump.value).scrollIntoView({behavior:'smooth'}); jump.value=''; } };
+  CATS.forEach(c=>{
+    const sec = document.createElement('section'); sec.dataset.cat=c.id;
+    sec.innerHTML = `<h2 class="cat" id="cat-${c.id}">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{
+      const card = document.createElement('article'); card.className='card'; card.id='item-'+it.id; card.dataset.id=it.id;
+      card.innerHTML = cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{
+        const cur = (state.answers[it.id]||{}).decision||'';
+        save(it.id,{decision: cur===b.dataset.v ? '' : b.dataset.v});
+      });
+      const ta = card.querySelector('textarea');
+      ta.oninput = ()=>{ clearTimeout(timers[it.id]); setSt(it.id,'Escrivint…'); timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200); };
+      ta.onblur = ()=>{ clearTimeout(timers[it.id]); commitComment(it.id,ta.value); };
+      sec.appendChild(card);
+    });
+    list.appendChild(sec);
+  });
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{
+    state.filter=b.dataset.f; document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b)); applyFilter();
+  });
+  ITEMS.forEach(it=>updateCard(it.id));
+  updateCount();
+}
+
+function isAnswered(id){ const a=state.answers[id]; return !!(a && (a.decision || (a.comment && a.comment.trim()))); }
+function commitComment(id,val){ const cur=(state.answers[id]||{}).comment||''; if(val===cur){ setSt(id, isAnswered(id)?'Desat ✓':''); return; } save(id,{comment:val}); }
+function setSt(id,t){ const c=document.getElementById('item-'+id); if(c) c.querySelector('.st').textContent=t; }
+
+function updateCard(id){
+  const c=document.getElementById('item-'+id); if(!c) return;
+  const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');
+  if(document.activeElement!==ta && ta.value!==(a.comment||'')) ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id], rb=c.querySelector('.reply');
+  if(r && r.text){ rb.style.display='block'; rb.querySelector('.rt').textContent=r.text; } else rb.style.display='none';
+}
+function updateCount(){
+  const n=ITEMS.filter(i=>isAnswered(i.id)).length;
+  document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;
+  document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';
+}
+function applyFilter(){
+  ITEMS.forEach(it=>{
+    const c=document.getElementById('item-'+it.id);
+    let show=true;
+    if(state.filter==='pending') show=!isAnswered(it.id);
+    if(state.filter==='star') show=!!it.star;
+    c.classList.toggle('hide',!show);
+  });
+  document.querySelectorAll('section[data-cat]').forEach(s=>{
+    s.classList.toggle('hide', !s.querySelector('.card:not(.hide)'));
+  });
+}
+
+function save(id,patch){
+  const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});
+  state.answers[id]=cur; updateCard(id); updateCount();
+  if(!db){ setSt(id,'No es pot desar en aquesta vista'); return; }
+  setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body))
+    .then(()=>setSt(id,'Desat ✓'))
+    .catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));
+}
+
+function banner(t){ const b=document.getElementById('banner'); b.textContent=t; b.style.display=t?'block':'none'; }
+
+build(); applyFilter();
+
+(async()=>{
+  if(!window.claude || typeof window.claude.use!=='function'){ banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.'); return; }
+  try{ db = await window.claude.use('db'); }catch(e){ db=null; }
+  if(!db){ banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).'); return; }
+  let t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{
+    if(!snap.metadata.fromCache){ clearTimeout(t); banner(''); }
+    const next={}; snap.docs.forEach(d=>{ next[d.id]=d.data(); });
+    ITEMS.forEach(it=>{ if(!(it.id in next) && state.answers[it.id] && (queues[it.id])) next[it.id]=state.answers[it.id]; });
+    state.answers=next; ITEMS.forEach(it=>updateCard(it.id)); updateCount();
+  }, e=>{ clearTimeout(t); banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').'); });
+  db.collection('replies').onSnapshot(snap=>{
+    const next={}; snap.docs.forEach(d=>{ next[d.id]=d.data(); });
+    state.replies=next; ITEMS.forEach(it=>updateCard(it.id));
+  }, ()=>{});
+})();
+</script>
+</body>
+</html>

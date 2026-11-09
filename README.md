@@ -16,7 +16,7 @@ wodb/                      WODB · Quin no hi encaixa?
 pdf/wodb/                  PDF ja preparats
   NUM-A.pdf … COS-A.pdf    Un PDF per a cada full 1
   tots-els-fulls-A.pdf     Els 12 fulls en un sol PDF
-  plantilla-2x2.pdf        Plantilla de 4 forats (2 per A4)
+  plantilla-2x2.pdf        Plantilla de 4 forats (3 per A4)
   plantilla-2x2-tall-laser.svg   Plantilla per a talladora làser
   solucionaris-A.pdf       Solucionaris dels 12 fulls (2 per cara)
 ```
@@ -29,16 +29,18 @@ Posis on posis la plantilla de 4 forats, cadascun dels quatre elements té almen
 |---|---|---|
 | NUM | Nombres | 36 |
 | FIG | Figures geomètriques | 36 |
-| FRA | Fraccions i decimals | 36 |
+| FRA | Fraccions | 36 |
 | BLO | Blocs lògics (color) | 36 |
 | BLB | Blocs lògics (blanc i negre: trames i gruix del contorn) | 36 |
 | LLE | Lletres | 36 |
 | ANG | Angles | 36 |
 | TR5 | Triangles (trama 5×5) | 36 |
-| TR4 | Triangles (trama 4×4) | 36 |
+| TR4 | Triangles (trama 4×4, graella de 9×5) | 32 |
 | QUA | Quadrilàters (graella de 10×4) | 27 |
 | POL | Poliòmins | 36 |
 | COS | Cossos geomètrics | 36 |
+
+**Regla d'equilibri.** Els fulls s'han buscat perquè cap motiu no domini: l'objectiu és que cap motiu no surti en més de 5/12 de les posicions (15 de 36). NUM, BLO i BLB ho compleixen; als altres fulls s'ha reduït tant com permeten les seves propietats. Els fulls nous mai no són menys equilibrats que el full A.
 
 **Posicions.** Es diuen per la casella que queda sota el forat marcat amb ★: de A1 a D9.
 
@@ -52,10 +54,31 @@ Posis on posis la plantilla de 4 forats, cadascun dels quatre elements té almen
 
 ## Plantilla
 
-- Exterior de 104 × 104 mm (4 × 4 caselles) i 4 forats de 23 mm, amb 1,5 mm de marge respecte de cada casella.
+- Exterior de 82 × 82 mm (marc de 15 mm) i 4 forats de 23 mm, amb 1,5 mm de marge respecte de cada casella. A les posicions de les vores, la plantilla no surt del full.
+- Cada dibuix ocupa com a màxim 18 mm dins de la casella de 26 mm: queda lluny de la vora del forat.
 - Les marques de la vora continuen les línies de la graella: serveixen per alinear-la.
 - SVG per a talladora làser: **vermell** = tall, **blau** = marcat (marques guia), **negre** = gravat (★). Unitats en mm.
 
 ## Publicar amb Cloudflare Pages
 
 Framework preset: *None*. Build command: (buit). Build output directory: `/`.
+
+## Altres jocs del projecte
+
+Reixeta no és només WODB. Jocs aprovats per fer, en aquest ordre (detalls a `docs/GAMES.md`):
+
+1. **Sanefa trencada**: en cada sanefa hi ha una figura que no segueix la regla.
+2. **Joc de comptar**: quants primers, múltiples de 3 o quadrats es veuen per la plantilla, o quant sumen (equips A contra B).
+3. **Pinta per sumes**: amb un generador on el professor dibuixa els seus propis dibuixos.
+4. **Generador de WODB** per al professorat.
+
+Aparcats: *El robot llaminer* i *El dau amagat*.
+
+## Documentació
+
+- `CLAUDE.md`: guia tècnica per a una IA (en anglès).
+- `TODO.md`: feina pendent, amb les especificacions exactes.
+- `docs/DECISIONS.md`: totes les decisions preses.
+- `docs/GAMES.md`: tots els jocs (fets, aprovats, aparcats i descartats).
+- `docs/history/`: les propostes revisades (rondes 1 a 9), amb les demos.
+- `tools/wodb/`: scripts en Python que generen `wodb/bancs.js` i els PDF.

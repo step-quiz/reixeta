@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jocs amb plantilla — ronda 5: WODB</title>
+<style>
+:root{
+  --bg:#f6f3ec; --card:#fffdf8; --ink:#1f2328; --muted:#5f6670; --line:#e3ddd0;
+  --accent:#0f766e; --accent-soft:#e0f2ef; --star:#b7791f; --q:#fff6dd; --qline:#f0d68a;
+  --cell:#ffffff; --cellink:#1f2328; --a:#e8743b; --ok:#15803d; --bad:#b91c1c;
+  --si:#15803d; --no:#b91c1c; --des:#6b7280; --par:#7c3aed;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#16181b; --card:#1f2226; --ink:#e8e6e1; --muted:#a3a8ae; --line:#33373d;
+    --accent:#2dd4bf; --accent-soft:#163632; --q:#2c2718; --qline:#6b5a26; --cell:#f4f1ea; --cellink:#1f2328; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:0 14px 60px}
+header.intro{padding:22px 0 6px}
+h1{font-size:1.45rem;line-height:1.25;margin:0 0 8px}
+.intro p{margin:6px 0;color:var(--muted);font-size:.95rem}
+.bar{position:sticky;top:0;z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding:10px 0;margin-bottom:6px}
+.bar .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.count{font-weight:650;margin-right:auto}
+.prog{height:6px;background:var(--line);border-radius:3px;overflow:hidden;margin-top:8px}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .3s}
+.fbtn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:6px 12px;font-size:.88rem;cursor:pointer}
+.fbtn.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.banner{display:none;background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:10px 12px;margin:10px 0;font-size:.92rem}
+h2.catt{font-size:1.1rem;margin:28px 0 4px;padding-top:6px}
+.catdesc{color:var(--muted);font-size:.9rem;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px 14px 12px;margin:12px 0;scroll-margin-top:110px}
+.card.answered{border-left:4px solid var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.id{font:700 .85rem ui-monospace,Menlo,monospace;background:var(--accent-soft);color:var(--accent);padding:2px 7px;border-radius:6px;flex:none}
+.title{font-weight:700;font-size:1.1rem}
+.star{color:var(--star);font-size:.85rem;font-weight:600;white-space:nowrap}
+.tags{display:flex;flex-wrap:wrap;gap:5px;margin:8px 0 4px}
+.tag{font-size:.75rem;border:1px solid var(--line);border-radius:999px;padding:1px 8px;color:var(--muted)}
+.tag.lvl{border-color:var(--accent);color:var(--accent)}
+.frase{font-size:1.02rem;font-weight:600;margin:8px 0;padding-left:10px;border-left:3px solid var(--star)}
+.sec{margin:8px 0}
+.sec b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);margin-bottom:1px}
+.sec p{margin:0;font-size:.95rem}
+.box{border-radius:10px;padding:8px 11px;margin:8px 0;font-size:.92rem}
+.box b{display:block;font-size:.76rem;text-transform:uppercase;letter-spacing:.04em;margin-bottom:1px}
+.box.nou{background:var(--accent-soft)} .box.nou b{color:var(--accent)}
+.box.chk{background:transparent;border:1px dashed var(--line)} .box.chk b{color:var(--muted)}
+.q{background:var(--q);border:1px solid var(--qline);border-radius:10px;padding:9px 11px;margin:10px 0 8px;font-size:.95rem}
+.q b{font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;display:block;color:var(--star)}
+.dec{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin:8px 0}
+.dbtn{border:1.5px solid var(--line);background:transparent;color:var(--ink);border-radius:9px;padding:8px 4px;font-size:.82rem;font-weight:600;cursor:pointer;line-height:1.2}
+.dbtn[data-v="si"].on{background:var(--si);border-color:var(--si);color:#fff}
+.dbtn[data-v="no"].on{background:var(--no);border-color:var(--no);color:#fff}
+.dbtn[data-v="despres"].on{background:var(--des);border-color:var(--des);color:#fff}
+.dbtn[data-v="parlem"].on{background:var(--par);border-color:var(--par);color:#fff}
+textarea{width:100%;min-height:58px;border:1px solid var(--line);border-radius:9px;background:var(--bg);color:var(--ink);padding:8px 10px;font:inherit;font-size:.93rem;resize:vertical}
+.st{font-size:.78rem;color:var(--muted);min-height:1.1em;margin-top:3px}
+.reply{display:none;margin-top:10px;background:var(--accent-soft);border-radius:10px;padding:9px 11px;font-size:.93rem;white-space:pre-wrap}
+.reply b{display:block;font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--accent)}
+.hide{display:none!important}
+footer{color:var(--muted);font-size:.85rem;margin-top:30px;text-align:center}
+@media (max-width:420px){ .dbtn{font-size:.76rem;padding:8px 2px} }
+/* demos */
+.demo{margin:12px 0 6px;padding:10px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.demo h4{margin:0 0 6px;font-size:.8rem;text-transform:uppercase;letter-spacing:.05em;color:var(--accent)}
+.btn{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:10px;font-size:.85rem;padding:7px 11px;cursor:pointer}
+.btn.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn:disabled{opacity:.4}
+.row2{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0;align-items:center}
+.msg{font-size:.9rem;min-height:1.3em;color:var(--muted);margin:6px 0}
+.msg.bad{color:var(--bad)} .msg.good{color:var(--ok);font-weight:600}
+.small{font-size:.8rem;color:var(--muted)}
+.board{display:grid;gap:2px;padding:2px;background:var(--line);border-radius:6px;width:max-content;max-width:100%;user-select:none;-webkit-user-select:none}
+.board .bc{display:flex;align-items:center;justify-content:center;background:var(--cell);color:var(--cellink);border-radius:3px;overflow:hidden;cursor:pointer;line-height:1}
+.board .bc.dim{opacity:.32}
+.board .bc.in{box-shadow:inset 0 0 0 2.5px var(--accent)}
+.big{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0;max-width:420px;padding:10px;border-radius:14px;background:repeating-linear-gradient(45deg,#3a3f46,#3a3f46 6px,#30353b 6px,#30353b 12px)}
+.tile{background:#fff;color:#1f2328;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:120px;padding:6px;cursor:pointer;position:relative;border:3px solid transparent}
+.tile.sel{border-color:var(--a)}
+.tile.pick{border-color:#dc2626;box-shadow:0 0 0 3px rgba(220,38,38,.25)}
+.tile.ok{border-color:var(--ok)}
+.tile .rs{font-size:.72rem;color:#0f766e;text-align:center;margin-top:4px;line-height:1.25}
+.tile .rs.none{color:#b91c1c}
+.tile .tick{position:absolute;top:4px;right:6px;font-size:.9rem}
+.it-t{font-weight:700;font-variant-numeric:tabular-nums}
+.it-l{font-family:Arial,Helvetica,sans-serif;font-weight:700}
+.fr{display:inline-flex;flex-direction:column;align-items:center;font-weight:700;line-height:1.05}
+.fr span:first-child{border-bottom:.09em solid currentColor;padding:0 .15em}
+.props{font-size:.82rem;color:var(--muted);margin:4px 0 0;padding-left:18px}
+.timer{font:700 1.1rem ui-monospace,Menlo,monospace;color:var(--accent)}
+.bingo{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;max-width:420px;margin:8px 0}
+.bingo div{border:1.5px solid var(--line);border-radius:8px;padding:6px;font-size:.72rem;line-height:1.2;min-height:54px;display:flex;align-items:center;justify-content:center;text-align:center;background:var(--card);cursor:pointer}
+.bingo div.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+.cands{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;max-width:420px}
+.cands button{background:#fff;color:#1f2328;border:2px solid var(--line);border-radius:10px;min-height:64px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+.cands button.ok{border-color:var(--ok)} .cands button.ko{border-color:var(--bad);opacity:.6}
+.palette{display:grid;gap:3px;max-height:260px;overflow:auto;padding:3px;background:var(--line);border-radius:8px}
+.palette button{background:#fff;color:#1f2328;border:2px solid transparent;border-radius:6px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+.palette button.on{border-color:var(--a)}
+select{font:inherit;font-size:.85rem;padding:6px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);max-width:100%}
+.log{font-size:.82rem;margin:6px 0;padding-left:18px;color:var(--ink)}
+.log li.cpu{color:#2f6fd0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <h1>Ronda 5: WODB, «quin no hi encaixa?»</h1>
+    <p>La rutina WODB mostra quatre elements, i qualsevol dels quatre pot ser l'intrús si es justifica bé. Aquí el full 2 té <b>4 forats en quadrat</b>, i el full 1 està fet perquè <b>totes les posicions de la plantilla siguin un WODB vàlid</b>: a cada posició, els quatre elements tenen almenys un motiu per no encaixar. Un full de 10×5 dona 36 WODB encadenats, perquè en moure la plantilla una casella canvien dos elements i se'n queden dos. Com que la plantilla és un quadrat, girar-la o capgirar-la no canvia quines caselles es veuen: només compten les 36 posicions.</p>
+    <p>Hi ha cinc fulls (nombres, figures, fraccions i decimals, blocs lògics i lletres) i sis maneres de jugar-hi. Tot té una demo, i els fulls els he comprovat per ordinador. Respon amb els botons i, si vols, amb un comentari: es desa sol. Quan acabis, escriu-me «Revisa artifact».</p>
+  </header>
+  <div class="bar">
+    <div class="row">
+      <span class="count" id="count">Contestats: 0/0</span>
+      <button class="fbtn on" data-f="all">Tots</button>
+      <button class="fbtn" data-f="pending">Sense resposta</button>
+      <button class="fbtn" data-f="star">⭐ Els que provaria primer</button>
+    </div>
+    <div class="prog"><i id="prog"></i></div>
+  </div>
+  <div class="banner" id="banner"></div>
+  <main id="list"></main>
+  <footer>Quan acabis, escriu «Revisa artifact» al xat.</footer>
+</div>
+<script>
+const DD = {"num":{"name":"Nombres","items":[{"t":"txt","v":"1","p":48,"k":"\"1\""},{"t":"txt","v":"2","p":41,"k":"\"2\""},{"t":"txt","v":"3","p":42,"k":"\"3\""},{"t":"txt","v":"4","p":49,"k":"\"4\""},{"t":"txt","v":"5","p":44,"k":"\"5\""},{"t":"txt","v":"6","p":35,"k":"\"6\""},{"t":"txt","v":"7","p":40,"k":"\"7\""},{"t":"txt","v":"8","p":33,"k":"\"8\""},{"t":"txt","v":"9","p":50,"k":"\"9\""},{"t":"txt","v":"10","p":5,"k":"\"10\""},{"t":"txt","v":"11","p":136,"k":"\"11\""},{"t":"txt","v":"12","p":3,"k":"\"12\""},{"t":"txt","v":"13","p":8,"k":"\"13\""},{"t":"txt","v":"14","p":1,"k":"\"14\""},{"t":"txt","v":"15","p":6,"k":"\"15\""},{"t":"txt","v":"16","p":17,"k":"\"16\""},{"t":"txt","v":"17","p":8,"k":"\"17\""},{"t":"txt","v":"18","p":3,"k":"\"18\""},{"t":"txt","v":"19","p":8,"k":"\"19\""},{"t":"txt","v":"20","p":5,"k":"\"20\""},{"t":"txt","v":"21","p":2,"k":"\"21\""},{"t":"txt","v":"22","p":129,"k":"\"22\""},{"t":"txt","v":"23","p":8,"k":"\"23\""},{"t":"txt","v":"24","p":3,"k":"\"24\""},{"t":"txt","v":"25","p":20,"k":"\"25\""},{"t":"txt","v":"26","p":1,"k":"\"26\""},{"t":"txt","v":"27","p":2,"k":"\"27\""},{"t":"txt","v":"28","p":1,"k":"\"28\""},{"t":"txt","v":"29","p":8,"k":"\"29\""},{"t":"txt","v":"30","p":7,"k":"\"30\""},{"t":"txt","v":"31","p":8,"k":"\"31\""},{"t":"txt","v":"32","p":1,"k":"\"32\""},{"t":"txt","v":"33","p":130,"k":"\"33\""},{"t":"txt","v":"34","p":1,"k":"\"34\""},{"t":"txt","v":"35","p":4,"k":"\"35\""},{"t":"txt","v":"36","p":19,"k":"\"36\""},{"t":"txt","v":"37","p":8,"k":"\"37\""},{"t":"txt","v":"38","p":1,"k":"\"38\""},{"t":"txt","v":"39","p":2,"k":"\"39\""},{"t":"txt","v":"40","p":5,"k":"\"40\""},{"t":"txt","v":"41","p":8,"k":"\"41\""},{"t":"txt","v":"42","p":3,"k":"\"42\""},{"t":"txt","v":"43","p":8,"k":"\"43\""},{"t":"txt","v":"44","p":129,"k":"\"44\""},{"t":"txt","v":"45","p":6,"k":"\"45\""},{"t":"txt","v":"46","p":1,"k":"\"46\""},{"t":"txt","v":"47","p":8,"k":"\"47\""},{"t":"txt","v":"48","p":3,"k":"\"48\""},{"t":"txt","v":"49","p":16,"k":"\"49\""},{"t":"txt","v":"50","p":5,"k":"\"50\""},{"t":"txt","v":"51","p":66,"k":"\"51\""},{"t":"txt","v":"52","p":65,"k":"\"52\""},{"t":"txt","v":"53","p":72,"k":"\"53\""},{"t":"txt","v":"54","p":67,"k":"\"54\""},{"t":"txt","v":"55","p":196,"k":"\"55\""},{"t":"txt","v":"56","p":65,"k":"\"56\""},{"t":"txt","v":"57","p":66,"k":"\"57\""},{"t":"txt","v":"58","p":65,"k":"\"58\""},{"t":"txt","v":"59","p":72,"k":"\"59\""},{"t":"txt","v":"60","p":71,"k":"\"60\""},{"t":"txt","v":"61","p":72,"k":"\"61\""},{"t":"txt","v":"62","p":65,"k":"\"62\""},{"t":"txt","v":"63","p":66,"k":"\"63\""},{"t":"txt","v":"64","p":81,"k":"\"64\""},{"t":"txt","v":"65","p":68,"k":"\"65\""},{"t":"txt","v":"66","p":195,"k":"\"66\""},{"t":"txt","v":"67","p":72,"k":"\"67\""},{"t":"txt","v":"68","p":65,"k":"\"68\""},{"t":"txt","v":"69","p":66,"k":"\"69\""},{"t":"txt","v":"70","p":69,"k":"\"70\""},{"t":"txt","v":"71","p":72,"k":"\"71\""},{"t":"txt","v":"72","p":67,"k":"\"72\""},{"t":"txt","v":"73","p":72,"k":"\"73\""},{"t":"txt","v":"74","p":65,"k":"\"74\""},{"t":"txt","v":"75","p":70,"k":"\"75\""},{"t":"txt","v":"76","p":65,"k":"\"76\""},{"t":"txt","v":"77","p":192,"k":"\"77\""},{"t":"txt","v":"78","p":67,"k":"\"78\""},{"t":"txt","v":"79","p":72,"k":"\"79\""},{"t":"txt","v":"80","p":69,"k":"\"80\""},{"t":"txt","v":"81","p":82,"k":"\"81\""},{"t":"txt","v":"82","p":65,"k":"\"82\""},{"t":"txt","v":"83","p":72,"k":"\"83\""},{"t":"txt","v":"84","p":67,"k":"\"84\""},{"t":"txt","v":"85","p":68,"k":"\"85\""},{"t":"txt","v":"86","p":65,"k":"\"86\""},{"t":"txt","v":"87","p":66,"k":"\"87\""},{"t":"txt","v":"88","p":193,"k":"\"88\""},{"t":"txt","v":"89","p":72,"k":"\"89\""},{"t":"txt","v":"90","p":71,"k":"\"90\""},{"t":"txt","v":"91","p":64,"k":"\"91\""},{"t":"txt","v":"92","p":65,"k":"\"92\""},{"t":"txt","v":"93","p":66,"k":"\"93\""},{"t":"txt","v":"94","p":65,"k":"\"94\""},{"t":"txt","v":"95","p":68,"k":"\"95\""},{"t":"txt","v":"96","p":67,"k":"\"96\""},{"t":"txt","v":"97","p":72,"k":"\"97\""},{"t":"txt","v":"98","p":65,"k":"\"98\""},{"t":"txt","v":"99","p":194,"k":"\"99\""}],"props":[{"yes":"És l'únic parell","no":"És l'únic senar"},{"yes":"És l'únic múltiple de 3","no":"És l'únic que no és múltiple de 3"},{"yes":"És l'únic múltiple de 5","no":"És l'únic que no és múltiple de 5"},{"yes":"És l'únic nombre primer","no":"És l'únic que no és primer"},{"yes":"És l'únic quadrat perfecte","no":"És l'únic que no és un quadrat perfecte"},{"yes":"És l'únic d'una sola xifra","no":"És l'únic de dues xifres"},{"yes":"És l'únic més gran que 50","no":"És l'únic que no passa de 50"},{"yes":"És l'únic amb les dues xifres iguals","no":"És l'únic que no té dues xifres iguals"}],"board":[49,62,45,30,79,1,36,35,18,50,0,10,24,86,76,71,19,87,29,8,68,39,52,91,88,7,16,3,12,53,6,15,32,74,48,92,34,98,14,80,95,9,51,66,75,70,63,78,77,72]},"fig":{"name":"Figures","items":[{"t":"poly","v":[[0.11,0.8377],[0.89,0.8377],[0.5,0.1623]],"p":81,"k":"equilater"},{"t":"poly","v":[[0.2134,0.89],[0.8548,0.4409],[0.1452,0.11]],"p":81,"k":"equilater"},{"t":"poly","v":[[0.11,0.89],[0.89,0.89],[0.11,0.11]],"p":73,"k":"rect_isos"},{"t":"poly","v":[[0.4312,0.7294],[0.89,0.4082],[0.11,0.2706]],"p":73,"k":"rect_isos"},{"t":"poly","v":[[0.11,0.7925],[0.89,0.7925],[0.11,0.2075]],"p":9,"k":"rect_esc"},{"t":"poly","v":[[0.3786,0.6918],[0.89,0.3337],[0.11,0.3082]],"p":9,"k":"rect_esc"},{"t":"poly","v":[[0.2562,0.89],[0.7438,0.89],[0.5,0.11]],"p":65,"k":"isos_agut"},{"t":"poly","v":[[0.4241,0.89],[0.824,0.6099],[0.176,0.11]],"p":65,"k":"isos_agut"},{"t":"poly","v":[[0.11,0.6129],[0.7258,0.6129],[0.89,0.3871]],"p":1,"k":"obtus"},{"t":"poly","v":[[0.1858,0.89],[0.808,0.4543],[0.8142,0.11]],"p":1,"k":"obtus"},{"t":"poly","v":[[0.11,0.591],[0.89,0.591],[0.5,0.409]],"p":65,"k":"obtus_isos"},{"t":"poly","v":[[0.11,0.7731],[0.89,0.2269],[0.3726,0.318]],"p":65,"k":"obtus_isos"},{"t":"poly","v":[[0.11,0.89],[0.89,0.89],[0.89,0.11],[0.11,0.11]],"p":218,"k":"quadrat"},{"t":"poly","v":[[0.4312,0.89],[0.89,0.5688],[0.5688,0.11],[0.11,0.4312]],"p":218,"k":"quadrat"},{"t":"poly","v":[[0.11,0.695],[0.89,0.695],[0.89,0.305],[0.11,0.305]],"p":202,"k":"rectangle"},{"t":"poly","v":[[0.3123,0.8467],[0.89,0.4422],[0.6877,0.1533],[0.11,0.5578]],"p":202,"k":"rectangle"},{"t":"poly","v":[[0.11,0.5],[0.5,0.734],[0.89,0.5],[0.5,0.266]],"p":210,"k":"rombe"},{"t":"poly","v":[[0.11,0.7731],[0.6638,0.734],[0.89,0.2269],[0.3362,0.266]],"p":210,"k":"rombe"},{"t":"poly","v":[[0.11,0.6444],[0.6878,0.6444],[0.89,0.3556],[0.3122,0.3556]],"p":130,"k":"paralelogram"},{"t":"poly","v":[[0.2302,0.89],[0.7699,0.5121],[0.7698,0.11],[0.2301,0.4879]],"p":130,"k":"paralelogram"},{"t":"poly","v":[[0.11,0.656],[0.89,0.656],[0.682,0.344],[0.318,0.344]],"p":194,"k":"trapezi_isos"},{"t":"poly","v":[[0.1203,0.8515],[0.89,0.3126],[0.4692,0.1485],[0.11,0.4]],"p":194,"k":"trapezi_isos"},{"t":"poly","v":[[0.11,0.669],[0.89,0.669],[0.63,0.331],[0.11,0.331]],"p":138,"k":"trapezi_rect"},{"t":"poly","v":[[0.2916,0.7693],[0.89,0.3503],[0.5089,0.2307],[0.11,0.51]],"p":138,"k":"trapezi_rect"},{"t":"poly","v":[[0.5,0.89],[0.74,0.62],[0.5,0.11],[0.26,0.62]],"p":66,"k":"estel"},{"t":"poly","v":[[0.7476,0.89],[0.7986,0.452],[0.2014,0.11],[0.3186,0.788]],"p":66,"k":"estel"},{"t":"poly","v":[[0.1455,0.89],[0.5,0.6064],[0.8545,0.89],[0.5,0.11]],"p":98,"k":"fletxa4"},{"t":"poly","v":[[0.3037,0.89],[0.422,0.4865],[0.8416,0.5134],[0.1584,0.11]],"p":98,"k":"fletxa4"},{"t":"poly","v":[[0.11,0.7836],[0.89,0.6773],[0.7482,0.2164],[0.2164,0.3936]],"p":2,"k":"quadrilater"},{"t":"poly","v":[[0.2928,0.89],[0.8354,0.3881],[0.4781,0.11],[0.1646,0.5328]],"p":2,"k":"quadrilater"},{"t":"poly","v":[[0.11,0.656],[0.89,0.656],[0.734,0.344],[0.24,0.344]],"p":130,"k":"trapezi_esc"},{"t":"poly","v":[[0.1895,0.8363],[0.89,0.3458],[0.5537,0.1637],[0.11,0.4743]],"p":130,"k":"trapezi_esc"},{"t":"poly","v":[[0.5,0.1291],[0.11,0.4124],[0.259,0.8709],[0.741,0.8709],[0.89,0.4124]],"p":84,"k":"pentagon"},{"t":"poly","v":[[0.267,0.127],[0.11,0.5829],[0.4951,0.873],[0.89,0.5965],[0.749,0.1354]],"p":84,"k":"pentagon"},{"t":"poly","v":[[0.175,0.89],[0.825,0.89],[0.825,0.435],[0.5,0.11],[0.175,0.435]],"p":204,"k":"casa"},{"t":"poly","v":[[0.3717,0.89],[0.8749,0.5377],[0.6283,0.1854],[0.2005,0.11],[0.1251,0.5378]],"p":204,"k":"casa"},{"t":"poly","v":[[0.1936,0.8064],[0.7507,0.7507],[0.89,0.4164],[0.5279,0.1936],[0.11,0.4443]],"p":4,"k":"pentagon_irr"},{"t":"poly","v":[[0.4196,0.89],[0.8801,0.4938],[0.7958,0.11],[0.3353,0.1373],[0.1199,0.6202]],"p":4,"k":"pentagon_irr"},{"t":"poly","v":[[0.11,0.89],[0.89,0.89],[0.89,0.11],[0.5,0.5],[0.11,0.11]],"p":236,"k":"pentagon_conc"},{"t":"poly","v":[[0.4312,0.89],[0.89,0.5688],[0.5688,0.11],[0.5,0.5],[0.11,0.4312]],"p":236,"k":"pentagon_conc"},{"t":"poly","v":[[0.89,0.5],[0.695,0.1623],[0.305,0.1623],[0.11,0.5],[0.305,0.8377],[0.695,0.8377]],"p":212,"k":"hexagon"},{"t":"poly","v":[[0.8207,0.2755],[0.4659,0.11],[0.1452,0.3345],[0.1793,0.7245],[0.5341,0.89],[0.8548,0.6655]],"p":212,"k":"hexagon"},{"t":"poly","v":[[0.24,0.89],[0.76,0.89],[0.76,0.63],[0.5,0.63],[0.5,0.11],[0.24,0.11]],"p":172,"k":"ela"},{"t":"poly","v":[[0.5096,0.8519],[0.89,0.5855],[0.7568,0.3953],[0.5666,0.5285],[0.3002,0.1481],[0.11,0.2813]],"p":172,"k":"ela"},{"t":"poly","v":[[0.2214,0.7674],[0.6671,0.7674],[0.89,0.5446],[0.7563,0.2771],[0.3551,0.2326],[0.11,0.5223]],"p":4,"k":"hexagon_irr"},{"t":"poly","v":[[0.3965,0.89],[0.7985,0.6085],[0.8588,0.2668],[0.5693,0.11],[0.1793,0.3231],[0.1412,0.7393]],"p":4,"k":"hexagon_irr"},{"t":"poly","v":[[0.11,0.89],[0.5,0.5],[0.89,0.89],[0.89,0.5],[0.5,0.11],[0.11,0.5]],"p":236,"k":"chevron"},{"t":"poly","v":[[0.3123,0.89],[0.3989,0.3989],[0.89,0.4855],[0.6877,0.1966],[0.1966,0.11],[0.11,0.6011]],"p":236,"k":"chevron"},{"t":"poly","v":[[0.11,0.6182],[0.5827,0.6182],[0.5827,0.8545],[0.89,0.5],[0.5827,0.1455],[0.5827,0.3818],[0.11,0.3818]],"p":236,"k":"fletxa"},{"t":"poly","v":[[0.2596,0.8633],[0.687,0.5641],[0.8366,0.7778],[0.89,0.2627],[0.3878,0.1367],[0.5374,0.3504],[0.11,0.6496]],"p":236,"k":"fletxa"},{"t":"poly","v":[[0.37,0.89],[0.63,0.89],[0.63,0.63],[0.89,0.63],[0.89,0.37],[0.63,0.37],[0.63,0.11],[0.37,0.11],[0.37,0.37],[0.11,0.37],[0.11,0.63],[0.37,0.63]],"p":252,"k":"creu"},{"t":"poly","v":[[0.616,0.89],[0.8268,0.7424],[0.6792,0.5316],[0.89,0.384],[0.7424,0.1732],[0.5316,0.3208],[0.384,0.11],[0.1732,0.2576],[0.3208,0.4684],[0.11,0.616],[0.2576,0.8268],[0.4684,0.6792]],"p":252,"k":"creu"},{"t":"poly","v":[[0.11,0.89],[0.89,0.89],[0.89,0.63],[0.63,0.63],[0.63,0.11],[0.37,0.11],[0.37,0.63],[0.11,0.63]],"p":236,"k":"te"},{"t":"poly","v":[[0.3317,0.89],[0.8634,0.5177],[0.7393,0.3404],[0.5621,0.4645],[0.3138,0.11],[0.1366,0.2341],[0.3848,0.5886],[0.2075,0.7127]],"p":236,"k":"te"},{"t":"poly","v":[[0.89,0.3385],[0.6615,0.11],[0.3385,0.11],[0.11,0.3385],[0.11,0.6615],[0.3385,0.89],[0.6615,0.89],[0.89,0.6615]],"p":212,"k":"octagon"},{"t":"poly","v":[[0.7146,0.1631],[0.4135,0.11],[0.1631,0.2854],[0.11,0.5865],[0.2854,0.8369],[0.5865,0.89],[0.8369,0.7146],[0.89,0.4135]],"p":212,"k":"octagon"},{"t":"poly","v":[[0.5,0.1291],[0.3988,0.3998],[0.11,0.4124],[0.3362,0.5924],[0.259,0.8709],[0.5,0.7114],[0.741,0.8709],[0.6638,0.5924],[0.89,0.4124],[0.6012,0.3998]],"p":116,"k":"estrella"},{"t":"poly","v":[[0.267,0.127],[0.3393,0.4069],[0.11,0.5829],[0.3985,0.6005],[0.4951,0.873],[0.601,0.604],[0.89,0.5965],[0.6669,0.4126],[0.749,0.1354],[0.5052,0.2907]],"p":116,"k":"estrella"},{"t":"poly","v":[[0.37,0.76],[0.89,0.76],[0.89,0.5],[0.63,0.5],[0.63,0.24],[0.11,0.24],[0.11,0.5],[0.37,0.5]],"p":172,"k":"zeta"},{"t":"poly","v":[[0.5355,0.7393],[0.89,0.4911],[0.7659,0.3138],[0.5886,0.4379],[0.4645,0.2607],[0.11,0.5089],[0.2341,0.6862],[0.4114,0.5621]],"p":172,"k":"zeta"}],"props":[{"yes":"És l'únic triangle","no":"És l'única figura que no és un triangle"},{"yes":"És l'únic quadrilàter","no":"És l'única figura que no és un quadrilàter"},{"yes":"És l'única amb més de 4 costats","no":"És l'única amb 4 costats o menys"},{"yes":"És l'única amb algun angle recte","no":"És l'única sense cap angle recte"},{"yes":"És l'única amb tots els costats iguals","no":"És l'única que no té tots els costats iguals"},{"yes":"És l'única còncava","no":"És l'única convexa"},{"yes":"És l'única amb algun eix de simetria","no":"És l'única sense cap eix de simetria"},{"yes":"És l'única amb costats paral·lels","no":"És l'única sense costats paral·lels"}],"board":[28,11,28,11,19,14,7,48,23,55,32,49,32,52,55,26,32,36,5,59,45,6,29,7,44,7,46,6,31,13,47,32,39,32,38,32,29,32,27,11,6,44,25,10,36,10,39,10,22,33]},"fra":{"name":"Fraccions i decimals","items":[{"t":"frac","v":[1,2],"p":64,"k":"[1, 2]"},{"t":"frac","v":[2,2],"p":48,"k":"[2, 2]"},{"t":"frac","v":[3,2],"p":1,"k":"[3, 2]"},{"t":"frac","v":[4,2],"p":49,"k":"[4, 2]"},{"t":"frac","v":[1,3],"p":74,"k":"[1, 3]"},{"t":"frac","v":[2,3],"p":8,"k":"[2, 3]"},{"t":"frac","v":[3,3],"p":48,"k":"[3, 3]"},{"t":"frac","v":[4,3],"p":9,"k":"[4, 3]"},{"t":"frac","v":[5,3],"p":9,"k":"[5, 3]"},{"t":"frac","v":[6,3],"p":49,"k":"[6, 3]"},{"t":"frac","v":[1,4],"p":66,"k":"[1, 4]"},{"t":"frac","v":[2,4],"p":16,"k":"[2, 4]"},{"t":"frac","v":[3,4],"p":0,"k":"[3, 4]"},{"t":"frac","v":[4,4],"p":48,"k":"[4, 4]"},{"t":"frac","v":[5,4],"p":1,"k":"[5, 4]"},{"t":"frac","v":[6,4],"p":17,"k":"[6, 4]"},{"t":"frac","v":[7,4],"p":1,"k":"[7, 4]"},{"t":"frac","v":[8,4],"p":49,"k":"[8, 4]"},{"t":"frac","v":[1,5],"p":66,"k":"[1, 5]"},{"t":"frac","v":[2,5],"p":2,"k":"[2, 5]"},{"t":"frac","v":[3,5],"p":0,"k":"[3, 5]"},{"t":"frac","v":[4,5],"p":0,"k":"[4, 5]"},{"t":"frac","v":[5,5],"p":48,"k":"[5, 5]"},{"t":"frac","v":[6,5],"p":1,"k":"[6, 5]"},{"t":"frac","v":[7,5],"p":1,"k":"[7, 5]"},{"t":"frac","v":[8,5],"p":1,"k":"[8, 5]"},{"t":"frac","v":[9,5],"p":1,"k":"[9, 5]"},{"t":"frac","v":[10,5],"p":49,"k":"[10, 5]"},{"t":"frac","v":[1,6],"p":74,"k":"[1, 6]"},{"t":"frac","v":[2,6],"p":26,"k":"[2, 6]"},{"t":"frac","v":[3,6],"p":16,"k":"[3, 6]"},{"t":"frac","v":[4,6],"p":24,"k":"[4, 6]"},{"t":"frac","v":[5,6],"p":8,"k":"[5, 6]"},{"t":"frac","v":[6,6],"p":48,"k":"[6, 6]"},{"t":"frac","v":[7,6],"p":9,"k":"[7, 6]"},{"t":"frac","v":[8,6],"p":25,"k":"[8, 6]"},{"t":"frac","v":[9,6],"p":17,"k":"[9, 6]"},{"t":"frac","v":[10,6],"p":25,"k":"[10, 6]"},{"t":"frac","v":[11,6],"p":9,"k":"[11, 6]"},{"t":"frac","v":[12,6],"p":49,"k":"[12, 6]"},{"t":"frac","v":[1,8],"p":66,"k":"[1, 8]"},{"t":"frac","v":[2,8],"p":18,"k":"[2, 8]"},{"t":"frac","v":[3,8],"p":2,"k":"[3, 8]"},{"t":"frac","v":[4,8],"p":16,"k":"[4, 8]"},{"t":"frac","v":[5,8],"p":0,"k":"[5, 8]"},{"t":"frac","v":[6,8],"p":16,"k":"[6, 8]"},{"t":"frac","v":[7,8],"p":0,"k":"[7, 8]"},{"t":"frac","v":[8,8],"p":48,"k":"[8, 8]"},{"t":"frac","v":[9,8],"p":1,"k":"[9, 8]"},{"t":"frac","v":[10,8],"p":17,"k":"[10, 8]"},{"t":"frac","v":[11,8],"p":1,"k":"[11, 8]"},{"t":"frac","v":[12,8],"p":17,"k":"[12, 8]"},{"t":"frac","v":[13,8],"p":1,"k":"[13, 8]"},{"t":"frac","v":[14,8],"p":17,"k":"[14, 8]"},{"t":"frac","v":[15,8],"p":1,"k":"[15, 8]"},{"t":"frac","v":[1,10],"p":66,"k":"[1, 10]"},{"t":"frac","v":[2,10],"p":18,"k":"[2, 10]"},{"t":"frac","v":[3,10],"p":2,"k":"[3, 10]"},{"t":"frac","v":[4,10],"p":18,"k":"[4, 10]"},{"t":"frac","v":[5,10],"p":16,"k":"[5, 10]"},{"t":"frac","v":[6,10],"p":16,"k":"[6, 10]"},{"t":"frac","v":[7,10],"p":0,"k":"[7, 10]"},{"t":"frac","v":[8,10],"p":16,"k":"[8, 10]"},{"t":"frac","v":[9,10],"p":0,"k":"[9, 10]"},{"t":"frac","v":[10,10],"p":48,"k":"[10, 10]"},{"t":"frac","v":[11,10],"p":1,"k":"[11, 10]"},{"t":"frac","v":[12,10],"p":17,"k":"[12, 10]"},{"t":"frac","v":[13,10],"p":1,"k":"[13, 10]"},{"t":"frac","v":[14,10],"p":17,"k":"[14, 10]"},{"t":"frac","v":[15,10],"p":17,"k":"[15, 10]"},{"t":"frac","v":[1,12],"p":74,"k":"[1, 12]"},{"t":"frac","v":[2,12],"p":26,"k":"[2, 12]"},{"t":"frac","v":[3,12],"p":18,"k":"[3, 12]"},{"t":"frac","v":[4,12],"p":26,"k":"[4, 12]"},{"t":"frac","v":[5,12],"p":10,"k":"[5, 12]"},{"t":"frac","v":[6,12],"p":16,"k":"[6, 12]"},{"t":"frac","v":[7,12],"p":8,"k":"[7, 12]"},{"t":"frac","v":[8,12],"p":24,"k":"[8, 12]"},{"t":"frac","v":[9,12],"p":16,"k":"[9, 12]"},{"t":"frac","v":[10,12],"p":24,"k":"[10, 12]"},{"t":"frac","v":[11,12],"p":8,"k":"[11, 12]"},{"t":"frac","v":[12,12],"p":48,"k":"[12, 12]"},{"t":"frac","v":[13,12],"p":9,"k":"[13, 12]"},{"t":"frac","v":[14,12],"p":25,"k":"[14, 12]"},{"t":"frac","v":[15,12],"p":17,"k":"[15, 12]"},{"t":"txt","v":"0,1","p":6,"k":"\"0,1\""},{"t":"txt","v":"0,2","p":6,"k":"\"0,2\""},{"t":"txt","v":"0,25","p":6,"k":"\"0,25\""},{"t":"txt","v":"0,3","p":6,"k":"\"0,3\""},{"t":"txt","v":"0,4","p":6,"k":"\"0,4\""},{"t":"txt","v":"0,5","p":4,"k":"\"0,5\""},{"t":"txt","v":"0,6","p":4,"k":"\"0,6\""},{"t":"txt","v":"0,75","p":4,"k":"\"0,75\""},{"t":"txt","v":"0,8","p":4,"k":"\"0,8\""},{"t":"txt","v":"0,125","p":6,"k":"\"0,125\""},{"t":"txt","v":"1,2","p":5,"k":"\"1,2\""},{"t":"txt","v":"1,25","p":5,"k":"\"1,25\""},{"t":"txt","v":"1,5","p":5,"k":"\"1,5\""},{"t":"txt","v":"1,75","p":5,"k":"\"1,75\""},{"t":"txt","v":"2,5","p":5,"k":"\"2,5\""},{"t":"txt","v":"0,333…","p":14,"k":"\"0,333…\""},{"t":"txt","v":"0,666…","p":12,"k":"\"0,666…\""},{"t":"txt","v":"1,333…","p":13,"k":"\"1,333…\""},{"t":"txt","v":"0,1666…","p":14,"k":"\"0,1666…\""},{"t":"txt","v":"2,25","p":5,"k":"\"2,25\""},{"t":"txt","v":"0,7","p":4,"k":"\"0,7\""},{"t":"txt","v":"0,9","p":4,"k":"\"0,9\""},{"t":"txt","v":"1,1","p":5,"k":"\"1,1\""},{"t":"txt","v":"1,4","p":5,"k":"\"1,4\""},{"t":"txt","v":"0,375","p":6,"k":"\"0,375\""},{"t":"txt","v":"3,5","p":5,"k":"\"3,5\""},{"t":"txt","v":"0,05","p":6,"k":"\"0,05\""},{"t":"txt","v":"0,8333…","p":12,"k":"\"0,8333…\""},{"t":"txt","v":"0,111…","p":14,"k":"\"0,111…\""},{"t":"txt","v":"1,666…","p":13,"k":"\"1,666…\""},{"t":"txt","v":"0,35","p":6,"k":"\"0,35\""},{"t":"txt","v":"1,8","p":5,"k":"\"1,8\""}],"props":[{"yes":"És l'únic més gran que 1","no":"És l'únic que no és més gran que 1"},{"yes":"És l'únic més petit que 1/2","no":"És l'únic que no és més petit que 1/2"},{"yes":"És l'únic escrit amb decimals","no":"És l'únic escrit en forma de fracció"},{"yes":"És l'únic amb infinits decimals","no":"És l'únic amb un nombre finit de decimals"},{"yes":"És l'única fracció que es pot simplificar","no":"És l'únic que no es pot simplificar"},{"yes":"És l'únic que és un nombre enter","no":"És l'únic que no és un nombre enter"},{"yes":"És l'única fracció amb numerador 1","no":"És l'únic que no és una fracció amb numerador 1"}],"board":[113,70,88,40,106,53,91,57,108,115,41,38,71,3,5,18,34,78,112,45,111,4,109,55,105,17,104,19,7,28,48,58,16,81,32,10,76,0,47,101,74,93,80,94,26,90,36,85,82,73]},"blo":{"name":"Blocs lògics","items":[{"t":"blo","v":["cercle","vermell",1,1],"p":401,"k":"[\"cercle\", \"vermell\", 1, 1]"},{"t":"blo","v":["cercle","vermell",1,0],"p":145,"k":"[\"cercle\", \"vermell\", 1, 0]"},{"t":"blo","v":["cercle","vermell",0,1],"p":273,"k":"[\"cercle\", \"vermell\", 0, 1]"},{"t":"blo","v":["cercle","vermell",0,0],"p":17,"k":"[\"cercle\", \"vermell\", 0, 0]"},{"t":"blo","v":["cercle","blau",1,1],"p":417,"k":"[\"cercle\", \"blau\", 1, 1]"},{"t":"blo","v":["cercle","blau",1,0],"p":161,"k":"[\"cercle\", \"blau\", 1, 0]"},{"t":"blo","v":["cercle","blau",0,1],"p":289,"k":"[\"cercle\", \"blau\", 0, 1]"},{"t":"blo","v":["cercle","blau",0,0],"p":33,"k":"[\"cercle\", \"blau\", 0, 0]"},{"t":"blo","v":["cercle","groc",1,1],"p":449,"k":"[\"cercle\", \"groc\", 1, 1]"},{"t":"blo","v":["cercle","groc",1,0],"p":193,"k":"[\"cercle\", \"groc\", 1, 0]"},{"t":"blo","v":["cercle","groc",0,1],"p":321,"k":"[\"cercle\", \"groc\", 0, 1]"},{"t":"blo","v":["cercle","groc",0,0],"p":65,"k":"[\"cercle\", \"groc\", 0, 0]"},{"t":"blo","v":["quadrat","vermell",1,1],"p":402,"k":"[\"quadrat\", \"vermell\", 1, 1]"},{"t":"blo","v":["quadrat","vermell",1,0],"p":146,"k":"[\"quadrat\", \"vermell\", 1, 0]"},{"t":"blo","v":["quadrat","vermell",0,1],"p":274,"k":"[\"quadrat\", \"vermell\", 0, 1]"},{"t":"blo","v":["quadrat","vermell",0,0],"p":18,"k":"[\"quadrat\", \"vermell\", 0, 0]"},{"t":"blo","v":["quadrat","blau",1,1],"p":418,"k":"[\"quadrat\", \"blau\", 1, 1]"},{"t":"blo","v":["quadrat","blau",1,0],"p":162,"k":"[\"quadrat\", \"blau\", 1, 0]"},{"t":"blo","v":["quadrat","blau",0,1],"p":290,"k":"[\"quadrat\", \"blau\", 0, 1]"},{"t":"blo","v":["quadrat","blau",0,0],"p":34,"k":"[\"quadrat\", \"blau\", 0, 0]"},{"t":"blo","v":["quadrat","groc",1,1],"p":450,"k":"[\"quadrat\", \"groc\", 1, 1]"},{"t":"blo","v":["quadrat","groc",1,0],"p":194,"k":"[\"quadrat\", \"groc\", 1, 0]"},{"t":"blo","v":["quadrat","groc",0,1],"p":322,"k":"[\"quadrat\", \"groc\", 0, 1]"},{"t":"blo","v":["quadrat","groc",0,0],"p":66,"k":"[\"quadrat\", \"groc\", 0, 0]"},{"t":"blo","v":["triangle","vermell",1,1],"p":404,"k":"[\"triangle\", \"vermell\", 1, 1]"},{"t":"blo","v":["triangle","vermell",1,0],"p":148,"k":"[\"triangle\", \"vermell\", 1, 0]"},{"t":"blo","v":["triangle","vermell",0,1],"p":276,"k":"[\"triangle\", \"vermell\", 0, 1]"},{"t":"blo","v":["triangle","vermell",0,0],"p":20,"k":"[\"triangle\", \"vermell\", 0, 0]"},{"t":"blo","v":["triangle","blau",1,1],"p":420,"k":"[\"triangle\", \"blau\", 1, 1]"},{"t":"blo","v":["triangle","blau",1,0],"p":164,"k":"[\"triangle\", \"blau\", 1, 0]"},{"t":"blo","v":["triangle","blau",0,1],"p":292,"k":"[\"triangle\", \"blau\", 0, 1]"},{"t":"blo","v":["triangle","blau",0,0],"p":36,"k":"[\"triangle\", \"blau\", 0, 0]"},{"t":"blo","v":["triangle","groc",1,1],"p":452,"k":"[\"triangle\", \"groc\", 1, 1]"},{"t":"blo","v":["triangle","groc",1,0],"p":196,"k":"[\"triangle\", \"groc\", 1, 0]"},{"t":"blo","v":["triangle","groc",0,1],"p":324,"k":"[\"triangle\", \"groc\", 0, 1]"},{"t":"blo","v":["triangle","groc",0,0],"p":68,"k":"[\"triangle\", \"groc\", 0, 0]"},{"t":"blo","v":["rectangle","vermell",1,1],"p":408,"k":"[\"rectangle\", \"vermell\", 1, 1]"},{"t":"blo","v":["rectangle","vermell",1,0],"p":152,"k":"[\"rectangle\", \"vermell\", 1, 0]"},{"t":"blo","v":["rectangle","vermell",0,1],"p":280,"k":"[\"rectangle\", \"vermell\", 0, 1]"},{"t":"blo","v":["rectangle","vermell",0,0],"p":24,"k":"[\"rectangle\", \"vermell\", 0, 0]"},{"t":"blo","v":["rectangle","blau",1,1],"p":424,"k":"[\"rectangle\", \"blau\", 1, 1]"},{"t":"blo","v":["rectangle","blau",1,0],"p":168,"k":"[\"rectangle\", \"blau\", 1, 0]"},{"t":"blo","v":["rectangle","blau",0,1],"p":296,"k":"[\"rectangle\", \"blau\", 0, 1]"},{"t":"blo","v":["rectangle","blau",0,0],"p":40,"k":"[\"rectangle\", \"blau\", 0, 0]"},{"t":"blo","v":["rectangle","groc",1,1],"p":456,"k":"[\"rectangle\", \"groc\", 1, 1]"},{"t":"blo","v":["rectangle","groc",1,0],"p":200,"k":"[\"rectangle\", \"groc\", 1, 0]"},{"t":"blo","v":["rectangle","groc",0,1],"p":328,"k":"[\"rectangle\", \"groc\", 0, 1]"},{"t":"blo","v":["rectangle","groc",0,0],"p":72,"k":"[\"rectangle\", \"groc\", 0, 0]"}],"props":[{"yes":"És l'únic cercle","no":"És l'únic que no és un cercle"},{"yes":"És l'únic quadrat","no":"És l'únic que no és un quadrat"},{"yes":"És l'únic triangle","no":"És l'únic que no és un triangle"},{"yes":"És l'únic rectangle","no":"És l'únic que no és un rectangle"},{"yes":"És l'únic vermell","no":"És l'únic que no és vermell"},{"yes":"És l'únic blau","no":"És l'únic que no és blau"},{"yes":"És l'únic groc","no":"És l'únic que no és groc"},{"yes":"És l'únic gran","no":"És l'únic petit"},{"yes":"És l'únic ple","no":"És l'únic buit"}],"board":[32,40,26,13,28,8,35,39,24,45,2,13,8,36,14,37,17,6,22,4,30,38,28,21,4,32,42,26,43,26,23,8,13,43,25,12,9,22,1,23,25,41,35,2,23,41,27,43,31,38]},"let":{"name":"Lletres","items":[{"t":"let","v":"A","p":91,"k":"\"A\""},{"t":"let","v":"B","p":76,"k":"\"B\""},{"t":"let","v":"C","p":68,"k":"\"C\""},{"t":"let","v":"D","p":76,"k":"\"D\""},{"t":"let","v":"E","p":85,"k":"\"E\""},{"t":"let","v":"F","p":80,"k":"\"F\""},{"t":"let","v":"G","p":64,"k":"\"G\""},{"t":"let","v":"H","p":118,"k":"\"H\""},{"t":"let","v":"I","p":119,"k":"\"I\""},{"t":"let","v":"J","p":64,"k":"\"J\""},{"t":"let","v":"K","p":84,"k":"\"K\""},{"t":"let","v":"L","p":80,"k":"\"L\""},{"t":"let","v":"M","p":82,"k":"\"M\""},{"t":"let","v":"N","p":48,"k":"\"N\""},{"t":"let","v":"O","p":47,"k":"\"O\""},{"t":"let","v":"P","p":8,"k":"\"P\""},{"t":"let","v":"Q","p":8,"k":"\"Q\""},{"t":"let","v":"R","p":8,"k":"\"R\""},{"t":"let","v":"S","p":32,"k":"\"S\""},{"t":"let","v":"T","p":18,"k":"\"T\""},{"t":"let","v":"U","p":3,"k":"\"U\""},{"t":"let","v":"V","p":18,"k":"\"V\""},{"t":"let","v":"W","p":18,"k":"\"W\""},{"t":"let","v":"X","p":54,"k":"\"X\""},{"t":"let","v":"Y","p":18,"k":"\"Y\""},{"t":"let","v":"Z","p":48,"k":"\"Z\""}],"props":[{"yes":"És l'única vocal","no":"És l'única consonant"},{"yes":"És l'única amb un eix de simetria vertical","no":"És l'única sense eix de simetria vertical"},{"yes":"És l'única amb un eix de simetria horitzontal","no":"És l'única sense eix de simetria horitzontal"},{"yes":"És l'única amb forats","no":"És l'única sense forats"},{"yes":"És l'única feta només de línies rectes","no":"És l'única que té corbes"},{"yes":"És l'única que queda igual si la gires mitja volta","no":"És l'única que canvia si la gires mitja volta"},{"yes":"És l'única de la primera meitat de l'abecedari (A-M)","no":"És l'única de la segona meitat de l'abecedari (N-Z)"}],"board":[12,20,18,22,13,22,13,19,2,13,0,4,17,2,4,16,4,15,20,15,20,24,13,12,25,24,25,12,13,10,2,17,4,1,4,9,15,4,15,0,18,22,13,12,23,3,0,25,12,3]}};
+const KEYS=['num','fig','fra','blo','let'];
+const CATS=[
+ {id:'F',name:'Els fulls: totes les posicions són un WODB',desc:'Cada full té 10×5 caselles. Posis on posis la plantilla, cadascun dels quatre elements té almenys un motiu per no encaixar.'},
+ {id:'J',name:'Maneres de jugar-hi',desc:'Variants per convertir la rutina en joc. Totes funcionen amb qualsevol dels cinc fulls.'},
+ {id:'S',name:'I després',desc:'Dues decisions per passar de les demos a l\'aula.'}];
+const ITEMS=[
+ {id:'F1',cat:'F',star:true,title:'Nombres',tags:['Divisibilitat','Primers','Quadrats'],lvl:'1r ESO → 3r ESO',
+  frase:'Posis on posis la plantilla, cadascun dels quatre nombres té un motiu per ser l\'intrús.',
+  joc:'El full 1 té 50 nombres diferents de l\'1 al 99, i la plantilla es pot posar en 36 posicions. A cada posició cal argumentar quin dels quatre no hi encaixa, i la gràcia és trobar un motiu per a cadascun. El full està fet perquè sempre n\'hi hagi almenys un per a cada nombre, amb aquestes propietats: parell, múltiple de 3, múltiple de 5, primer, quadrat perfecte, d\'una xifra, més gran que 50 i amb les dues xifres iguals. Els alumnes en poden trobar d\'altres.',
+  enganxa:'En moure la plantilla una casella, canvien dos nombres i se\'n queden dos, i per això sempre hi ha una pregunta nova. I «aquest no hi encaixa perquè…» és una frase que tothom s\'atreveix a dir.',
+  mates:'Divisibilitat, nombres primers i quadrats, i sobretot argumentació: no n\'hi ha prou amb dir quin és l\'intrús, cal justificar-ho.',
+  nou:'L\'activitat WODB la van popularitzar Christopher Danielson (amb el seu llibre) i Mary Bourassa (amb el web wodb.ca). La novetat és el full: totes les posicions de la plantilla són un WODB vàlid, i un sol full en conté 36, encadenats.',
+  chk:'He fet buscar el full a l\'ordinador: les 36 posicions són vàlides. De mitjana, cada nombre té 1,53 motius dins de la llista de propietats. He limitat els nombres d\'una xifra a 6 i els de dues xifres iguals a 5, perquè el full no quedi descompensat.',
+  pregunta:'Aquestes vuit propietats van bé per als teus cursos? Vols que n\'hi afegeixi o en tregui alguna (per exemple, «múltiple de 4» o «nombre triangular»)?',
+  demo:'exp',dom:'num'},
+ {id:'F2',cat:'F',star:true,title:'Figures geomètriques',tags:['Polígons','Angles','Simetria'],lvl:'1r ESO → 4t ESO',
+  frase:'Quatre figures, quatre motius: qualsevol pot ser la que no hi encaixa.',
+  joc:'El full 1 té 50 figures dibuixades: triangles, quadrilàters, pentàgons, hexàgons, figures còncaves… A cada posició, cada figura té almenys un motiu per ser diferent de les altres tres, amb aquestes propietats: triangle, quadrilàter, més de 4 costats, angle recte, tots els costats iguals, còncava, eix de simetria i costats paral·lels. Algunes figures apareixen girades, perquè es vegi que girar no canvia les propietats.',
+  enganxa:'Les figures entren pels ulls, i les discussions surten soles: «aquesta té un angle recte», «no, el que passa és que és còncava»…',
+  mates:'Classificar polígons per les seves propietats, no pel nom: angles, costats, paral·lelisme, simetria i concavitat. Discutir si un rombe és «un quadrat aixafat» és geometria de debò.',
+  nou:'Les propietats de cada figura les ha calculat l\'ordinador a partir de les coordenades (angles, simetries, paral·lelisme), i el full està fet perquè les 36 posicions funcionin.',
+  chk:'Les 36 posicions són vàlides. Al full hi surten 20 figures diferents (30 si comptem les girades), i cada figura té de mitjana 1,67 motius dins de la llista.',
+  pregunta:'Ho vols només amb propietats geomètriques, o hi afegim el color o la mida (més fàcil, per a 1r)?',
+  demo:'exp',dom:'fig'},
+ {id:'F3',cat:'F',title:'Fraccions i decimals',tags:['Fraccions','Decimals','Equivalència'],lvl:'1r ESO → 3r ESO',
+  frase:'Fraccions i decimals barrejats: quin no hi encaixa, i per què?',
+  joc:'El full 1 barreja fraccions (com 9/12 o 14/8) i decimals (com 0,375 o 0,666…). Les propietats que garanteixen un motiu per a cada element són: més gran que 1, més petit que 1/2, escrit amb decimals, amb infinits decimals, fracció que es pot simplificar, nombre enter i fracció amb numerador 1. Hi apareixen valors iguals escrits de maneres diferents (1/2 i 0,5), i això dona molt de joc: «però si són el mateix nombre!».',
+  enganxa:'Barrejar maneres d\'escriure obliga a comparar de debò, i quan apareixen dues formes del mateix nombre surten discussions molt bones.',
+  mates:'Equivalència de fraccions, pas de fracció a decimal, decimals finits i periòdics, simplificació i comparació amb 1 i amb 1/2.',
+  nou:'Una mateixa propietat (per exemple, «més petit que 1/2») es pot complir en forma de fracció o de decimal, i això obliga a mirar el valor i no només l\'aspecte.',
+  chk:'Les 36 posicions són vàlides. Els 50 elements són diferents: 16 són decimals (3 d\'ells, periòdics), només 4 són enters i cap valor no hi surt més de dues vegades. Cada element té de mitjana 1,43 motius dins de la llista.',
+  pregunta:'Hi afegim percentatges (25%, 50%…) o ho deixem en fraccions i decimals?',
+  demo:'exp',dom:'fra'},
+ {id:'F4',cat:'F',title:'Blocs lògics',tags:['Lògica','Classificació','Atributs'],lvl:'1r ESO (i Primària)',
+  frase:'Forma, color, mida, ple o buit: el WODB més lògic.',
+  joc:'Com els blocs lògics de Dienes: cada element té una forma (cercle, quadrat, triangle o rectangle), un color (vermell, blau o groc), una mida (gran o petit) i pot ser ple o buit. A cada posició, cada bloc és l\'únic en alguna cosa: l\'únic blau, l\'únic petit, l\'únic buit… És la versió sense llenguatge matemàtic: només cal observar i comparar.',
+  enganxa:'Tothom hi pot participar des del primer minut. És ideal per començar el curs o per presentar la rutina WODB abans de passar als nombres.',
+  mates:'Lògica i classificació per atributs, negacions («l\'únic que no és vermell») i la idea que un element pot ser diferent per motius diferents.',
+  nou:'Els blocs lògics són un material clàssic; aquí es converteixen en un full en què qualsevol posició de la plantilla és un repte.',
+  chk:'Les 36 posicions són vàlides, i és el full més ric: cada bloc té de mitjana 1,88 motius, i en 21 de les 36 posicions tots quatre en tenen almenys dos.',
+  pregunta:'T\'agrada «ple o buit» en lloc del clàssic «gruixut o prim», que en paper no es veu?',
+  demo:'exp',dom:'blo'},
+ {id:'F5',cat:'F',title:'Lletres',tags:['Lògica','Simetria','Forats'],lvl:'1r ESO → 4t ESO',
+  frase:'Quina lletra no hi encaixa? Vocals, simetries, forats…',
+  joc:'El full 1 té lletres majúscules. Les propietats que garanteixen un motiu per a cada lletra són: vocal, eix de simetria vertical, eix horitzontal, forats (com la A o la B), només línies rectes, que queda igual després de mitja volta (com la N o la S) i de la primera meitat de l\'abecedari. Barreja llenguatge, lògica i geometria.',
+  enganxa:'Les lletres són familiars i sorprenents alhora: poca gent s\'ha fixat que la N queda igual cap per avall o que la K té un eix horitzontal.',
+  mates:'Simetries (d\'eix i de mitja volta) i una mica de topologia (els forats). La propietat «primera meitat de l\'abecedari» no és geomètrica, i això fa veure que el criteri el tria qui argumenta.',
+  nou:'Les simetries depenen del tipus de lletra, i la discussió sobre si la C és simètrica «de debò» també forma part del joc.',
+  chk:'Les 36 posicions són vàlides. Com que només hi ha 26 lletres, algunes es repeteixen al full, però mai dins d\'una mateixa posició. Cada lletra té de mitjana 1,44 motius dins de la llista.',
+  pregunta:'La propietat «primera meitat de l\'abecedari» et sembla bé, o prefereixes que totes siguin geomètriques?',
+  demo:'exp',dom:'let'},
+ {id:'J1',cat:'J',star:true,title:'Tots quatre!',tags:['Equips','Argumentació'],lvl:'1r ESO → Batx.',
+  frase:'Teniu 90 segons: trobeu un motiu per a cadascun dels quatre.',
+  joc:'La plantilla es posa en una posició (la tria el professor, un dau o l\'equip que ha guanyat la ronda anterior). Cada equip té 90 segons per escriure un motiu per a cada element. Puntuació: 1 punt per motiu vàlid i 1 punt extra si cap altre equip no l\'ha trobat. Si un equip troba motius per als quatre, crida «Tots quatre!» i guanya 2 punts més.',
+  enganxa:'El punt extra per l\'originalitat fa que els equips busquin motius sorprenents en lloc dels obvis, que és exactament el que es vol.',
+  mates:'Argumentació i vocabulari precís: un motiu només és vàlid si és cert i distingeix aquell element dels altres tres.',
+  nou:'Amb el full de 36 posicions, cada ronda és nova sense haver de preparar res.',
+  chk:'Totes les posicions tenen motius garantits per als quatre elements, de manera que «Tots quatre!» sempre és possible.',
+  pregunta:'T\'agrada aquest sistema de punts, o prefereixes una discussió oberta, sense punts?',
+  demo:'tots4'},
+ {id:'J2',cat:'J',title:'Defensa\'l!',tags:['Duel','Argumentació'],lvl:'1r ESO → Batx.',
+  frase:'Jo t\'assenyalo l\'intrús, i tu has de defensar per què ho és.',
+  joc:'Per parelles o per equips. Un jugador posa la plantilla on vol i assenyala un dels quatre elements. L\'altre té 30 segons per donar un motiu que el faci diferent dels altres tres. Si l\'encerta, el punt és per a ell; si no, per a qui l\'ha assenyalat. Després es canvien els papers.',
+  enganxa:'És un duel ràpid amb una estratègia clara: assenyalar l\'element que té el motiu més amagat.',
+  mates:'Buscar la propietat que distingeix un element obliga a repassar mentalment totes les propietats que es coneixen.',
+  nou:'Com que totes les posicions del full són vàlides, qualsevol element que s\'assenyali té almenys un motiu, i el duel sempre és just.',
+  chk:'A la demo, l\'ordinador tria una posició i un element a l\'atzar i ensenya els motius garantits quan es demana.',
+  pregunta:'El veus més per a parelles o per a equips?',
+  demo:'defensa'},
+ {id:'J3',cat:'J',star:true,title:'Sense repetir',tags:['Duel','Estratègia'],lvl:'1r ESO → Batx.',
+  frase:'A cada jugada, un motiu nou. Qui no en troba cap, perd.',
+  joc:'Per a dos jugadors o dos equips. A cada torn, el jugador mou la plantilla una casella i dona un motiu per a un dels quatre elements, però aquest motiu no s\'ha d\'haver dit abans en tota la partida. Per exemple, si algú ja ha dit «és l\'únic parell», ja no es pot repetir, però «és l\'únic senar» sí. Perd qui no troba cap motiu nou.',
+  enganxa:'Al principi és fàcil, però cada motiu que es diu tanca una porta, i cal guardar els motius difícils per al final. Té estratègia de debò.',
+  mates:'Obliga a fer servir tot el ventall de propietats, també les menys habituals, i a pensar en les negacions («l\'únic que no és múltiple de 3»).',
+  nou:'Les posicions encadenades del full (en moure la plantilla, dos elements es queden) i la regla de no repetir motius el converteixen en un joc d\'estratègia.',
+  chk:'A la demo es juga contra l\'ordinador, que comprova que cada motiu sigui cert i nou.',
+  pregunta:'T\'agrada com a joc per a dos? Hi afegim que valguin els motius inventats (fora de la llista) si l\'altre jugador els accepta?',
+  demo:'repetir'},
+ {id:'J4',cat:'J',title:'Bingo de propietats',tags:['Tota la classe','Reconeixement ràpid'],lvl:'1r ESO → 4t ESO',
+  frase:'Marca els motius del cartó quan els puguis fer servir.',
+  joc:'Cada alumne o equip té un cartó amb 9 motius (per exemple, «l\'únic primer», «l\'únic de dues xifres» o «l\'únic que no és múltiple de 3»). El professor posa la plantilla en una posició, i qui pot justificar un dels quatre elements amb un motiu del cartó, el marca (només una casella per posició). Es van canviant les posicions, i guanya el primer que fa línia.',
+  enganxa:'El bingo agrada a tothom, i aquí cada casella del cartó s\'ha de guanyar argumentant.',
+  mates:'Reconèixer ràpidament les propietats de cada element, negacions incloses.',
+  nou:'Al cartó no hi ha nombres, sinó propietats, i el que surt de la «bossa» és una posició de la plantilla.',
+  chk:'La demo fa cartons amb motius que surten de debò en alguna posició del full i comprova cada marca.',
+  pregunta:'Ho faries amb cartons diferents per a cada equip o amb un sol cartó per a tota la classe?',
+  demo:'bingo'},
+ {id:'J5',cat:'J',star:true,title:'Completa\'l',tags:['Lògica','WODB al revés'],lvl:'1r ESO → Batx.',
+  frase:'Falta un dels quatre. Quin hi has de posar perquè tots tinguin un motiu?',
+  joc:'La plantilla mostra tres elements, i el quart forat està tapat. Hi ha quatre candidats, però només un fa que el WODB sigui vàlid, és a dir, que tots quatre tinguin un motiu per ser l\'intrús. Cal trobar-lo i explicar per què els altres tres no serveixen.',
+  enganxa:'És un WODB al revés: en lloc de buscar motius, cal construir-los. I quan un candidat falla, cal descobrir quin element s\'ha quedat sense motiu.',
+  mates:'Raonament lògic amb propietats: un candidat falla quan algun element deixa de ser l\'únic en alguna cosa.',
+  nou:'Converteix la rutina WODB en un trencaclosques amb una sola resposta correcta, que es pot comprovar.',
+  chk:'La demo tria una posició del full, n\'amaga un element i busca tres candidats que fallen i un que funciona.',
+  pregunta:'T\'agrada com a trencaclosques individual o com a repte per a tota la classe?',
+  demo:'completa'},
+ {id:'J6',cat:'J',title:'Fes el teu WODB',tags:['Creativitat','Lògica'],lvl:'1r ESO → Batx.',
+  frase:'Tria quatre elements i aconsegueix que tots quatre tinguin un motiu.',
+  joc:'Cada alumne crea el seu propi WODB triant quatre elements, i l\'objectiu és que tots quatre siguin «intrusos» per algun motiu. Després, els companys l\'han de resoldre. Repte difícil: que tots quatre en tinguin almenys dos.',
+  enganxa:'Crear és més difícil que resoldre, i fer un WODB vàlid dona la satisfacció de l\'inventor. Els millors es poden col·leccionar en un mural de classe.',
+  mates:'Pensar al revés: triar elements per les seves propietats i planificar quina propietat separarà cada element. Hi ha una descoberta amagada: una mateixa propietat mai no pot servir per a dos elements alhora (si un és l\'únic parell, els altres tres són senars, i cap d\'ells pot ser «l\'únic senar»).',
+  nou:'La demo fa de corrector instantani: diu quins elements tenen motiu i quins no.',
+  chk:'He comprovat per ordinador totes les combinacions possibles de quatre elements. Formen un WODB vàlid 1 de cada 4 amb els blocs lògics, 1 de cada 10 amb les figures, 1 de cada 11 amb els nombres, 1 de cada 16 amb les lletres i 1 de cada 21 amb les fraccions: triar a l\'atzar gairebé mai funciona, cal pensar. El repte difícil només és possible amb els nombres (per exemple, 1, 10, 11 i 51) i amb els blocs lògics.',
+  pregunta:'T\'agradaria que aquesta eina es pogués projectar perquè la classe fes WODB col·lectius?',
+  demo:'crea'},
+ {id:'S1',cat:'S',title:'Fulls per imprimir',tags:['PDF','A4 / A5'],lvl:'Material d\'aula',
+  frase:'Els cinc fulls i la plantilla, a punt per imprimir.',
+  joc:'Et prepararia un PDF amb els fulls que triïs (10×5 caselles), la plantilla de 4 forats a la mida exacta de les caselles i un solucionari: per a cadascuna de les 36 posicions, els motius garantits de cada element. Les caselles es poden numerar a la vora (files A-E, columnes 1-10) perquè sigui fàcil dir «poseu la plantilla a C4».',
+  pregunta:'Te\'ls preparo en PDF? En A4 o en A5, i amb el solucionari a part o al darrere?'},
+ {id:'S2',cat:'S',title:'Més fulls',tags:['Continguts'],lvl:'ESO i Batxillerat',
+  frase:'El mateix motor serveix per a qualsevol contingut que es pugui classificar.',
+  joc:'Per fer un full nou només cal una llista d\'elements i unes quantes propietats de sí o no. L\'ordinador busca la disposició que fa que les 36 posicions siguin vàlides. Alguns candidats: potències i arrels, nombres enters (amb negatius), angles, expressions algebraiques, gràfiques de funcions (per a Batxillerat), poliedres o dibuixos de la vida quotidiana.',
+  pregunta:'Quins continguts t\'agradaria per als fulls següents?'}
+];
+
+/* ============ motor WODB ============ */
+const COLS=10,ROWS=5;
+const esc=s=>String(s).replace(/[&<>"]/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+const rnd=n=>Math.floor(Math.random()*n);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]];}return a;};
+const winIds=(d,r,c)=>{const B=DD[d].board;return [B[r*COLS+c],B[r*COLS+c+1],B[(r+1)*COLS+c],B[(r+1)*COLS+c+1]];};
+const bit=(d,id,j)=>(DD[d].items[id].p>>j)&1;
+function reasons(d,ids,k){const out=[];DD[d].props.forEach((p,j)=>{const m=bit(d,ids[k],j);for(let i=0;i<4;i++)if(i!==k&&bit(d,ids[i],j)===m)return;out.push({j,dir:m,key:j+':'+m,text:m?p.yes:p.no});});return out;}
+const reasonText=(d,key)=>{const [j,m]=key.split(':').map(Number);return m?DD[d].props[j].yes:DD[d].props[j].no;};
+const allKeys=d=>{const s=[];DD[d].props.forEach((p,j)=>{s.push(j+':1');s.push(j+':0');});return s;};
+const boardKeys=d=>{const S=new Set();for(let r=0;r<ROWS-1;r++)for(let c=0;c<COLS-1;c++){const ids=winIds(d,r,c);for(let k=0;k<4;k++)reasons(d,ids,k).forEach(x=>S.add(x.key));}return [...S];};
+const BCOL={vermell:'#e11d48',blau:'#2563eb',groc:'#eab308'};
+function itemHTML(d,id,px){const it=DD[d].items[id];
+  if(it.t==='txt'){const L=String(it.v).length;return `<span class="it-t" style="font-size:${Math.round(px*Math.min(.42,1.55/L))}px">${esc(it.v)}</span>`;}
+  if(it.t==='let')return `<span class="it-l" style="font-size:${Math.round(px*.6)}px">${esc(it.v)}</span>`;
+  if(it.t==='frac')return `<span class="fr" style="font-size:${Math.round(px*.3)}px"><span>${it.v[0]}</span><span>${it.v[1]}</span></span>`;
+  if(it.t==='poly')return `<svg viewBox="0 0 1 1" width="${Math.round(px*.9)}" height="${Math.round(px*.9)}"><polygon points="${it.v.map(p=>p.join(',')).join(' ')}" fill="#99d5cc" stroke="#0f766e" stroke-width="${Math.max(.025,1.5/px).toFixed(3)}" stroke-linejoin="round"/></svg>`;
+  if(it.t==='blo'){const [s,col,g,f]=it.v,c=BCOL[col],k=g?.84:.5,sw=Math.max(.05,2.2/px).toFixed(3),fill=f?c:'#fff';let sh;
+    if(s==='cercle')sh=`<circle cx=".5" cy=".5" r="${k/2}"/>`;else if(s==='quadrat')sh=`<rect x="${.5-k/2}" y="${.5-k/2}" width="${k}" height="${k}"/>`;
+    else if(s==='triangle')sh=`<polygon points=".5,${.5-k/2} ${.5+k/2},${.5+k*.4} ${.5-k/2},${.5+k*.4}"/>`;else sh=`<rect x="${.5-k/2}" y="${.5-k*.28}" width="${k}" height="${(k*.56).toFixed(3)}"/>`;
+    return `<svg viewBox="0 0 1 1" width="${Math.round(px*.9)}" height="${Math.round(px*.9)}"><g fill="${fill}" stroke="${c}" stroke-width="${sw}">${sh}</g></svg>`;}
+  return '';}
+function boardHTML(d,r0,c0,root){const w=(root.clientWidth||320)-24,sz=Math.max(22,Math.min(42,Math.floor((w-2*9-4)/10)));const B=DD[d].board;
+  let h=`<div class="board" style="grid-template-columns:repeat(${COLS},${sz}px);grid-auto-rows:${sz}px">`;
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){const inw=r>=r0&&r<=r0+1&&c>=c0&&c<=c0+1;h+=`<div class="bc ${inw?'in':'dim'}" data-r="${r}" data-c="${c}">${itemHTML(d,B[r*COLS+c],sz)}</div>`;}
+  return h+'</div>';}
+const tilePx=root=>Math.max(90,Math.min(170,Math.floor(((root.clientWidth||320)-60)/2)));
+function domSelect(cur){return `<div class="row2">${KEYS.map(k=>`<button class="btn${k===cur?' on':''}" data-dom="${k}">${DD[k].name}</button>`).join('')}</div>`;}
+function bindDom(root,fn){root.querySelectorAll('[data-dom]').forEach(b=>b.onclick=()=>{root.querySelectorAll('[data-dom]').forEach(x=>x.classList.toggle('on',x===b));fn(b.dataset.dom);});}
+function msgr(root){const el=root.querySelector('.msg');return (t,k)=>{el.innerHTML=t;el.className='msg '+(k||'');};}
+function timer(el,secs,onEnd){let t=secs,iv=null;const show=()=>{el.textContent=Math.floor(t/60)+':'+String(t%60).padStart(2,'0');};show();
+  return {start(){clearInterval(iv);t=secs;show();iv=setInterval(()=>{t--;show();if(t<=0){clearInterval(iv);onEnd&&onEnd();}},1000);},stop(){clearInterval(iv);},reset(){clearInterval(iv);t=secs;show();}};}
+const RENDERERS=[];window.addEventListener('resize',()=>RENDERERS.forEach(f=>f()));
+const ARROWS=`<button class="btn" data-mv="l">←</button><button class="btn" data-mv="u">↑</button><button class="btn" data-mv="d">↓</button><button class="btn" data-mv="r">→</button>`;
+const step=(r,c,m)=>{if(m==='l')c--;else if(m==='r')c++;else if(m==='u')r--;else if(m==='d')r++;return (r<0||r>ROWS-2||c<0||c>COLS-2)?null:[r,c];};
+
+/* ---- F: explorador d'un full ---- */
+function demoExp(root,d){let r=rnd(4),c=rnd(9),show=false,showP=false,say;
+  root.innerHTML=`<h4>Demo · mou la plantilla pel full</h4><div class="bigw"></div><div class="msg"></div>
+   <div class="row2">${ARROWS}<button class="btn" data-a="rand">A l'atzar</button></div>
+   <div class="row2"><button class="btn" data-a="show">Mostra els motius</button><button class="btn" data-a="props">Propietats del full</button></div>
+   <div class="plist"></div><div class="small" style="margin-top:6px">El full sencer (toca una casella per portar-hi la plantilla):</div><div class="bw"></div>`;
+  say=msgr(root);
+  root.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{const s=step(r,c,b.dataset.mv);if(!s){say('La plantilla sortiria del full.','bad');return;}[r,c]=s;say('');draw();});
+  root.querySelector('[data-a="rand"]').onclick=()=>{r=rnd(4);c=rnd(9);say('');draw();};
+  root.querySelector('[data-a="show"]').onclick=e=>{show=!show;e.target.classList.toggle('on',show);draw();};
+  root.querySelector('[data-a="props"]').onclick=e=>{showP=!showP;e.target.classList.toggle('on',showP);draw();};
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,k)=>{const rs=reasons(d,ids,k);return `<div class="tile">${itemHTML(d,id,px)}${show?`<div class="rs">${rs.map(x=>esc(x.text)).join('<br>')}</div>`:''}</div>`;}).join('')}</div>`;
+    root.querySelector('.plist').innerHTML=showP?`<ul class="props">${DD[d].props.map(p=>`<li>${esc(p.yes)} / ${esc(p.no.replace(/^És /,''))}</li>`).join('')}</ul>`:'';
+    root.querySelector('.bw').innerHTML=boardHTML(d,r,c,root);
+    root.querySelectorAll('.bw .bc').forEach(el=>el.onclick=()=>{r=Math.min(ROWS-2,+el.dataset.r);c=Math.min(COLS-2,+el.dataset.c);say('');draw();});
+    if(!root.querySelector('.msg').textContent)say(`Posició ${r*(COLS-1)+c+1} de 36. Quin no hi encaixa? Busca un motiu per a cadascun.`);}
+  RENDERERS.push(draw);draw();}
+
+/* ---- J1: Tots quatre! ---- */
+function demoTots4(root){let d='num',r,c,ticks,show,say,T;
+  function next(){r=rnd(4);c=rnd(9);ticks=[0,0,0,0];show=false;T&&T.reset();say('Engega el rellotge i busqueu un motiu per a cada element. Toqueu un element quan en tingueu el motiu.');draw();}
+  root.innerHTML=`<h4>Demo · 90 segons per trobar-los tots</h4>${domSelect(d)}
+   <div class="row2"><span class="timer">1:30</span><button class="btn" data-a="go">▶ Engega</button><button class="btn" data-a="show">Mostra els motius</button><button class="btn" data-a="next">Posició nova</button></div>
+   <div class="bigw"></div><div class="msg"></div>`;
+  say=msgr(root);T=timer(root.querySelector('.timer'),90,()=>say('S\'ha acabat el temps! Motius trobats: '+ticks.reduce((a,b)=>a+b,0)+' de 4.','bad'));
+  bindDom(root,k=>{d=k;next();});
+  root.querySelector('[data-a="go"]').onclick=()=>T.start();
+  root.querySelector('[data-a="next"]').onclick=next;
+  root.querySelector('[data-a="show"]').onclick=e=>{show=!show;draw();};
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,k)=>`<div class="tile ${ticks[k]?'ok':''}" data-k="${k}">${ticks[k]?'<span class="tick">✅</span>':''}${itemHTML(d,id,px)}${show?`<div class="rs">${reasons(d,ids,k).map(x=>esc(x.text)).join('<br>')}</div>`:''}</div>`).join('')}</div>`;
+    root.querySelectorAll('.tile').forEach(el=>el.onclick=()=>{const k=+el.dataset.k;ticks[k]=1-ticks[k];
+      if(ticks.every(x=>x)){T.stop();say('Tots quatre! +2 punts de bonificació.','good');}else say('Motius trobats: '+ticks.reduce((a,b)=>a+b,0)+' de 4.');draw();});}
+  RENDERERS.push(draw);next();}
+
+/* ---- J2: Defensa'l! ---- */
+function demoDefensa(root){let d='num',r,c,k,show,sc=[0,0],say,T;
+  function next(go){r=rnd(4);c=rnd(9);k=rnd(4);show=false;T.reset();if(go)T.start();say(go?'Per què l\'element marcat en vermell no hi encaixa? Teniu 30 segons.':'Per què l\'element marcat en vermell no hi encaixa? Engega el rellotge: teniu 30 segons.');draw();}
+  root.innerHTML=`<h4>Demo · defensa l'assenyalat</h4>${domSelect(d)}
+   <div class="row2"><span class="timer">0:30</span><button class="btn" data-a="go">▶ Engega</button><button class="btn" data-a="next">Repte nou</button><button class="btn" data-a="show">Mostra els motius</button></div>
+   <div class="bigw"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="a">+1 Equip A</button><button class="btn" data-a="b">+1 Equip B</button><span class="small sc"></span></div>`;
+  say=msgr(root);T=timer(root.querySelector('.timer'),30,()=>say('Temps! Si no heu trobat cap motiu, el punt és per a qui l\'ha assenyalat.','bad'));
+  bindDom(root,kk=>{d=kk;next(false);});
+  root.querySelector('[data-a="go"]').onclick=()=>T.start();
+  root.querySelector('[data-a="next"]').onclick=()=>next(true);
+  root.querySelector('[data-a="show"]').onclick=()=>{show=true;T.stop();draw();};
+  root.querySelector('[data-a="a"]').onclick=()=>{sc[0]++;draw();};root.querySelector('[data-a="b"]').onclick=()=>{sc[1]++;draw();};
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,i)=>`<div class="tile ${i===k?'pick':''}">${itemHTML(d,id,px)}${show&&i===k?`<div class="rs">${reasons(d,ids,i).map(x=>esc(x.text)).join('<br>')}</div>`:''}</div>`).join('')}</div>`;
+    root.querySelector('.sc').textContent=`Equip A: ${sc[0]} · Equip B: ${sc[1]}`;}
+  RENDERERS.push(draw);next(false);}
+
+/* ---- J3: Sense repetir ---- */
+function demoRepetir(root){let d='num',r,c,base,used,sel,moved,over,log,say,busy=false,gid=0;
+  const optionsFrom=(r0,c0)=>{const o=[];shuffle(['u','d','l','r']).forEach(m=>{const s=step(r0,c0,m);if(!s)return;const ids=winIds(d,s[0],s[1]);
+      for(let k=0;k<4;k++)reasons(d,ids,k).forEach(x=>{if(!used.has(x.key))o.push({s,k,x,ids});});});return o;};
+  function reset(){gid++;r=rnd(4);c=rnd(9);base=[r,c];used=new Set();sel=null;moved=false;over=false;busy=false;log=[];say('El teu torn: mou la plantilla una casella, toca un element i tria un motiu nou.');draw();}
+  root.innerHTML=`<h4>Demo · juga contra l'ordinador</h4>${domSelect(d)}
+   <div class="bigw"></div>
+   <div class="row2">${ARROWS}</div>
+   <div class="row2"><select class="rsel"></select><button class="btn" data-a="claim">Dic aquest motiu</button><button class="btn" data-a="give">No en trobo cap</button><button class="btn" data-a="new">Partida nova</button></div>
+   <div class="msg"></div><ol class="log"></ol><div class="bw"></div>`;
+  say=msgr(root);
+  bindDom(root,k=>{d=k;reset();});
+  root.querySelector('[data-a="new"]').onclick=reset;
+  root.querySelectorAll('[data-mv]').forEach(b=>b.onclick=()=>{if(over||busy)return;
+    const s=step(base[0],base[1],b.dataset.mv);if(!s){say('La plantilla sortiria del full.','bad');return;}[r,c]=s;moved=true;sel=null;say('Ara toca un element i tria un motiu. (Si vols, encara pots canviar el moviment.)');draw();});
+  root.querySelector('[data-a="give"]').onclick=()=>{if(over||busy)return;over=true;const o=optionsFrom(base[0],base[1]);
+    say(o.length?`Has abandonat: guanya l'ordinador. N'hi havia un: moure la plantilla i dir «${esc(o[0].x.text)}».`:'Has abandonat: guanya l\'ordinador.','bad');draw();};
+  root.querySelector('[data-a="claim"]').onclick=()=>{if(over||busy)return;if(!moved){say('Primer mou la plantilla una casella.','bad');return;}if(sel===null){say('Toca l\'element que vols defensar.','bad');return;}
+    const key=root.querySelector('.rsel').value,ids=winIds(d,r,c);
+    if(used.has(key)){say('Aquest motiu ja s\'ha dit abans.','bad');return;}
+    if(!reasons(d,ids,sel).some(x=>x.key===key)){say('Aquest motiu no és cert per a l\'element triat en aquesta posició.','bad');return;}
+    used.add(key);log.push({who:'Tu',txt:reasonText(d,key),item:ids[sel]});moved=false;sel=null;busy=true;say('Correcte! Torn de l\'ordinador…');draw();const g=gid;setTimeout(()=>{if(g===gid)cpu();},800);};
+  function cpu(){busy=false;if(over)return;const opts=optionsFrom(r,c);
+    if(!opts.length){over=true;say('L\'ordinador no troba cap motiu nou: has guanyat!','good');draw();return;}
+    const o=opts[rnd(opts.length)];[r,c]=o.s;base=[r,c];used.add(o.x.key);log.push({who:'Ordinador',txt:o.x.text,item:o.ids[o.k],cpu:1});
+    if(!optionsFrom(r,c).length){over=true;say('L\'ordinador ha dit un motiu, i a tu ja no te\'n queda cap de nou en cap moviment: guanya l\'ordinador.','bad');draw();return;}
+    say('L\'ordinador ha mogut la plantilla i ha dit un motiu. El teu torn: mou-la una casella.');draw();}
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,k)=>`<div class="tile ${sel===k?'sel':''}" data-k="${k}">${itemHTML(d,id,px)}</div>`).join('')}</div>`;
+    root.querySelectorAll('.tile').forEach(el=>el.onclick=()=>{if(over||busy)return;if(!moved){say('Primer mou la plantilla una casella.','bad');return;}sel=+el.dataset.k;draw();});
+    const S=root.querySelector('.rsel'),cur=S.value;S.innerHTML=allKeys(d).map(k=>`<option value="${k}" ${used.has(k)?'disabled':''}>${esc(reasonText(d,k))}${used.has(k)?' (ja dit)':''}</option>`).join('');if(cur&&!used.has(cur))S.value=cur;
+    root.querySelector('.log').innerHTML=log.map(l=>`<li class="${l.cpu?'cpu':''}">${l.who}: ${esc(l.txt)}</li>`).join('');
+    root.querySelector('.bw').innerHTML=boardHTML(d,r,c,root);}
+  RENDERERS.push(draw);reset();}
+
+/* ---- J4: Bingo ---- */
+function demoBingo(root){let d='num',card,marks,r,c,sel,npos,done,said,say;
+  function newCard(){card=shuffle(boardKeys(d)).slice(0,9);marks=Array(9).fill(0);npos=0;done=false;nextPos();}
+  function nextPos(){r=rnd(4);c=rnd(9);sel=null;said=false;npos++;say('Toca un element i després la casella del cartó que el justifica (només una per posició).');draw();}
+  const lines=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
+  root.innerHTML=`<h4>Demo · fes línia</h4>${domSelect(d)}<div class="bigw"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="pos">Posició nova</button><button class="btn" data-a="card">Cartó nou</button><span class="small np"></span></div><div class="bingo"></div>`;
+  say=msgr(root);
+  bindDom(root,k=>{d=k;newCard();});
+  root.querySelector('[data-a="pos"]').onclick=()=>{if(!done)nextPos();};root.querySelector('[data-a="card"]').onclick=newCard;
+  function draw(){const ids=winIds(d,r,c),px=Math.min(120,tilePx(root));
+    root.querySelector('.bigw').innerHTML=`<div class="big">${ids.map((id,k)=>`<div class="tile ${sel===k?'sel':''}" data-k="${k}" style="min-height:${px}px">${itemHTML(d,id,px)}</div>`).join('')}</div>`;
+    root.querySelectorAll('.tile').forEach(el=>el.onclick=()=>{sel=+el.dataset.k;draw();});
+    root.querySelector('.bingo').innerHTML=card.map((k,i)=>`<div class="${marks[i]?'on':''}" data-i="${i}">${esc(reasonText(d,k).replace(/^És l'únic(a)? /,'l\'únic$1 '))}</div>`).join('');
+    root.querySelectorAll('.bingo div').forEach(el=>el.onclick=()=>{if(done)return;const i=+el.dataset.i;if(marks[i])return;
+      if(said){say('Ja has marcat una casella en aquesta posició. Demana una posició nova.','bad');return;}
+      if(sel===null){say('Primer toca l\'element que vols fer servir.','bad');return;}
+      if(reasons(d,winIds(d,r,c),sel).some(x=>x.key===card[i])){marks[i]=1;said=true;if(lines.some(L=>L.every(j=>marks[j]))){done=true;say(`BINGO! Línia feta en ${npos} ${npos===1?'posició':'posicions'}.`,'good');}else say('Ben marcat! Ara demana una posició nova.','good');}
+      else say('Aquest motiu no serveix per a l\'element triat.','bad');draw();});
+    root.querySelector('.np').textContent=`Posicions: ${npos}`;}
+  RENDERERS.push(draw);newCard();}
+
+/* ---- J5: Completa'l ---- */
+function demoCompleta(root){let d='num',r,c,hid,cands,res,say;
+  const perfect=(ids)=>[0,1,2,3].every(k=>reasons(d,ids,k).length>0);
+  function next(){for(let tries=0;tries<50;tries++){r=rnd(4);c=rnd(9);hid=rnd(4);const ids=winIds(d,r,c),its=DD[d].items,keys=new Set(ids.filter((x,i)=>i!==hid).map(x=>its[x].k));
+      const V=[],I=[];its.forEach((it,x)=>{if(keys.has(it.k))return;const t=ids.slice();t[hid]=x;(perfect(t)?V:I).push(x);});
+      const seenK=new Set(),uniq=a=>a.filter(x=>{const k=its[x].k;if(seenK.has(k))return false;seenK.add(k);return true;});
+      const v=uniq(shuffle(V)).slice(0,1),iv=uniq(shuffle(I)).slice(0,3);if(v.length===1&&iv.length===3){cands=shuffle(v.concat(iv));res={};break;}}
+    say('Quin dels quatre candidats fa que tots quatre elements tinguin un motiu?');draw();}
+  root.innerHTML=`<h4>Demo · troba la peça que falta</h4>${domSelect(d)}<div class="bigw"></div><div class="small">Candidats:</div><div class="cands"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="next">Repte nou</button></div>`;
+  say=msgr(root);
+  bindDom(root,k=>{d=k;next();});root.querySelector('[data-a="next"]').onclick=next;
+  function draw(){const ids=winIds(d,r,c),px=tilePx(root);const shown=res.ok!==undefined?ids.map((x,i)=>i===hid?res.ok:x):ids;
+    root.querySelector('.bigw').innerHTML=`<div class="big">${shown.map((id,k)=>`<div class="tile ${k===hid&&res.ok!==undefined?'ok':''}">${k===hid&&res.ok===undefined?`<span style="font-size:${Math.round(px*.4)}px;font-weight:800;color:#9ca3af">?</span>`:itemHTML(d,id,px)}${res.ok!==undefined?`<div class="rs">${reasons(d,shown,k).map(x=>esc(x.text)).join('<br>')}</div>`:''}</div>`).join('')}</div>`;
+    const cp=Math.min(70,Math.floor(((root.clientWidth||320)-60)/4));
+    root.querySelector('.cands').innerHTML=cands.map(x=>`<button data-x="${x}" class="${res[x]===true?'ok':res[x]===false?'ko':''}">${itemHTML(d,x,cp)}</button>`).join('');
+    root.querySelectorAll('.cands button').forEach(b=>b.onclick=()=>{if(res.ok!==undefined)return;const x=+b.dataset.x,t=ids.slice();t[hid]=x;
+      if(perfect(t)){res[x]=true;res.ok=x;say('Exacte! Amb aquest, tots quatre tenen un motiu per ser l\'intrús.','good');}
+      else{res[x]=false;const lost=[0,1,2,3].filter(k=>!reasons(d,t,k).length).map(k=>k===hid?'el candidat mateix':'l\'element '+['de dalt a l\'esquerra','de dalt a la dreta','de baix a l\'esquerra','de baix a la dreta'][k]);
+        say('No: amb aquest, '+lost.join(' i ')+' es queda'+(lost.length>1?'n':'')+' sense cap motiu.','bad');}draw();});}
+  RENDERERS.push(draw);next();}
+
+/* ---- J6: Fes el teu WODB ---- */
+function demoCrea(root){let d='num',chosen=[],say;
+  function pal(){const its=DD[d].items,seen=new Set(),out=[];its.forEach((it,x)=>{if(seen.has(it.k))return;seen.add(it.k);out.push(x);});return out;}
+  root.innerHTML=`<h4>Demo · el corrector de WODB</h4>${domSelect(d)}<div class="bigw"></div><div class="msg"></div>
+   <div class="row2"><button class="btn" data-a="clr">Esborra</button><span class="small">Toca quatre elements de la paleta:</span></div><div class="palw"></div>`;
+  say=msgr(root);
+  bindDom(root,k=>{d=k;chosen=[];draw();});root.querySelector('[data-a="clr"]').onclick=()=>{chosen=[];draw();};
+  function draw(){const px=tilePx(root);
+    if(chosen.length===4){const rs=[0,1,2,3].map(k=>reasons(d,chosen,k));const ok=rs.every(x=>x.length),two=rs.every(x=>x.length>=2);
+      root.querySelector('.bigw').innerHTML=`<div class="big">${chosen.map((id,k)=>`<div class="tile ${rs[k].length?'ok':''}">${itemHTML(d,id,px)}<div class="rs ${rs[k].length?'':'none'}">${rs[k].length?rs[k].map(x=>esc(x.text)).join('<br>'):'Sense cap motiu'}</div></div>`).join('')}</div>`;
+      say(two?'Repte difícil superat: tots quatre tenen almenys dos motius!':ok?'És un WODB vàlid: tots quatre poden ser l\'intrús!':'Encara no: hi ha elements sense cap motiu. Canvia\'n algun.',ok?'good':'bad');}
+    else{root.querySelector('.bigw').innerHTML=`<div class="big">${[0,1,2,3].map(k=>`<div class="tile">${chosen[k]!==undefined?itemHTML(d,chosen[k],px):'<span class="small">tria</span>'}</div>`).join('')}</div>`;say(`Has triat ${chosen.length} de 4.`);}
+    const P=pal(),cell=Math.max(30,Math.min(48,Math.floor(((root.clientWidth||320)-40)/8)));
+    root.querySelector('.palw').innerHTML=`<div class="palette" style="grid-template-columns:repeat(auto-fill,${cell}px);grid-auto-rows:${cell}px">${P.map(x=>`<button data-x="${x}" class="${chosen.includes(x)?'on':''}">${itemHTML(d,x,cell)}</button>`).join('')}</div>`;
+    root.querySelectorAll('.palette button').forEach(b=>b.onclick=()=>{const x=+b.dataset.x;const i=chosen.indexOf(x);if(i>=0)chosen.splice(i,1);else if(chosen.length<4)chosen.push(x);else{say('Ja en tens quatre: treu-ne un primer.','bad');return;}draw();});}
+  RENDERERS.push(draw);draw();}
+
+const DEMOS={exp:demoExp,tots4:demoTots4,defensa:demoDefensa,repetir:demoRepetir,bingo:demoBingo,completa:demoCompleta,crea:demoCrea};
+
+/* ============ revisió ============ */
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const state={answers:{},replies:{},filter:'all'};let db=null;const queues={},timers={};
+function cardHTML(it){
+  let s=`<div class="head"><span class="id">${it.id}</span><span class="title">${esc(it.title)}</span>${it.star?'<span class="star">⭐ provar primer</span>':''}</div>`;
+  s+=`<div class="tags">${it.tags.map(t=>`<span class="tag">${esc(t)}</span>`).join('')}<span class="tag lvl">${esc(it.lvl)}</span></div>`;
+  s+=`<div class="frase">${esc(it.frase)}</div>`;
+  s+=`<div class="sec"><b>${it.cat==='F'?'Com és el full':it.cat==='J'?'Com es juga':'Què faria'}</b><p>${esc(it.joc)}</p></div>`;
+  if(it.demo)s+=`<div class="demo" data-demo="${it.demo}" data-dom="${it.dom||''}"></div>`;
+  if(it.enganxa)s+=`<div class="sec"><b>Per què enganxa</b><p>${esc(it.enganxa)}</p></div>`;
+  if(it.mates)s+=`<div class="sec"><b>Matemàtiques</b><p>${esc(it.mates)}</p></div>`;
+  if(it.nou)s+=`<div class="box nou"><b>Què té de nou</b>${esc(it.nou)}</div>`;
+  if(it.chk)s+=`<div class="box chk"><b>Què he comprovat</b>${esc(it.chk)}</div>`;
+  s+=`<div class="q"><b>Pregunta per a tu</b>${esc(it.pregunta)}</div>`;
+  s+=`<div class="dec">${DECS.map(([v,l])=>`<button class="dbtn" data-v="${v}">${l}</button>`).join('')}</div>`;
+  s+=`<textarea placeholder="Comentari (opcional)…" aria-label="Comentari per a ${it.id}"></textarea><div class="st"></div>`;
+  s+=`<div class="reply"><b>Resposta de Claude</b><span class="rt"></span></div>`;
+  return s;}
+function build(){const list=document.getElementById('list');
+  CATS.forEach(c=>{const sec=document.createElement('section');sec.dataset.cat=c.id;
+    sec.innerHTML=`<h2 class="catt">${esc(c.name)}</h2><p class="catdesc">${esc(c.desc)}</p>`;
+    ITEMS.filter(i=>i.cat===c.id).forEach(it=>{const card=document.createElement('article');card.className='card';card.id='item-'+it.id;card.innerHTML=cardHTML(it);
+      card.querySelectorAll('.dbtn').forEach(b=>b.onclick=()=>{const cur=(state.answers[it.id]||{}).decision||'';save(it.id,{decision:cur===b.dataset.v?'':b.dataset.v});});
+      const ta=card.querySelector('textarea');
+      ta.oninput=()=>{clearTimeout(timers[it.id]);setSt(it.id,'Escrivint…');timers[it.id]=setTimeout(()=>commitComment(it.id,ta.value),1200);};
+      ta.onblur=()=>{clearTimeout(timers[it.id]);commitComment(it.id,ta.value);};
+      sec.appendChild(card);});
+    list.appendChild(sec);});
+  document.querySelectorAll('.fbtn').forEach(b=>b.onclick=()=>{state.filter=b.dataset.f;document.querySelectorAll('.fbtn').forEach(x=>x.classList.toggle('on',x===b));applyFilter();});
+  document.querySelectorAll('.demo').forEach(el=>{try{const f=DEMOS[el.dataset.demo];if(el.dataset.dom)f(el,el.dataset.dom);else f(el);}catch(e){el.innerHTML='<span class="small">No s\'ha pogut carregar la demo.</span>';console.error(e);}});
+  ITEMS.forEach(it=>updateCard(it.id));updateCount();}
+function isAnswered(id){const a=state.answers[id];return !!(a&&(a.decision||(a.comment&&a.comment.trim())));}
+function commitComment(id,val){const cur=(state.answers[id]||{}).comment||'';if(val===cur){setSt(id,isAnswered(id)?'Desat ✓':'');return;}save(id,{comment:val});}
+function setSt(id,t){const c=document.getElementById('item-'+id);if(c)c.querySelector('.st').textContent=t;}
+function updateCard(id){const c=document.getElementById('item-'+id);if(!c)return;const a=state.answers[id]||{};
+  c.querySelectorAll('.dbtn').forEach(b=>b.classList.toggle('on',b.dataset.v===a.decision));
+  const ta=c.querySelector('textarea');if(document.activeElement!==ta&&ta.value!==(a.comment||''))ta.value=a.comment||'';
+  c.classList.toggle('answered',isAnswered(id));
+  const r=state.replies[id],rb=c.querySelector('.reply');if(r&&r.text){rb.style.display='block';rb.querySelector('.rt').textContent=r.text;}else rb.style.display='none';}
+function updateCount(){const n=ITEMS.filter(i=>isAnswered(i.id)).length;document.getElementById('count').textContent=`Contestats: ${n}/${ITEMS.length}`;document.getElementById('prog').style.width=(100*n/ITEMS.length)+'%';}
+function applyFilter(){ITEMS.forEach(it=>{const c=document.getElementById('item-'+it.id);let show=true;
+  if(state.filter==='pending')show=!isAnswered(it.id);if(state.filter==='star')show=!!it.star;c.classList.toggle('hide',!show);});
+  document.querySelectorAll('section[data-cat]').forEach(s=>s.classList.toggle('hide',!s.querySelector('.card:not(.hide)')));}
+function save(id,patch){const cur=Object.assign({},state.answers[id]||{},patch,{updatedAt:new Date().toISOString()});state.answers[id]=cur;updateCard(id);updateCount();
+  if(!db){setSt(id,'No es pot desar en aquesta vista');return;}setSt(id,'Desant…');
+  const body={decision:cur.decision||'',comment:cur.comment||'',updatedAt:cur.updatedAt};
+  queues[id]=(queues[id]||Promise.resolve()).then(()=>db.doc('answers/'+id).set(body)).then(()=>setSt(id,'Desat ✓')).catch(e=>setSt(id,'No s\'ha pogut desar'+(e&&e.code?' ('+e.code+')':'')));}
+function banner(t){const b=document.getElementById('banner');b.textContent=t;b.style.display=t?'block':'none';}
+build();applyFilter();
+(async()=>{
+  if(!window.claude||typeof window.claude.use!=='function'){banner('Aquesta vista no pot desar respostes. Obre l\'artifact a claude.ai.');return;}
+  try{db=await window.claude.use('db');}catch(e){db=null;}
+  if(!db){banner('No es poden desar respostes en aquesta vista (cal haver iniciat la sessió).');return;}
+  const t=setTimeout(()=>banner('Encara no s\'han pogut carregar les respostes desades. Torna-ho a provar d\'aquí a una estona.'),10000);
+  db.collection('answers').onSnapshot(snap=>{if(!snap.metadata.fromCache){clearTimeout(t);banner('');}
+    const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});
+    ITEMS.forEach(it=>{if(!(it.id in next)&&state.answers[it.id]&&queues[it.id])next[it.id]=state.answers[it.id];});
+    state.answers=next;ITEMS.forEach(it=>updateCard(it.id));updateCount();},e=>{clearTimeout(t);banner('No s\'han pogut carregar les respostes ('+(e&&e.code||'error')+').');});
+  db.collection('replies').onSnapshot(snap=>{const next={};snap.docs.forEach(d=>{next[d.id]=d.data();});state.replies=next;ITEMS.forEach(it=>updateCard(it.id));},()=>{});
+})();
+</script>
+</body>
+</html>
