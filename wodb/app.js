@@ -3,21 +3,22 @@
 'use strict';
 const W=window.WODB,BANCS=window.BANCS,ORDRE=window.BANCS_ORDRE;
 const $=s=>document.querySelector(s);
-const CEL=26,FORAT=23,MARGE=(CEL-FORAT)/2,ITEM=18,MARC=15;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
+const CEL=40,FORAT=36,MARGE=(CEL-FORAT)/2,ITEM=28,MARC=15;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
+const FIXOS=c=>Object.keys(BANCS[c].fulls);              // fulls fixos d'un banc: A, B, C, D
 const generats={};               // 'NUM-4821' -> tauler
-const st={banc:'NUM',ver:'A',vista:'full',solu:new Set(ORDRE.map(c=>c+'-A'))};
+const st={banc:'NUM',ver:'A',vista:'full',solu:new Set(ORDRE)};   // solu: temes (els 4 fulls fixos) i fulls generats triats
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-function tauler(id){const [c,v]=id.split('-');return v==='A'?BANCS[c].fulls.A:generats[id];}
+function tauler(id){const [c,v]=id.split('-');return BANCS[c].fulls[v]||generats[id];}
 /* ---------- full 1 ---------- */
 function fullSVG(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]=W.dims(B);
   const w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2;let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
-  o+=`<text x="${x0+w}" y="${y0-12}" font-size="4.6" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
-  for(let r=0;r<R;r++)o+=`<text x="${x0-6}" y="${y0+r*CEL+CEL/2+2}" font-size="5.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${'ABCDEFGH'[r]}</text>`;
-  for(let c=0;c<C;c++)o+=`<text x="${x0+c*CEL+CEL/2}" y="${y0-4}" font-size="5.5" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
+  o+=`<text x="${x0+w}" y="${y0-15}" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
+  for(let r=0;r<R;r++)o+=`<text x="${x0-8}" y="${y0+r*CEL+CEL/2+2.5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${'ABCDEFGH'[r]}</text>`;
+  for(let c=0;c<C;c++)o+=`<text x="${x0+c*CEL+CEL/2}" y="${y0-5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=x0+c*CEL,y=y0+r*CEL;
-    o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".3"/>`;
+    o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".35"/>`;
     o+=`<svg x="${x+(CEL-ITEM)/2}" y="${y+(CEL-ITEM)/2}" width="${ITEM}" height="${ITEM}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
-  o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".7"/></svg>`;return o;}
+  o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/></svg>`;return o;}
 /* ---------- plantilla ---------- */
 function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
 function plantillaCos(ox,oy,laser){const S=2*CEL+2*MARC,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
@@ -27,8 +28,9 @@ function plantillaCos(ox,oy,laser){const S=2*CEL+2*MARC,cut=laser?'stroke="#FF00
   for(const k of [0,1,2]){const t=MARC+k*CEL;   // marques guia: continuen les línies de la graella
     o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/>`;
     o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
-  o+=`<polygon points="${estrella(ox+MARC/2+1,oy+MARC/2+1,3)}" fill="#000"/>`;return o;}
-function plantillaSVG(){const S=2*CEL+2*MARC,x=(210-S)/2;return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,14,false)}${plantillaCos(x,107.5,false)}${plantillaCos(x,201,false)}</svg>`;}
+  o+=`<polygon points="${estrella(ox+MARC/2+1,oy+MARC/2+1,3.5)}" fill="#000"/>`;return o;}
+function plantillaSVG(){const S=2*CEL+2*MARC,x=(210-S)/2,g=(297-2*S)/3;   // dues plantilles per A4 vertical
+  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false)}${plantillaCos(x,2*g+S,false)}</svg>`;}
 function plantillaLaser(){const S=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true)}</svg>`;}
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];
@@ -44,29 +46,33 @@ function pinta(){const P=$('#pagines');let h='';
   $('#mida-pagina').textContent=st.vista==='plantilla'?'@page{size:A4 portrait;margin:0}':'@page{size:A4 landscape;margin:0}';
   if(st.vista==='full'){if(!tauler(idActual())){P.innerHTML='';return;}h=`<div class="pagina h">${fullSVG(idActual())}</div>`;}
   else if(st.vista==='plantilla')h=`<div class="pagina v">${plantillaSVG()}</div>`;
-  else{const L=[...st.solu].filter(tauler);for(let i=0;i<L.length;i+=2)h+=`<div class="pagina h"><div class="solus">${soluHTML(L[i])}${L[i+1]?soluHTML(L[i+1]):'<div class="solu"></div>'}</div></div>`;
-    if(!L.length)h='<p>Tria almenys un full.</p>';}
+  else{const gen=[...st.solu].filter(x=>generats[x]),L=[];   // una cara per tema (fulls A–D); els fulls generats, de 4 en 4
+    for(const c of ORDRE)if(st.solu.has(c))L.push(FIXOS(c).map(v=>c+'-'+v));
+    for(let i=0;i<gen.length;i+=4)L.push(gen.slice(i,i+4));
+    for(const g of L){h+='<div class="pagina h"><div class="solus">';for(let i=0;i<4;i++)h+=g[i]?soluHTML(g[i]):'<div class="solu"></div>';h+='</div></div>';}
+    if(!L.length)h='<p>Tria almenys un tema.</p>';}
   P.innerHTML=h;escala();pintaSolu();}
 function escala(){const pw=document.querySelector('.pagina');if(!pw)return;const mm=pw.classList.contains('v')?210:297;const px=mm*96/25.4;
   const z=Math.min(1,(document.documentElement.clientWidth-28)/px);document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',z));}
 function pintaSolu(){const box=$('#soluTria');box.classList.toggle('amagat',st.vista!=='solu');if(st.vista!=='solu')return;
-  const tots=[...ORDRE.map(c=>c+'-A'),...Object.keys(generats)];
-  box.innerHTML='<span>Solucionaris (2 per cara; imprimeix a doble cara, gir per la vora curta):</span>'+tots.map(id=>`<label><input type="checkbox" value="${id}" ${st.solu.has(id)?'checked':''}> ${id}</label>`).join('');
+  const tots=[...ORDRE,...Object.keys(generats)];
+  box.innerHTML='<span>Solucionaris (una cara per tema, amb els fulls A–D; imprimeix a doble cara):</span>'+tots.map(id=>`<label><input type="checkbox" value="${id}" ${st.solu.has(id)?'checked':''}> ${id}</label>`).join('');
   box.querySelectorAll('input').forEach(i=>i.onchange=()=>{i.checked?st.solu.add(i.value):st.solu.delete(i.value);pinta();});}
 function estat(t){$('#estat').textContent=t||'';}
 function actualitzaHash(){history.replaceState(null,'','#'+idActual()+(st.vista!=='full'?'/'+st.vista:''));}
 function genera(num){const B=BANCS[st.banc],id=st.banc+'-'+num;
-  if(generats[id]){st.ver=String(num);marca();pinta();actualitzaHash();return;}
+  if(generats[id]){st.ver=String(num);st.solu.add(id);marca();pinta();actualitzaHash();return;}
   estat('Generant el full '+id+'… (pot trigar uns segons)');$('#btnGen').disabled=true;
   setTimeout(()=>{const T=W.genera(B,num);$('#btnGen').disabled=false;
     if(!T){estat('No he trobat cap full vàlid amb el número '+num+'. Prova un altre número.');return;}
     generats[id]=T;st.solu.add(id);st.ver=String(num);estat('Full '+id+' generat. Amb el mateix número sempre surt el mateix full.');marca();pinta();actualitzaHash();},30);}
-function marca(){$('#btnA').classList.toggle('on',st.ver==='A');document.querySelectorAll('[data-vista]').forEach(b=>b.classList.toggle('on',b.dataset.vista===st.vista));
-  $('#banc').value=st.banc;if(st.ver!=='A')$('#num').value=st.ver;}
+function marca(){$('#vers').innerHTML=FIXOS(st.banc).map(v=>`<button data-ver="${v}" class="${st.ver===v?'on':''}">${v}</button>`).join('');
+  $('#vers').querySelectorAll('button').forEach(b=>b.onclick=()=>{st.ver=b.dataset.ver;estat('');marca();pinta();actualitzaHash();});
+  document.querySelectorAll('[data-vista]').forEach(b=>b.classList.toggle('on',b.dataset.vista===st.vista));
+  $('#banc').value=st.banc;if(/^\d+$/.test(st.ver))$('#num').value=st.ver;}
 /* ---------- inici ---------- */
 $('#banc').innerHTML=ORDRE.map(c=>`<option value="${c}">${c} · ${esc(BANCS[c].nom)}</option>`).join('');
 $('#banc').onchange=e=>{st.banc=e.target.value;st.ver='A';estat('');marca();pinta();actualitzaHash();};
-$('#btnA').onclick=()=>{st.ver='A';estat('');marca();pinta();actualitzaHash();};
 $('#btnGen').onclick=()=>{const n=parseInt($('#num').value,10);if(!(n>=1000&&n<=9999)){estat('Escriu un número entre 1000 i 9999.');return;}genera(n);};
 $('#btnAtzar').onclick=()=>{const n=1000+Math.floor(Math.random()*9000);$('#num').value=n;genera(n);};
 document.querySelectorAll('[data-vista]').forEach(b=>b.onclick=()=>{st.vista=b.dataset.vista;marca();pinta();actualitzaHash();});
@@ -74,8 +80,8 @@ $('#btnPrint').onclick=()=>window.print();
 window.addEventListener('resize',escala);
 window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1)));
 window.addEventListener('afterprint',escala);
-function aplicaHash(){const m=/^#([A-Z0-9]{3})-(A|\d{4})(?:\/(full|plantilla|solu))?$/.exec(location.hash);
-  if(m&&BANCS[m[1]]){st.banc=m[1];st.vista=m[3]||'full';if(m[2]==='A'){st.ver='A';marca();pinta();}else{marca();genera(+m[2]);}}else{marca();pinta();}}
+function aplicaHash(){const m=/^#([A-Z0-9]{3})-([A-Z]|\d{4})(?:\/(full|plantilla|solu))?$/.exec(location.hash);
+  if(m&&BANCS[m[1]]&&(/\d/.test(m[2])||BANCS[m[1]].fulls[m[2]])){st.banc=m[1];st.vista=m[3]||'full';if(BANCS[m[1]].fulls[m[2]]){st.ver=m[2];marca();pinta();}else{marca();genera(+m[2]);}}else{marca();pinta();}}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
 window.__reixeta={fullSVG,plantillaLaser,soluHTML,generats,st,pinta};
 })();

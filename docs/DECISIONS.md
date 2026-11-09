@@ -53,4 +53,17 @@ Chronological. "Round" = one review artifact (`docs/history/rondaN.html`).
 - Balance rule: first 1/3, then relaxed to **5/12** of the positions per reason type; if a sheet gets close, it is accepted.
 
 ## Round 9 — new properties to improve balance
-See `TODO.md` P0 for the exact list (not yet implemented at closing).
+Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals, some pair of equal sides, obtuse angle (not "horizontal/vertical side"); FRA one-decimal value, both terms even, plus his own: both terms prime, perfect square (he also asked for "irreducible", which is the existing "es pot simplificar" in the opposite direction, so it was not duplicated); TR5/TR4 whole-number area, 45° angle; LLE junction of three or more lines, mixes straight and curved lines; COS faces of two shapes, exactly 5 faces; FIG obtuse angle, all angles equal, more than one symmetry axis.
+
+## Redesign session (2026-11-09, cloud session, answered through option dialogs)
+- **Fewer cells per F1.** The owner found that a 10×5 sheet holds far too many puzzles (36 per sheet). Decision: WODB board = **5 columns × 4 rows = 12 positions**; the 10×5 sheets are **replaced** (not kept as an alternative). General preference for the project: few cells per F1, several F1 sheets per topic.
+- **F1 is always A4, never A5** (explicit). The cells grow instead: 40 mm cell, 36 mm hole, 28 mm drawing box, frame 15 mm, mask 110 × 110 mm (the 82 mm mask is obsolete).
+- **Four fixed sheets per topic: A, B, C, D** (plus "Full nou"). One PDF per topic with 4 pages; answer keys: one page per topic with the 4 keys.
+- **Delivery in cloud sessions: commit + push to the working branch** (the ZIP → `_uploads/` route remains valid for chat sessions).
+- **"Full nou" was broken in v3** (found by the study): the annealer always failed and the fallback only flipped sheet A (BLO/BLB had just 4 possible sheets). Rewritten: incremental scoring, cap consistent with the acceptance test, two phases. Now every tested number gives a genuinely new good sheet.
+- **Neighbour rule** (owner idea): if reason C1 works at mask position (x,y), as few as possible of the positions (x±1,y), (x,y±1) should also offer C1. Implemented as a soft objective: `repVeins` counts reason types shared by neighbouring positions; phase 2 of the search minimises it. It cannot reach 0 (neighbouring positions share two cells) and pushing it lowers the number of spare reasons per position.
+- **Round 9 implemented** (`tools/wodb/props9.py`), with these adaptations that the owner still has to confirm:
+  - COS "faces of two different shapes" is worded "cares **planes** de dues formes diferents" so that cylinder, cone and hemisphere are unambiguous (no).
+  - LLE "three or more lines meet" is worded "algun punt d'on **surten** tres línies o més" (branch count, computed from the stroke font): A B E F H K P Q R T X Y. X and Q count (4 branches).
+  - FRA wording shortened to fit the answer key: "amb un sol decimal", "amb els dos termes parells", "amb els dos termes primers", "que és un quadrat perfecte". Every k/k (= 1) is a perfect square. Pool extended with denominator 9 and 9/4, 16/9, 1/16, 9/16, 4/25, 9/25, 16/25, otherwise the only squares were 1 and 1/4.
+- Result: 9 of 12 topics meet the 5/12 rule exactly (5 of 12 positions): NUM, FIG, FRA, BLO, BLB, LLE, TR5, TR4, QUA. POL 6, COS 7, ANG 10 (accepted as "leave as is" for ANG and POL; COS is close).

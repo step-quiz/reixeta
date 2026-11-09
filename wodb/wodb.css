@@ -19,16 +19,17 @@ input[type=number]{width:6.2em}
 .pagina.h{width:297mm;height:210mm}
 .pagina.v{width:210mm;height:297mm}
 .pagina svg.full{display:block;width:100%;height:100%}
-/* solucionari */
-.solus{display:flex;width:297mm;height:210mm}
-.solu{width:148.5mm;height:210mm;padding:6mm 5mm 4mm;overflow:hidden;border-right:.2mm dashed #bbb;font-family:Arial,Helvetica,sans-serif;color:#000}
-.solu:last-child{border-right:none}
+/* solucionari: 4 per cara (un tema: fulls A–D), 12 posicions cadascun */
+.solus{display:flex;flex-wrap:wrap;width:297mm;height:210mm}
+.solu{width:148.5mm;height:105mm;padding:5mm 5mm 3mm;overflow:hidden;border-right:.2mm dashed #bbb;border-bottom:.2mm dashed #bbb;font-family:Arial,Helvetica,sans-serif;color:#000}
+.solu:nth-child(2n){border-right:none}
+.solu:nth-child(n+3){border-bottom:none}
 .solu .cap{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:1.2mm}
-.solu .codi{font:700 4.2mm/1 "Courier New",monospace}
+.solu .codi{font:700 4.6mm/1 "Courier New",monospace}
 .solu .nota{font-size:2.3mm;color:#333}
 .solu table{width:100%;border-collapse:collapse;table-layout:fixed}
-.solu td{border-top:.15mm solid #ccc;padding:.3mm .5mm;vertical-align:top;font-size:2.05mm;line-height:2.2mm;height:5.05mm}
-.solu td.pos{width:7mm;font-weight:700;font-size:2.4mm}
+.solu td{border-top:.15mm solid #ccc;padding:.45mm .6mm;vertical-align:top;font-size:2.45mm;line-height:2.7mm;height:6.4mm}
+.solu td.pos{width:7.5mm;font-weight:700;font-size:2.9mm}
 .solu .el{font-weight:700}
 @media screen{.pagina{zoom:var(--z,1)}}
 @media print{

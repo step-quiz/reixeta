@@ -1,15 +1,16 @@
 # GAMES.md — game catalogue of Reixeta
 
-All games use the same device: F1 = grid sheet (default 10×5 cells of 26 mm), F2 = mask with holes. The mask can be translated, rotated (90/180/270°) and flipped. The original proposals, with working demos, are in `docs/history/rondaN.html`; the owner's answers were stored in the artifacts' databases and are summarised in `docs/DECISIONS.md`.
+All games use the same device: F1 = grid sheet (always A4; the grid size is chosen per game — the owner prefers few cells per sheet and several sheets per topic), F2 = mask with holes. The mask can be translated, rotated (90/180/270°) and flipped. The original proposals, with working demos, are in `docs/history/rondaN.html`; the owner's answers were stored in the artifacts' databases and are summarised in `docs/DECISIONS.md`.
 
 Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), **REJECTED**.
 
-## DONE — WODB · Quin no hi encaixa? (rounds 5, 6, 8, 9)
+## DONE — WODB · Quin no hi encaixa? (rounds 5, 6, 8, 9 + redesign of 2026-11-09)
 
-- Mask: 2×2 holes. Every position (36 on a 10×5 sheet) is a valid WODB: each visible item differs from the other three in at least one listed property. Any other correct argument from students is also accepted ("no hi ha solució única").
-- 12 sheets: NUM numbers 1–99; FIG polygons (geometric properties only); FRA fractions only; BLO logic blocks in colour; BLB logic blocks in B/W (colour → hatch pattern: ratllat / quadriculat / puntejat; filled/empty → thick/thin contour); LLE letters (geometric properties only, custom stroke font); ANG angles (types + <45°, >270°); TR5 triangles on a 5×5 dot grid; TR4 triangles on a 4×4 dot grid (board 9×5, 32 positions); QUA quadrilaterals on a 5×5 dot grid (board 10×4, 27 positions); POL tetrominoes + pentominoes; COS solids (no icosahedron or dodecahedron).
-- Teacher page `wodb/` prints F1, the mask (PDF + laser SVG) and answer keys (4 per duplex sheet), and generates new sheets ("Full nou", reproducible by number).
-- Pending: new properties (see `TODO.md` P0).
+- Mask: 2×2 holes. F1: 5 × 4 cells of 40 mm, so 12 positions per sheet. Every position is a valid WODB: each visible item differs from the other three in at least one listed property. Any other correct argument from students is also accepted ("no hi ha solució única").
+- 12 topics, each with 4 fixed sheets (A–D): NUM numbers 1–99; FIG polygons (geometric properties only); FRA fractions only; BLO logic blocks in colour; BLB logic blocks in B/W (colour → hatch pattern: ratllat / quadriculat / puntejat; filled/empty → thick/thin contour); LLE letters (geometric properties only, custom stroke font); ANG angles (types + <45°, >270°); TR5 triangles on a 5×5 dot grid; TR4 triangles on a 4×4 dot grid; QUA quadrilaterals on a 5×5 dot grid; POL tetrominoes + pentominoes; COS solids (no icosahedron or dodecahedron).
+- Two quality rules on top of validity: balance (no reason type in more than 5 of the 12 positions) and neighbours (moving the mask one cell should change the reasons as much as possible). See `CLAUDE.md` §4.2.
+- Teacher page `wodb/` prints F1, the mask (PDF + laser SVG) and answer keys (one page per topic), and generates new sheets ("Full nou", reproducible by number).
+- Pending: the owner's physical test of the new sizes (see `TODO.md` P0).
 
 ## APPROVED — Sanefa trencada (round 4, S1) — *without the creative version*
 
@@ -27,7 +28,7 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 
 ## APPROVED — Pinta per sumes (round 2, A1)
 
-- F1 numbers that look random. Place the mask at each position, add the 4 visible numbers; if the sum satisfies the rule, colour the corresponding cell on an answer grid. When the class has done all positions, a picture appears. The same F1 hides up to **three** pictures, one per mask orientation (demo: upright + "even sum" → heart; flipped + "multiple of 3" → smiley; rotated 180° + "multiple of 5" → π). The demo used an asymmetric 4-hole mask on a 9×10 sheet with numbers 10–99.
+- F1 numbers that look random. Place the mask at each position, add the 4 visible numbers; if the sum satisfies the rule, colour the corresponding cell on an answer grid. When the class has done all positions, a picture appears. The same F1 hides up to **three** pictures, one per mask orientation (demo: upright + "even sum" → heart; flipped + "multiple of 3" → smiley; rotated 180° + "multiple of 5" → π). The demo used an asymmetric 4-hole mask on a 9×10 sheet with numbers 10–99 (before the "few cells per sheet" preference; rediscuss the size).
 - Owner decisions: the generator must let the teacher **design his own bitmap drawings**; up to 3 per sheet; more and simpler rules, e.g. "there is a multiple of 7", "there is a prime" (rules about the visible numbers, not only about the sum).
 - Open: drawing size (9×9 on a 10×10 sheet was proposed). With arbitrary rules, three simultaneous pictures become a constraint-satisfaction problem; verify feasibility by computer before promising.
 
