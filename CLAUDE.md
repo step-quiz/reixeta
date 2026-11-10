@@ -27,6 +27,7 @@ Three games are built: **WODB** (§4), the **counting game** (§7) and **Sanefa 
 - **«Sí, fes-ho» means: the owner agrees with the proposal / the first option of the question, with no further request.** Extra wishes come in the comment box.
 - **Beta mode** (owner, 2026-11-10): until he says otherwise nothing old has to be preserved (generated sheet numbers, old PDFs, old masks may change freely).
 - Every game has its own grid and mask (the owner expects some games with many more cells and some with a 3×2 mask); only WODB is fixed at 5×4 + 2×2.
+- **Always open a pull request to `main` whenever changes are pushed** (owner, 2026-11-10: standing instruction, do not ask each time). He merges it himself; a merged PR is finished, so later changes go in a new PR.
 - Verify before claiming: every property and every "all positions valid" claim in this repo was checked by computer. Keep it that way.
 
 ## 3. Repository map
