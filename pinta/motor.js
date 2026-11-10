@@ -45,7 +45,7 @@ const codiCurt=estat=>'PIN-'+(hashSeed(estat)%1679616).toString(36).toUpperCase(
 const EX={
  A:[['.........','.XX...XX.','XXXX.XXXX','XXXXXXXXX','XXXXXXXXX','.XXXXXXX.','..XXXXX..','...XXX...','....X....'],
     ['..XXXXX..','.X.....X.','X.X...X.X','X.......X','X.......X','X.X...X.X','X..XXX..X','.X.....X.','..XXXXX..'],
-    ['.........','XXXXXXXXX','XXXXXXXXX','..X...X..','..X...X..','..X...X..','..X...X..','.XX...XX.','.X....XX.']],
+    ['.........','XXXXXXXXX','XXXXXXXXX','..X...X..','..X...X..','..X...X..','..X...X..','..X...X..','.XX...XX.']],
  B:[['....X....','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','.XXXXXXX.','.XX.X.XX.','.XX.XXXX.','.XX.XXXX.'],
     ['....X....','...XXX...','..XXXXX..','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','....X....','....X....'],
     ['....X....','....XX...','....XXX..','....XXXX.','....X....','XXXXXXXXX','.XXXXXXX.','..XXXXX..','.........']],
