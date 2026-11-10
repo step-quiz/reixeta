@@ -61,14 +61,16 @@ function makeState(B,CAP,pen,opt){
    q: {cap, iters, t0, decay, pen, init, w1, balw, adjw}
    · pen[x]: penalització per fer servir l'element x (per no repetir elements entre fulls).
    · init: tauler de sortida (si no, a l'atzar).
-   · adjw: pes de la regla dels veïns (motius repetits entre posicions veïnes). */
+   · adjw: pes de la regla dels veïns (motius repetits entre posicions veïnes).
+   · fix: caselles que no es poden tocar (cal donar-ne el valor a init; a init, -1 vol dir «a l'atzar»). */
 function anneal(B,rnd,q){const st=makeState(B,q.cap,q.pen,q),NC=st.NC,N=st.N,Bd=st.Bd;
-  for(let i=0;i<NC;i++)st.set(i,q.init?q.init[i]:Math.floor(rnd()*N));
+  const fix=new Set(q.fix||[]),L=[];for(let i=0;i<NC;i++)if(!fix.has(i))L.push(i);   // L: caselles que es poden canviar
+  for(let i=0;i<NC;i++)st.set(i,q.init&&q.init[i]>=0?q.init[i]:Math.floor(rnd()*N));
   let cur=st.total(),best=-Infinity,bestB=null,bestOk=false,T=q.t0||5;const decay=q.decay||0.99992;
   const keep=()=>{const ok=st.factible();if((ok&&!bestOk)||(ok===bestOk&&cur>best)){best=cur;bestB=Array.from(Bd);bestOk=ok;}};keep();
   for(let it=0,n=q.iters||120000;it<n;it++){let i,j=-1,xi,xj;
-    if(rnd()<.5){i=Math.floor(rnd()*NC);j=Math.floor(rnd()*NC);xi=Bd[i];xj=Bd[j];st.set(i,xj);st.set(j,xi);}
-    else{i=Math.floor(rnd()*NC);xi=Bd[i];st.set(i,Math.floor(rnd()*N));}
+    if(rnd()<.5){i=L[Math.floor(rnd()*L.length)];j=L[Math.floor(rnd()*L.length)];xi=Bd[i];xj=Bd[j];st.set(i,xj);st.set(j,xi);}
+    else{i=L[Math.floor(rnd()*L.length)];xi=Bd[i];st.set(i,Math.floor(rnd()*N));}
     const s2=st.total();
     if(s2>=cur||rnd()<Math.exp((s2-cur)/T)){cur=s2;keep();}
     else{st.set(i,xi);if(j>=0)st.set(j,xj);}
@@ -79,7 +81,7 @@ function anneal(B,rnd,q){const st=makeState(B,q.cap,q.pen,q),NC=st.NC,N=st.N,Bd=
 const POLIT={w1:60,balw:30,adjw:8,t0:5,decay:0.99994,iters:150000};
 function cercaFull(B,rnd,cap,pen,q){const o=B.gen||{};   // q (opcional): paràmetres de la fase 1 (cerca intensiva dels fulls fixos)
   const Bd=anneal(B,rnd,Object.assign({cap,pen,iters:o.iters,t0:o.t0,decay:o.decay},q));if(!bo(B,Bd,cap))return null;
-  const B2=anneal(B,rnd,Object.assign({},POLIT,{cap,pen,init:Bd}));return bo(B,B2,cap)&&repVeins(B,B2)<=repVeins(B,Bd)?B2:Bd;}
+  const B2=anneal(B,rnd,Object.assign({},POLIT,{cap,pen,init:Bd,fix:q&&q.fix}));return bo(B,B2,cap)&&repVeins(B,B2)<=repVeins(B,Bd)?B2:Bd;}
 function valid(B,Bd){const P=B.items.map(x=>x.p),ALL=(1<<B.props.length)-1;let n=0;
   for(const [r,c] of wins(B)){const ids=cellsOf(B,r,c).map(i=>Bd[i]);if(new Set(ids.map(i=>B.items[i].k)).size<4)continue;
     let ok=true;for(let k=0;k<4;k++)if(!uniqMask(P,ids,k,ALL)){ok=false;break;}if(ok)n++;}return n;}

@@ -101,10 +101,21 @@ function canvi(){desa();marca();pinta();missatge();}
 function marca(){$('#banc').value=st.banc;$('#cols').value=st.C;$('#files').value=st.R;$('#model').value=st.model;$('#marc').value=st.marc;$('#estrella').checked=st.estrella;
   document.querySelectorAll('[data-vista]').forEach(b=>b.classList.toggle('on',b.dataset.vista===st.vista));}
 function nouTauler(){st.T=new Array(st.R*st.C).fill(-1);st.sel=0;st.pos=-1;}
-/* Omple sol: mateix cercador que «Full nou», amb el límit d'equilibri més baix que trobi per a aquesta graella. */
+/* Omple sol: mateix cercador que «Full nou», amb el límit d'equilibri més baix que trobi per a aquesta graella.
+   Si el full està a mitges, respecta les caselles que ja tenen element i només omple les buides. */
 function omple(){const B2=Object.assign({},B(),{rows:st.R,cols:st.C}),n=W.wins(B2).length,llavor=Math.floor(Math.random()*1e9);
-  for(let cap=Math.max(1,Math.floor(5*n/12));cap<=n;cap++)for(let a=0;a<3;a++){const Bd=W.cercaFull(B2,W.mulberry32(W.hashSeed(llavor+'-'+cap+'-'+a)),cap);if(Bd){st.T=Bd;st.sel=0;st.pos=-1;return true;}}
+  const fix=[];st.T.forEach((x,i)=>{if(x>=0)fix.push(i);});const parcial=fix.length>0&&fix.length<st.T.length,q=parcial?{init:st.T.slice(),fix}:undefined;
+  for(let cap=Math.max(1,Math.floor(5*n/12));cap<=n;cap++)for(let a=0;a<3;a++){const Bd=W.cercaFull(B2,W.mulberry32(W.hashSeed(llavor+'-'+cap+'-'+a)),cap,undefined,q);if(Bd){st.T=Bd;st.sel=0;st.pos=-1;return true;}}
   return false;}
+/* Posicions que no es poden completar de cap manera amb els elements que ja hi ha posats (per exemple, dues figures
+   amb exactament les mateixes propietats). Es comprova provant tots els elements possibles a les caselles buides. */
+function impossibles(){const it=B().items,n=it.length,out=[];
+  for(const [r,c] of posicions()){const cs=cells(r,c),posats=cs.map(i=>st.T[i]),lliures=[0,1,2,3].filter(k=>posats[k]<0);if(lliures.length===4||lliures.length===0&&estatPos(r,c).t==='ok')continue;
+    const ids=posats.slice();let ok=false;
+    const prova=d=>{if(d===lliures.length){ok=new Set(ids.map(i=>it[i].k)).size===4&&[0,1,2,3].every(k=>W.motius(B(),ids,k).length>0);return;}
+      for(let x=(d?ids[lliures[d-1]]+1:0);x<n&&!ok;x++){ids[lliures[d]]=x;prova(d+1);}};
+    if(lliures.length<=2){prova(0);if(!ok)out.push(LL[r]+(c+1));}}
+  return out;}
 /* ---------- inici ---------- */
 $('#banc').innerHTML=ORDRE.map(c=>`<option value="${c}">${c} · ${esc(BANCS[c].nom)}</option>`).join('');
 $('#cols').innerHTML=[2,3,4,5,6,7].map(n=>`<option>${n}</option>`).join('');$('#files').innerHTML=[2,3,4,5].map(n=>`<option>${n}</option>`).join('');
@@ -115,7 +126,7 @@ $('#model').onchange=e=>{st.model=e.target.value;canvi();};
 $('#marc').onchange=e=>{st.marc=+e.target.value;canvi();};
 $('#estrella').onchange=e=>{st.estrella=e.target.checked;canvi();};
 $('#btnBuida').onclick=()=>{nouTauler();canvi();};
-$('#btnOmple').onclick=()=>{estat('Buscant un full…');$('#btnOmple').disabled=true;setTimeout(()=>{const ok=omple();$('#btnOmple').disabled=false;canvi();if(!ok)estat('No he trobat cap full amb totes les posicions vàlides per a aquesta graella. Prova-ho una altra vegada o fes-la més petita.');},30);};
+$('#btnOmple').onclick=()=>{estat('Buscant un full…');$('#btnOmple').disabled=true;setTimeout(()=>{const ok=omple();$('#btnOmple').disabled=false;canvi();if(!ok){const imp=st.T.some(x=>x>=0)?impossibles():[];estat('No he trobat cap full amb totes les posicions vàlides'+(imp.length?': amb els elements que hi has posat, la posició '+imp.join(', ')+' no es pot completar de cap manera. Canvia-hi algun element (doble clic per treure\'l).':st.T.some(x=>x>=0)?' que respecti les caselles que ja has posat. Treu-ne alguna (doble clic) o prem «Buida».':' per a aquesta graella. Prova-ho una altra vegada o fes-la més petita.'));}},30);};
 document.querySelectorAll('[data-vista]').forEach(b=>b.onclick=()=>{st.vista=b.dataset.vista;canvi();});
 $('#btnPrint').onclick=()=>window.print();
 $('#btnLaser').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([plantillaLaser()],{type:'image/svg+xml'}));a.download='plantilla-'+codi()+'.svg';document.body.appendChild(a);a.click();a.remove();};
@@ -124,5 +135,5 @@ window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').f
 window.addEventListener('afterprint',escala);
 function aplicaHash(){const m=/^#c=([^/]+)(?:\/(editor|full|plantilla|solu))?$/.exec(location.hash);if(m&&llegeix(decodeURIComponent(m[1])))st.vista=m[2]||'editor';marca();pinta();missatge();}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
-window.__constructor={st,resum,mides,omple,canvi,estatText,codi,plantillaLaser,estatPos,posicions};
+window.__constructor={st,resum,mides,omple,canvi,impossibles,estatText,codi,plantillaLaser,estatPos,posicions};
 })();

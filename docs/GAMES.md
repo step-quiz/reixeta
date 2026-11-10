@@ -17,7 +17,8 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 
 - F1 6 × 4 numbers (40 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
 - Team rules (owner): A vs B, first to answer; +5 if right, −10 if wrong; start at 40; first to 100. Answer key = shuffled game script; printable score track.
-- Full spec: `CLAUDE.md` §7. Open: the owner wants to compare later with a 2×2 mask on 5×4 ("keep it simple").
+- Simple variant for comparison: levels `CS1`/`CS2` on a 5×4 sheet with the WODB 2×2 mask (12 positions, answers 0–4). The owner has to choose which one stays (or both).
+- Full spec: `CLAUDE.md` §7.
 
 ## DONE — Sanefa trencada (round 4 S1, round 7 Q13, format round 10) — `sanefa/`
 
