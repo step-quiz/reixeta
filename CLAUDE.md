@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Three games are built: **WODB** (§4), the **counting game** (§7) and **Sanefa trencada** (§8). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -40,12 +40,15 @@ docs/DECISIONS.md             Every decision taken with the owner (rounds 1–9 
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4, ronda10.html = format proposals for the next two games
+comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
+sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/                     GENERATED PDFs + laser SVG + index.html
+pdf/wodb/, pdf/comptar/, pdf/sanefa/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
+tools/comptar/, tools/sanefa/ fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
 ```
 
 ## 4. WODB architecture
@@ -94,7 +97,7 @@ The fixed sheets A–D are found by the same engine (`tools/wodb/fulls.js`: best
 |---|---|
 | F1 | A4 landscape, grid 5 × 4 centred, cell 40, grid line 0.35, outer 0.8 |
 | Labels | letters at x0−8, numbers at y0−5, 7 mm Arial; code 5.5 mm Courier bold at (x0+w, y0−15) right-aligned |
-| Item drawing box | 28 × 28 centred in the cell (4.5 mm clearance to the hole edge) |
+| Item drawing box | 28 × 28 centred in the cell (4.5 mm clearance to the hole edge); ANG uses 31 × 31 (3 mm clearance, the minimum the owner accepts) |
 | Text | Arial bold; size so width ≤ 84/100 of the box (`midaText`); fractions stacked, 30/100 |
 | Mask | frame 15, 4 holes of 37 (1.5 inset from each cell — owner's explicit choice — so 3 mm bars between holes), outer 110 × 110; guide marks 6 long at 15/55/95 on every edge (they continue the grid lines); ★ near the top-left hole; 2 masks per A4 portrait |
 | Laser SVG | red `#FF0000` 0.01 = cut, blue `#0000FF` = score (guides), black fill = engrave (★) |
@@ -105,7 +108,7 @@ The mask must never exceed the paper: 5·40 + 2·15 = 230 ≤ 297 and 4·40 + 2�
 ### 4.5 Drawing rules
 
 - Dot-grid shapes (TR5, TR4, QUA): thin shapes are excluded (`tools/wodb/thin.py`): triangles min angle ≥ 25° and isoperimetric ratio 4πA/P² ≥ 0.40; quadrilaterals ≥ 22° and ≥ 0.35. The owner rejected slivers.
-- Angles (ANG): arc radius and right-angle square have a **fixed** size (11 and 8 units), whatever the ray lengths.
+- Angles (ANG): **every cell is drawn at the same scale** (owner, twice): in a 31 mm drawing box (`caixa: 31` in the bank; 3 mm left to the hole edge) every angle has one long ray (56 units of the 100-unit box = 17.4 mm) and one short ray (40 = 12.4 mm), sector radius 24 (7.4 mm), right-angle square of side 16; the figure is only translated to centre it, never scaled (the flat angle, 96 units wide, sets the limit). No dot at the vertex (owner: it adds noise). Smaller sectors or per-cell scaling were rejected as hard to see / inconsistent.
 - Letters (LLE): custom stroke font (`letters.py`, SVG paths) so that symmetries are exact; properties are geometric only.
 - Solids (COS): 3D convex hull projected orthographically; hidden edges dashed.
 
@@ -129,9 +132,28 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 6. Checklist before delivering
 
-1. `node --check wodb/*.js`.
-2. `node tools/wodb/check.js` prints `ALL OK`.
-3. `make_pdfs.py` prints `solu overflow: []` and `errors []`.
+1. `node --check` on every `.js` of the game you touched.
+2. `node tools/wodb/check.js`, `node tools/comptar/check.js`, `node tools/sanefa/check.js` print `ALL OK` (run the ones affected).
+3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
 5. Delivery: either commit + push to the working branch (cloud sessions), or a ZIP from the repo root: `cd reixeta && zip -qr ../reixeta-vN.zip . -x "*.DS_Store" "*/__pycache__/*" ".git/*"` uploaded by the owner to `_uploads/`.
 6. Give the owner the steps in Catalan (merge / upload, check Actions is green and Cloudflare published).
+
+## 7. Counting game — `comptar/` (owner's idea; format approved in round 10)
+
+- F1: 6 columns × 4 rows of 40 mm cells, 24 **distinct** numbers; F2: 3×2 holes (150 × 110 mm, frame 15, holes 37, no ★). The mask is used horizontally (12 positions) and vertically (10) = **22 positions**, named by the top-left visible cell + orientation (`B2 horitzontal`, `A5 vertical`). Paper check: 240 + 30 = 270 ≤ 297, 160 + 30 = 190 ≤ 210.
+- Questions (`PROPS` in `comptar/motor.js`): how many primes / multiples of 3 / perfect squares are visible (answer 0–6), or "add them" = sum of the visible numbers **with the property**. 22 × 3 × 2 = 132 plays per sheet. Team rules (owner): A vs B, first to answer, +5 / −10, start at 40, first to 100.
+- Levels: `CO1` numbers 2–50, `CO2` numbers 2–150. One sheet serves the three questions. A sheet is good (`COMPTAR.bo`) iff, for every question, each answer 0..kmax appears in at least `min` of the 22 positions (CO1: min 1, kmax 6/6/5 because 2–50 holds only six squares; CO2: min 2, kmax 6) and no answer appears in more than 6 positions.
+- `genera(niv, num)`: deterministic annealing on the three histograms (up to 8 attempts of 60 000 iterations, ~0.3–0.5 s). Fixed sheets A–D per level are stored in `comptar/fulls.js`, written by `tools/comptar/fulls.js` (best of 16 seeds).
+- Answer key = **game script** (`guio(T, code, k)`): the 132 plays shuffled deterministically by sheet code, 40 per page side, two scripts printed per sheet (a third exists, k = 2). Plus a printable score track (`marcadorSVG`). Codes `CO1-A…D`, `CO2-A…D`, generated `CO1-4821`.
+- Open point noted by the owner: check later whether a 2×2 mask on 5×4 would be more "easy-going / keep it simple" (see `TODO.md`).
+
+## 8. Sanefa trencada — `sanefa/` (round 4 S1; format approved in round 10)
+
+- F1: **one sheet with the seven frieze types** (owner's explicit choice over a two-sheet layout), 12 copies per frieze, motif box 16 mm, friezes lettered A–G (order shuffled per sheet), copies numbered 1–12. Five types take one row, the two with a horizontal mirror take two rows. Each frieze has exactly **one wrong copy**.
+- Orientations are 2-bit codes combined by XOR: 0 as is, 1 vertical mirror, 2 horizontal mirror, 3 half-turn. `TIPUS` (period per row): T `[0]`, V `[0,1]`, L `[0,2]`, R `[0,3]`, VR `[0,1,2,3]`, H `[0]/[2]`, VH `[0,1]/[2,3]`, each with a random global orientation and phase.
+- The wrong copy shows one of the other three orientations (never a quarter turn), never in the first two columns, and must be the **only** single-copy change that yields a correct frieze of any type (`arreglos` in `motor.js`; re-verified by `tools/sanefa/check.js` with an independent definition).
+- Motifs (owner asked for figurative ones if they keep the mathematical properties): boot `BOT`, flag `BAN`, sailboat `VEL`, duck `ANE` — polygons in a 0–100 box. Asymmetry is measured, not assumed: for the three frieze transforms the non-overlapping area fraction after the best translation is ≥ 0.20 (values 0.21–0.55; the weakest is the sailboat's vertical mirror, 0.21).
+- F2: a 40 mm card (motif box 16 + frame 12) with a motif-shaped hole (0.6 mm clearance) and a **notch** at one corner. Fitting the mask on a copy leaves the notch at a corner that tells the orientation: ↖ as is, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn. Pupils write the notch sequence of each frieze; the wrong copy breaks the rhythm. One mask per motif (PDF with 4 copies of each + one laser SVG per motif).
+- Sheets are generated on the fly: `genera(motiu, num)` is deterministic; fixed sheets are numbers 1 and 2 of each motif (`SAN-BOT1`, `SAN-BOT2`, …), any number 1000–9999 is a "Full nou" (`SAN-VEL4821`). Answer key: wrong cell (e.g. `B10`, with "fila de dalt/baix" for two-row friezes), found vs expected notch, and the correct notch sequence.
+- Paper check (done on the real page by `make_pdfs.py`): around the mask at the outermost copies there remain 40.5 mm at the sides, 14 mm at the top and 10 mm at the bottom.

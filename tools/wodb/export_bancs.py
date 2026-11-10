@@ -70,7 +70,7 @@ add('LLE','Lletres','let',[{'si':L['props'][j]['yes'],'no':L['props'][j]['no']} 
 from angles import ang_domain
 A=load('out_ang2'); base,_=ang_domain(); assert len(base)==len(A['items'])
 its=[{'k':x['k'],'p':P(x['p']),'d':[x['th'],x['phi'],1 if i%2==0 else .62]} for i,x in enumerate(A['items'])]
-add('ANG','Angles','ang',props(A['props']),its)
+add('ANG','Angles','ang',props(A['props']),its,None,{'caixa':31})   # drawing box of 31 mm (3 mm to the hole edge): angles are drawn at one fixed scale
 # triangles / quadrilàters
 for code,src,nom,g in (('TR5','out_tri_g','Triangles (trama 5×5)',4),('TR4','out_tr4_5x9','Triangles (trama 4×4)',3),('QUA',sys.argv[1] if len(sys.argv)>1 else 'out_qua_g','Quadrilàters',4)):
     S=load(src); its=[{'k':x['k'],'p':P(x['p']),'d':[g]+[c for pt in x['pts'] for c in pt],'src':x} for x in S['items']]

@@ -13,6 +13,9 @@ wodb/                      WODB · Quin no hi encaixa?
   motor.js                 Motius, dibuix dels elements i generador de fulls nous
   bancs.js                 Elements, propietats i fulls fixos (A–D) dels 12 temes
   app.js, wodb.css         Interfície i estils d'impressió
+comptar/                   Joc de comptar (pàgina d'impressió, motor i fulls fixos)
+sanefa/                    Sanefa trencada (pàgina d'impressió i motor)
+pdf/comptar/, pdf/sanefa/  PDF ja preparats d'aquests dos jocs
 pdf/wodb/                  PDF ja preparats
   NUM.pdf … COS.pdf        Un PDF per tema, amb els fulls A, B, C i D (un per pàgina)
   tots-els-fulls.pdf       Els 48 fulls en un sol PDF
@@ -64,18 +67,35 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 - SVG per a talladora làser: **vermell** = tall, **blau** = marcat (marques guia), **negre** = gravat (★). Unitats en mm.
 - La plantilla antiga de 82 mm (caselles de 26 mm) ja no serveix.
 
+## Joc de comptar
+
+Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar horitzontal o vertical: 22 posicions per full. Dos equips; qui fa d'àrbitre col·loca la plantilla i pregunta quants primers, múltiples de 3 o quadrats perfectes es veuen, o quant sumen (només els que compleixen la propietat). El primer equip que respon guanya 5 punts si l'encerta i en perd 10 si falla; es comença amb 40 i guanya qui arriba a 100.
+
+- **Nivells:** `CO1`, nombres de 2 a 50; `CO2`, de 2 a 150. Quatre fulls fixos per nivell (A–D) i «Full nou».
+- **Un sol full per a totes les preguntes:** a cada full, les respostes de cada pregunta surten repartides entre les 22 posicions, de manera que no es poden endevinar. Al nivell 1 només hi ha sis quadrats perfectes, i veure'n cinc o sis alhora és poc freqüent o impossible.
+- **Guió de partida:** fa de solucionari. Són 40 jugades barrejades per cara (posició, pregunta i resposta), dos guions per full.
+- **Marcador:** un full a part amb una pista de 0 a 100 per a cada equip.
+- **Plantilla:** 150 × 110 mm, marc de 15 mm i forats de 37 mm. La posició es diu per la casella que es veu a dalt a l'esquerra.
+
+## Sanefa trencada
+
+Cada full té les set classes de sanefa fetes amb un mateix motiu, amb 12 còpies cadascuna. A cada sanefa hi ha una sola còpia que trenca el ritme: cal trobar-la.
+
+- **Motius:** bota, bandera, veler i ànec. Cap no té simetria (s'ha mesurat per ordinador), i per això qualsevol error es pot detectar.
+- **Plantilla:** una targeta de 40 mm amb un forat amb la forma del motiu i una osca en una cantonada. Per fer-la encaixar en una còpia cal deixar-la tal com és, girar-la de cara o fer-li mitja volta, i la cantonada on queda l'osca ho diu: ↖ tal com és, ↗ mirall vertical, ↙ mirall horitzontal, ↘ mitja volta. Anotant les osques de cada sanefa es veu el ritme i la còpia que el trenca.
+- **Fulls:** dos de fixos per motiu (`SAN-BOT1`, `SAN-BOT2`…) i «Full nou» amb un número. L'error no és mai a les dues primeres còpies i és l'única manera d'arreglar la sanefa canviant una sola còpia.
+- **Solucionari:** la casella errònia de cada sanefa i el ritme correcte d'osques.
+
 ## Publicar amb Cloudflare Pages
 
 Framework preset: *None*. Build command: (buit). Build output directory: `/`.
 
 ## Altres jocs del projecte
 
-Reixeta no és només WODB. Jocs aprovats per fer, en aquest ordre (detalls a `docs/GAMES.md`):
+Jocs aprovats que encara s'han de fer (detalls a `docs/GAMES.md`):
 
-1. **Sanefa trencada**: en cada sanefa hi ha una figura que no segueix la regla.
-2. **Joc de comptar**: quants primers, múltiples de 3 o quadrats es veuen per la plantilla, o quant sumen (equips A contra B).
-3. **Pinta per sumes**: amb un generador on el professor dibuixa els seus propis dibuixos.
-4. **Generador de WODB** per al professorat.
+1. **Pinta per sumes**: amb un generador on el professor dibuixa els seus propis dibuixos.
+2. **Generador de WODB** per al professorat.
 
 Aparcats: *El robot llaminer* i *El dau amagat*.
 
@@ -86,4 +106,4 @@ Aparcats: *El robot llaminer* i *El dau amagat*.
 - `docs/DECISIONS.md`: totes les decisions preses.
 - `docs/GAMES.md`: tots els jocs (fets, aprovats, aparcats i descartats).
 - `docs/history/`: les propostes revisades (rondes 1 a 9), amb les demos.
-- `tools/wodb/`: scripts que generen `wodb/bancs.js`, busquen els fulls i fan els PDF.
+- `tools/wodb/`, `tools/comptar/`, `tools/sanefa/`: scripts que busquen i verifiquen els fulls i fan els PDF.

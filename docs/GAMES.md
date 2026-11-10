@@ -11,21 +11,20 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - Two quality rules on top of validity: balance (no reason type in more than 5 of the 12 positions) and neighbours (moving the mask one cell should change the reasons as much as possible). See `CLAUDE.md` §4.2.
 - Teacher page `wodb/` prints F1, the mask (PDF + laser SVG) and answer keys (one page per topic), and generates new sheets ("Full nou", reproducible by number).
 - Pending: the owner's physical test of the new sizes (see `TODO.md` P0).
-- Format proposals for the next two games (counting game, Sanefa trencada) are in `docs/history/ronda10.html`; the owner's answers are pending (see `TODO.md` P1). Do not treat those proposals as decisions.
+- The format proposals of round 10 (`docs/history/ronda10.html`) were answered and built: see the next two entries.
 
-## APPROVED — Sanefa trencada (round 4, S1) — *without the creative version*
+## DONE — Counting game (owner's idea, round 1 comment; format round 10) — `comptar/`
 
-- F1: friezes (border strips) made by repeating one motif with one of the 7 frieze rules (translation, glide reflection, vertical mirrors, half-turns, horizontal mirror and their combinations; Conway's names: hop, step, sidle, spinning hop, spinning sidle, jump, spinning jump). Each frieze contains exactly **one** wrong copy (rotated or reflected). Find it.
-- F2: a mask with the motif's outline, used to check: a copy is correct if the mask fits it with the same orientation as the others.
-- The motif must have **no symmetry at all**, so that any wrong copy is detectable (the demo checked this).
-- Owner decisions: no "creative version"; same motif within one sheet, different motifs on different sheets; separate answer key; print only, B/W.
+- F1 6 × 4 numbers (40 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
+- Team rules (owner): A vs B, first to answer; +5 if right, −10 if wrong; start at 40; first to 100. Answer key = shuffled game script; printable score track.
+- Full spec: `CLAUDE.md` §7. Open: the owner wants to compare later with a 2×2 mask on 5×4 ("keep it simple").
 
-## APPROVED — Counting game (owner's idea, round 1 comment)
+## DONE — Sanefa trencada (round 4 S1, round 7 Q13, format round 10) — `sanefa/`
 
-- F2: 2×2 (4 holes) or 3×2 (6 holes). F1: numbers. Questions: "how many primes / multiples of 3 / perfect squares do you see?" or "add them" = add **only** the visible numbers that satisfy the property.
-- Levels: N1 numbers 2–50; N2 numbers 2–150.
-- Team rules (owner): teams A vs B; the first team that thinks it knows the answer says it; +5 if right, −10 if wrong; both start at 40; first to 100 wins.
-- Design the sheet so that all possible answers (0..4 or 0..6) appear with similar frequency over the positions (no guessing). Answer key separate.
+- One sheet = the seven frieze types (translation; vertical mirrors; glide reflection; half-turns; vertical mirrors + half-turns; horizontal mirror; vertical + horizontal mirrors) made with one figurative motif without symmetry (boot, flag, sailboat, duck), 12 copies each, exactly one wrong copy per frieze. Same motif within a sheet, different motifs on different sheets. No "creative version".
+- F2 = card with a motif-shaped hole and a corner notch; the corner where the notch ends up names the isometry. Separate answer key.
+- Rejected in round 10: splitting the seven friezes over two sheets with larger motifs (the owner found it too "baroque": too much information puts pupils off).
+- Full spec: `CLAUDE.md` §8.
 
 ## APPROVED — Pinta per sumes (round 2, A1)
 
