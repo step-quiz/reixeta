@@ -82,7 +82,7 @@ Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar 
 Cada full té les set classes de sanefa fetes amb un mateix motiu, amb 12 còpies cadascuna. A cada sanefa hi ha una sola còpia que trenca el ritme: cal trobar-la.
 
 - **Motius:** bota, bandera, veler i ànec. Cap no té simetria (s'ha mesurat per ordinador), i per això qualsevol error es pot detectar.
-- **Plantilla:** una targeta de 40 mm amb un forat amb la forma del motiu i una osca en una cantonada. Per fer-la encaixar en una còpia cal deixar-la tal com és, girar-la de cara o fer-li mitja volta, i la cantonada on queda l'osca ho diu: ↖ tal com és, ↗ mirall vertical, ↙ mirall horitzontal, ↘ mitja volta. Anotant les osques de cada sanefa es veu el ritme i la còpia que el trenca.
+- **Plantilla:** una targeta de 54 mm amb un forat amb la forma del motiu i una osca en una cantonada. Per fer-la encaixar en una còpia cal deixar-la tal com és, girar-la de cara o fer-li mitja volta, i la cantonada on queda l'osca ho diu: ↖ tal com és, ↗ mirall vertical, ↙ mirall horitzontal, ↘ mitja volta. Anotant les osques de cada sanefa es veu el ritme i la còpia que el trenca.
 - **Fulls:** dos de fixos per motiu (`SAN-BOT1`, `SAN-BOT2`…) i «Full nou» amb un número. L'error no és mai a les dues primeres còpies i és l'única manera d'arreglar la sanefa canviant una sola còpia.
 - **Solucionari:** la casella errònia de cada sanefa i el ritme correcte d'osques.
 

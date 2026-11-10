@@ -3,7 +3,7 @@
 'use strict';
 const S=window.SANEFA;
 const $=s=>document.querySelector(s);
-const M=16,GAP=3,MARC=12,JOC=.6,OSCA=6;          // mm: caixa del motiu, separació entre sanefes, marc de la plantilla, joc del forat, osca
+const M=16,GAP=3,MARC=19,JOC=.6,OSCA=8;          // mm: caixa del motiu, separació entre sanefes, marc de la plantilla, joc del forat, osca
 const FIXOS=['1','2'];                           // fulls fixos de cada motiu
 const st={motiu:'BOT',ver:'1',vista:'full',tria:new Set([].concat(...S.ORDRE.map(m=>FIXOS.map(v=>'SAN-'+m+v))))};
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -23,8 +23,8 @@ function fullSVG(id){const F=full(id),mo=motiuDe(id),w=S.N*M,files=F.reduce((a,s
 function plantillaCos(mo,ox,oy,laser){const Sz=M+2*MARC,pts=S.foratPunts(mo,ox+MARC,oy+MARC,M,JOC);
   const d=`M${ox+OSCA},${oy} L${ox+Sz},${oy} L${ox+Sz},${oy+Sz} L${ox},${oy+Sz} L${ox},${oy+OSCA} Z M${pts.map(p=>p.join(',')).join(' L')} Z`;
   return laser?`<path d="${d}" stroke="#FF0000" stroke-width="0.01" fill="none"/>`:`<path d="${d}" fill="#d4d4d4" fill-rule="evenodd" stroke="#000" stroke-width=".3"/>`;}
-function plantillaSVG(){const Sz=M+2*MARC,n=4,gx=(210-n*Sz)/(n+1);let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
-  S.ORDRE.forEach((mo,r)=>{const y=22+r*(Sz+24);o+=`<text x="${gx}" y="${y-4}" font-size="4.5" font-family="Arial,Helvetica,sans-serif">${esc(S.MOTIUS[mo].nom)} · fulls SAN-${mo}</text>`;
+function plantillaSVG(){const Sz=M+2*MARC,n=3,gx=(210-n*Sz)/(n+1);let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
+  S.ORDRE.forEach((mo,r)=>{const y=20+r*(Sz+14);o+=`<text x="${gx}" y="${y-4}" font-size="4.5" font-family="Arial,Helvetica,sans-serif">${esc(S.MOTIUS[mo].nom)} · fulls SAN-${mo}</text>`;
     for(let i=0;i<n;i++)o+=plantillaCos(mo,gx+i*(Sz+gx),y,false);});
   return o+'</svg>';}
 function plantillaLaser(mo){const Sz=M+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${Sz}mm" height="${Sz}mm" viewBox="0 0 ${Sz} ${Sz}">${plantillaCos(mo,0,0,true)}</svg>`;}

@@ -93,4 +93,5 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - **Outer margins of the mask 60 % larger** (frame 15 → 24 mm), same window. Consequence the owner was warned about: only 1 mm of paper remains above/below the mask at the extreme rows.
 - **★ 40 % larger and centred in its corner.**
 - Angles (ANG): same scale in every cell, larger sector, no vertex dot (see `CLAUDE.md` §4.5). Third time the owner had to ask for consistent angle drawings: do not reintroduce per-cell scaling.
-- The Sanefa mask (frame 12, 40 mm card) was **not** changed: a 60 % larger frame would leave under 3 mm of paper below the last frieze. Ask the owner.
+- Sanefa mask: the owner chose the 60 % larger frame too (12 → 19 mm, card 54 mm), knowing that only 3 mm of paper remain below the last frieze.
+- Standing instruction: always open a pull request when changes are pushed.

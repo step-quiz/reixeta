@@ -10,7 +10,7 @@ Nothing was printed yet. Expect corrections of the kind recorded in `docs/DECISI
 - **Counting game:** numbers with the same property cluster on the sheet (needed to reach answers 5–6); the owner has not judged how that looks. Level 1 squares: answer 6 never occurs, 5 rarely.
 - **Sanefa trencada:** motif box is only 16 mm so that seven friezes fit in A4 landscape with the mask inside the paper; hole details are small (the flag pole is about 2.2 mm wide) — fine for a laser, hard with a cutter. If too small: fewer copies per frieze do not help (height is the limit); options are A4 portrait (motif about 24 mm, 7 copies) or a thinner mask frame.
 - **Sanefa trencada:** the sailboat is the least asymmetric motif under a vertical mirror (0.21, threshold 0.20); if pupils confuse it, enlarge the sail offset in `MOTIUS.VEL` and rerun `tools/sanefa/check.js`.
-- **Masks (WODB, counting game):** new frame of 24 mm leaves only 1 mm of paper above/below at the extreme rows (conflicts with a possible framing of the sheets; owner informed, awaiting his view). Sanefa mask frame still 12 mm: ask whether he wants it larger too. The `barres` model must be offered by the future builder site.
+- **Masks (WODB, counting game):** new frame of 24 mm leaves only 1 mm of paper above/below at the extreme rows (conflicts with a possible framing of the sheets; owner informed, awaiting his view). Sanefa mask frame is 19 mm by his choice (3 mm of paper left below the last frieze). The `barres` model must be offered by the future builder site.
 - **WODB:** the Q is excluded from the LLE junction property by owner decision.
 
 ## P1 — Next games (full specs in `docs/GAMES.md`)

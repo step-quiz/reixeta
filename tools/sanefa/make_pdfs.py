@@ -40,7 +40,7 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <p><a href="../../">Reixeta</a> · <a href="../../sanefa/">Sanefa trencada</a></p><h1>PDF · Sanefa trencada</h1>
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Full 1</h2><ul>{li}</ul>
-<h2>Plantilles</h2><ul><li><a href="plantilles.pdf">Plantilles dels quatre motius (4 de cada en un A4)</a></li>{ls}</ul>
+<h2>Plantilles</h2><ul><li><a href="plantilles.pdf">Plantilles dels quatre motius (3 de cada en un A4)</a></li>{ls}</ul>
 <h2>Solucionaris</h2><ul><li><a href="solucionaris.pdf">Solucionaris dels fulls fixos</a> (dos per cara)</li></ul>
 </body></html>''')
 print('errors',errs)
