@@ -17,11 +17,14 @@ Nothing was printed yet. Expect corrections of the kind recorded in `docs/DECISI
 
 Points to watch: 1 mm of paper left at the sides of the mask on the 10×10 sheet; the example drawings (`EX` in `pinta/motor.js`) were drawn by Claude and not reviewed; a possible fourth rule (multiple of 7) would need three-digit numbers.
 
-## P1 — Next games (full specs in `docs/GAMES.md`)
+## P0c — WODB builder: built 2026-11-10 without a proposals round, not yet reviewed by the owner
 
-1. **WODB builder / own-grid site** (round 5, J6): static vanilla HTML; parts (1) choose 4 items → reasons, (2) generate a sheet (exists as "Full nou"). Part (3) custom banks: not wanted.
+`wodb/constructor.html` (spec `CLAUDE.md` §4.6). Expect corrections. Not done: keeping some cells fixed while "Omple sol" fills the rest; the builder exists only for WODB (the counting game and Pinta per sumes have their own generators).
 
-How the owner works: proposals go in a review artifact (see `CLAUDE.md` §2); «Sí, fes-ho» = first option; he then writes «Revisa artifact». He judges sheets by how approachable they look to a pupil ("too baroque" = rejected).
+## P1 — Round 12: laser cutter + 3D printer (artifact https://claude.ai/artifact/32rS7wTCXxAGtP5ZvedKMK, offline copy `docs/history/ronda12.html`) — awaiting the owner's answers
+
+On «Revisa artifact»: read collection `respostes` (doc ids A1, L1–L7, D1–D3, N1), reply in collection `claude`, build what he approved. Nothing of this round is built. Ideas proposed: A1 which machines/materials they have (assumed CO₂ laser ≥ 300 × 200 mm bed cutting 3 mm MDF/acrylic, FDM printer ~200 mm, PLA); L1 rigid masks in 3 mm (single-hole model; 3 mm bars still fragile); L2 transparent acrylic mask with hatched-engraved frame (grid lines visible through it; neighbours only blurred) as a trial; L3 Sanefa masks cut by laser + an "A" engraved on one face; L4 real logic blocks (48 pieces; MDF with engraved hatches, "empty" = piece with a hole); L5 polyomino pieces (17 pieces, 15 mm squares, 3 dominoes, 3×3 frame); L6 loose engraved tiles + tray: pupils arrange 20 tiles so that every position is valid, checked with the builder page; L7 45°/90° acrylic set square; D1 the 14 solids of the COS sheet printed at ~40 mm (STL to be generated from the coordinates in `tools/wodb/solids.py`; sphere and octahedron in two halves; ~9 h and ~150 g PLA per set); D2 printed knob for the rigid mask (pending the L1 test); D3 tactile tiles only if a pupil needs them; N1 six rejected ideas (3D-printed masks, notched positioning tray, pixel board, engraved score track, frieze stamps = the rejected creative version, engraved wooden sheets).
+- All times in that artifact are estimates, not measurements.
 
 ## Parked (do not work on them unless asked)
 

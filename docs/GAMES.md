@@ -32,10 +32,9 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - The teacher draws his own bitmaps in the editor; any bitmap is possible. Three example sheets. Full spec: `CLAUDE.md` §9.
 - Rejected in round 11: rules of the kind "there is a multiple of 7" (only thick drawings are drawable).
 
-## APPROVED — WODB builder for teachers (round 5, J6)
+## DONE — WODB builder for teachers (round 5, J6; built 2026-11-10) — `wodb/constructor.html`
 
-- Static vanilla HTML, very intuitive. Part 1: choose 4 items from a bank and see each item's reasons. Part 2: generate a whole sheet from a bank (the "Full nou" logic already exists in `wodb/motor.js`). Part 3 (custom banks): **not** wanted.
-- Facts already computed: a random set of 4 items is a valid WODB about 1/4 of the time with logic blocks, 1/10 with figures, 1/11 with numbers, 1/16 with letters, 1/21 with fractions. A property can never give a reason to two items of the same window.
+- Own grid (2–7 × 2–5), sheet filled by hand with live validation of every mask position (reasons shown per item) or automatically, own mask (one hole / 6 mm bars, frame, star), print views and laser SVG. Uses the 12 existing banks; custom banks are still **not** wanted. Spec: `CLAUDE.md` §4.6.
 
 ## PARKED — El robot llaminer (round 2, P3)
 

@@ -28,6 +28,8 @@ python3 export_bancs.py && node fulls.js && python3 export_bancs.py && node chec
 | `check.js [N]` | Validity, no repeated item, balance cap, neighbour figures, and `WODB.genera` (deterministic, valid, searched vs fallback). Exit code 1 on failure. |
 | `make_pdfs.py` | Serves the repo on 127.0.0.1:8766, prints with headless Chrome, merges with pypdf, checks that no answer key overflows its quarter page (`solu overflow: []`) and that the page raised no JS error (`errors []`). Deletes old PDFs/SVG in `pdf/wodb/` first. |
 
+`prova_constructor.js` is the browser test of the builder page (`wodb/constructor.html`): `node tools/wodb/prova_constructor.js` must print `ALL OK`.
+
 ## Item sources per bank
 
 | Bank | Items / base properties come from |

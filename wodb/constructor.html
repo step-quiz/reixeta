@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Constructor de WODB</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="wodb.css">
+<link rel="stylesheet" href="constructor.css">
+<style id="mida-pagina">@page{size:A4 landscape;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>Constructor de WODB</h1>
+    <a href="./" style="margin-left:auto;font-size:.9rem;color:#0f766e">Fulls ja fets</a>
+  </div>
+  <div class="fila">
+    <label>Tema <select id="banc"></select></label>
+    <label>Columnes <select id="cols"></select></label>
+    <label>Files <select id="files"></select></label>
+    <button id="btnOmple" title="Busca un full amb totes les posicions vàlides">Omple sol</button>
+    <button id="btnBuida">Buida</button>
+  </div>
+  <div class="fila">
+    <span class="grup"><span>Plantilla</span>
+      <select id="model" aria-label="Model de plantilla"><option value="un">Un sol forat</option><option value="barres">Quatre forats (barres de 6 mm)</option></select>
+      <label>Marc <select id="marc"><option value="15">15 mm</option><option value="20">20 mm</option><option value="24">24 mm</option></select></label>
+      <label><input type="checkbox" id="estrella" checked> Estrella</label>
+    </span>
+  </div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="editor" class="on">Constructor</button>
+      <button data-vista="full">Full 1</button>
+      <button data-vista="plantilla">Plantilla</button>
+      <button data-vista="solu">Solucionari</button>
+    </span>
+    <button id="btnLaser" class="amagat">Baixa l'SVG per al làser</button>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <p id="estat" class="estat" role="status"></p>
+</header>
+<main id="pagines"></main>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <pattern id="tr-ratlles" patternUnits="userSpaceOnUse" width="9" height="9" patternTransform="rotate(45)"><rect width="9" height="9" fill="#fff"/><line x1="0" y1="0" x2="0" y2="9" stroke="#000" stroke-width="2.6"/></pattern>
+    <pattern id="tr-quadricula" patternUnits="userSpaceOnUse" width="10" height="10"><rect width="10" height="10" fill="#fff"/><path d="M0,0 H10 M0,0 V10" stroke="#000" stroke-width="1.6"/></pattern>
+    <pattern id="tr-punts" patternUnits="userSpaceOnUse" width="8" height="8"><rect width="8" height="8" fill="#fff"/><circle cx="4" cy="4" r="1.9" fill="#000"/></pattern>
+  </defs>
+</svg>
+<script src="motor.js"></script>
+<script src="bancs.js"></script>
+<script src="constructor.js"></script>
+</body>
+</html>

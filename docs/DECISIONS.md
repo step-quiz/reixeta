@@ -99,3 +99,8 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 ## Round 11 — Pinta per sumes (2026-11-10, artifact `docs/history/ronda11.html`, 8 points, all answered)
 - P1 sheet 10×10 (pictures 9×9) by default, 8×8 as an option; P2 plain 2×2 mask and one rule per picture (no orientations); P3 base rules sum even / multiple of 3 / multiple of 5; P5 repeated numbers accepted (never inside one position); P6 answer sheet with empty grids; E1 teacher editor; E2 three example sheets: all approved.
 - P4 **No** to existential rules: "ens quedem només amb les regles de suma".
+
+## 2026-11-10 (evening) — example drawings and builder
+- Pinta per sumes examples corrected by the owner: π with equal legs; PIN-C = little man (instead of a star that "did not look like a star"), arrow with a 1-pixel shaft, cat with two eyes and one nose. Lesson: he checks every drawing pixel by pixel; keep bitmaps symmetric and unambiguous.
+- The owner ordered the WODB builder ("lloc per construir fulls i plantilles pròpies") directly, without a proposals round; built with the options of `CLAUDE.md` §4.6. Not yet reviewed by him.
+- Round 12 (laser cutter + 3D printer brainstorming) published as a review artifact; see `TODO.md`.
