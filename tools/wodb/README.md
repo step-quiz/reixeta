@@ -1,42 +1,54 @@
-# tools/wodb — pipeline that builds the WODB banks and PDFs
+# tools/wodb — pipeline that builds the WODB banks, sheets and PDFs
 
-Run every script from this directory. Requirements: Python 3, numpy, scipy (solids), pypdf, playwright with Google Chrome at `/usr/bin/google-chrome` (edit `make_pdfs.py` if elsewhere), Node for checks.
+Run every script from this directory. Requirements: Python 3 with numpy, scipy (solids), pypdf, playwright (`pip install scipy pypdf playwright`); Chrome or Chromium at `/usr/bin/google-chrome` or `/usr/bin/chromium` (`make_pdfs.py` picks the first that exists); Node ≥ 18.
 
 ## Main flow
 
 ```bash
-python3 export_bancs.py out_qua_g   # → ../../wodb/bancs.js
-python3 make_pdfs.py                # → ../../pdf/wodb/*.pdf, laser SVG, index.html
+python3 export_bancs.py    # item sources + props9.py + fulls_bal.json -> ../../wodb/bancs.js
+node check.js [N]          # verifies every fixed sheet and N generated sheets per bank; must print ALL OK
+python3 make_pdfs.py       # -> ../../pdf/wodb/: CODE.pdf (sheets A–D), tots-els-fulls.pdf, mask, laser SVG, solucionaris.pdf, index.html
 ```
 
-`export_bancs.py` reads the item sources below, builds every bank (items, bitmask properties, generator options), then overrides the fixed sheet "A" of each bank with the balanced boards in `fulls_bal.json`.
+Full rebuild including the board search (about 10 minutes):
 
-## Sources per bank
+```bash
+python3 export_bancs.py && node fulls.js && python3 export_bancs.py && node check.js && python3 make_pdfs.py
+```
 
-| Bank | Items / properties come from | Original board search |
-|---|---|---|
-| NUM, FIG, BLO/BLB | `data5.json` (built earlier by `domains.py` + `gen.py`; NUM board by `gen_extra.py num`) | `gen.py`, `gen_extra.py` |
-| FRA | inline in `export_bancs.py` (fractions only, 7 properties) | `balance.py FRA` |
-| LLE | `out_let9.json` (+ paths in `letters.py`); property 6 "one stroke" dropped by `perm` | `run_let_simple.py` (not copied; superseded by `balance.py`) |
-| ANG | `out_ang2.json` (+ `angles.py` for ray lengths) | `common.run` |
-| TR5, TR4 | `out_tri_g.json`, `out_tr4_5x9.json` (`dots.py` + `thin.py` filter) | `common.run`, `polish.py`, `tr4size.py` |
-| QUA | `out_qua_g.json` (10×4 board, 7 properties) | `sizes.py`, `polish.py` |
-| POL | `out_pol_b.json` (`poly.py`) | `polish.py` |
-| COS | `out_sol2.json` (`solids.py`) | `common.run` |
+`export_bancs.py` builds every bank (items, bitmask properties, generator options) for a 5 × 4 board (`ROWS`, `COLS`), appends the round-9 properties of `props9.py`, and takes the fixed sheets from `fulls_bal.json` (`{CODE: {A: [20 indices], B, C, D}}`; BLB uses the boards of BLO). If a bank is missing there it gets a placeholder sheet, which `check.js` reports as BAD until `fulls.js` has run.
 
-## Board search scripts
+## Scripts in use
 
-- `common.py`: generic simulated annealing over a 5×10 board (score = validity + variety); `W1` env = coverage weight.
-- `balance.py CODE ITERS SEEDS`: reads banks from `../../wodb/bancs.js`, searches a board that keeps every window valid and minimises reason types above the cap. Env: `CAPN/CAPD` (cap = N·CAPN/CAPD, owner rule 5/12), `W1` (use 200 to force validity), `BALW` (balance weight), `CONW` (weight of tag quotas / value-group caps), `INIT` (start from `bal{INIT}_CODE.json`), `TAG` (output `bal{TAG}_CODE.json`). Saves the board only if all windows are valid.
-- `polish.py NAME MAXREP ITERS SEEDS BASE [TAG]`: restarts annealing from an existing `out_NAME.json` board.
-- `sizes.py R C ...` / `tr4size.py R C`: search smaller boards when 36 positions are impossible.
-- `bal_final.json`: chosen board per bank → (max reason count, number of windows, source file).
+| Script | Role |
+|---|---|
+| `export_bancs.py` | Builds `wodb/bancs.js`. FRA pool and its 7 base properties are inline. `maxrep` (max items with the same key per sheet) = ceil(20 / number of keys). |
+| `props9.py` | Round-9 properties, each computed from the item's own data: TR5/TR4 (integer lattice arithmetic), QUA (exact fractions), FIG (from `domains.SHAPES`), LLE (junctions and stroke kinds parsed from the SVG paths of `letters.py`), COS (face lists), FRA. `python3 props9.py` prints the LLE sets and the FIG / COS tables for visual checking. |
+| `fulls.js [CODE …]` | Searches sheets A–D: smallest balance cap starting at floor(5N/12); each sheet = best of `SEEDS` (env, default 24) two-phase searches (`WODB.cercaFull` in `wodb/motor.js`), cost = neighbour repeats + reuse of items of the previous sheets. Writes `fulls_bal.json` and `bal_final.json` (`{CODE: [max positions of one reason type, positions, [neighbour repeats of A–D]]}`). Deterministic. |
+| `check.js [N]` | Validity, no repeated item, balance cap, neighbour figures, and `WODB.genera` (deterministic, valid, searched vs fallback). Exit code 1 on failure. |
+| `make_pdfs.py` | Serves the repo on 127.0.0.1:8766, prints with headless Chrome, merges with pypdf, checks that no answer key overflows its quarter page (`solu overflow: []`) and that the page raised no JS error (`errors []`). Deletes old PDFs/SVG in `pdf/wodb/` first. |
 
-## Adding properties (TODO P0)
+## Item sources per bank
 
-1. Add the property to the domain generator (e.g. `dots.py` for QUA/TR5/TR4, inline FRA block in `export_bancs.py`, `letters.py` sets, `solids.py` table, `domains.py` for FIG).
-2. Rebuild the pool and its bitmasks (re-run the relevant `out_*.json` generation or patch the `p` arrays), keeping the item order.
-3. `export_bancs.py` (with the old board, which stays valid: adding properties never removes reasons), then `balance.py CODE 250000 4` with `W1=200 CAPN=5 CAPD=12 BALW=40`.
-4. Copy the best board into `fulls_bal.json`, re-export, `make_pdfs.py`, check visually.
+| Bank | Items / base properties come from |
+|---|---|
+| NUM, FIG, BLO/BLB | `data5.json` (built earlier by `domains.py` + `gen.py`) |
+| FRA | inline in `export_bancs.py` (fractions only) |
+| LLE | `out_let9.json` (+ paths in `letters.py`); property 6 "one stroke" dropped by `perm` |
+| ANG | `out_ang2.json` (+ `angles.py` for ray lengths) |
+| TR5, TR4 | `out_tri_g.json`, `out_tr4_5x9.json` (`dots.py` + `thin.py` filter) |
+| QUA | `out_qua_g.json` (pool of 450, `dots.py` + `thin.py`) |
+| POL | `out_pol_b.json` (`poly.py`) |
+| COS | `out_sol2.json` (`solids.py`) |
 
-Absolute paths of the original environment were rewritten to relative ones; if a script still fails, look for a hard-coded path.
+The `board` arrays inside the `out_*.json` / `data5.json` files are the old 10×5 boards and are **ignored**.
+
+## Adding or changing a property
+
+1. Add `(si, no, test)` to the bank's list in `props9.py` (or edit the generator of the pool). At most 15 properties per bank (reason types are kept in a 32-bit mask).
+2. Full rebuild (above). Adding properties never invalidates a sheet, but the balance and neighbour figures change, so rerun `fulls.js`.
+3. Update the table in the root `README.md` from `bal_final.json`.
+
+## Legacy scripts (history of the 10×5 version; not part of the flow)
+
+`common.py`, `gen.py`, `gen_extra.py`, `polish.py`, `sizes.py`, `tr4size.py`, `mosaics.py` (pool builders / 10×5 annealers in Python) and `balance.py` (10×5 balance search; superseded by `fulls.js`). They are kept because the `out_*.json` pools were produced with them; some contain hard-coded sizes `R,C=5,10`.
