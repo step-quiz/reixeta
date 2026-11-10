@@ -11,13 +11,13 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 function tauler(id){const [c,v]=id.split('-');return BANCS[c].fulls[v]||generats[id];}
 /* ---------- full 1 ---------- */
 function fullSVG(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]=W.dims(B);
-  const w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2;let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
+  const w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2,it=B.caixa||ITEM;let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
   o+=`<text x="${x0+w}" y="${y0-15}" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
   for(let r=0;r<R;r++)o+=`<text x="${x0-8}" y="${y0+r*CEL+CEL/2+2.5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${'ABCDEFGH'[r]}</text>`;
   for(let c=0;c<C;c++)o+=`<text x="${x0+c*CEL+CEL/2}" y="${y0-5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=x0+c*CEL,y=y0+r*CEL;
     o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".35"/>`;
-    o+=`<svg x="${x+(CEL-ITEM)/2}" y="${y+(CEL-ITEM)/2}" width="${ITEM}" height="${ITEM}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
+    o+=`<svg x="${x+(CEL-it)/2}" y="${y+(CEL-it)/2}" width="${it}" height="${it}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
   o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/></svg>`;return o;}
 /* ---------- plantilla ---------- */
 function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}

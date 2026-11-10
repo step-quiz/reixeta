@@ -137,15 +137,16 @@ function dibuixa(B,id){const it=B.items[id],d=it.d;
     if(bn)return `<g fill="${TRAMA[col]}" stroke="#000" stroke-width="${fl?6:1.6}" stroke-linejoin="round">${sh}</g>`;
     return `<g fill="${fl?c:'#fff'}" stroke="${c}" stroke-width="5" stroke-linejoin="round">${sh}</g>`;}
   case 'let':return `<path d="${d}" fill="none" stroke="#000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
-  case 'ang':{const [th,phi,l2]=d,a1=phi*Math.PI/180,a2=(phi+th)*Math.PI/180,RA=11,RQ=8;   // RA, RQ: mida fixa de l'arc i del quadradet
-    const P1=[Math.cos(a1),Math.sin(a1)],P2=[l2*Math.cos(a2),l2*Math.sin(a2)],pts=[[0,0],P1,P2],xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]);
-    const s=76/Math.max(Math.max(...xs)-Math.min(...xs),Math.max(...ys)-Math.min(...ys),.8),cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
-    const T=p=>[f1(50+(p[0]-cx)*s),f1(50-(p[1]-cy)*s)],O=T([0,0]),A=T(P1),Bp=T(P2),U=(a,r)=>[f1(O[0]+r*Math.cos(a)),f1(O[1]-r*Math.sin(a))];let o='';
-    if(th===90){const q=[U(a1,RQ),[f1(O[0]+RQ*(Math.cos(a1)+Math.cos(a2))),f1(O[1]-RQ*(Math.sin(a1)+Math.sin(a2)))],U(a2,RQ)];
-      o+=`<polyline points="${O} ${q.map(p=>p.join(',')).join(' ')} ${O}" fill="#d0d0d0" stroke="#000" stroke-width="1.6"/>`;}
-    else{const ap=[];for(let i=0;i<=40;i++)ap.push(U(a1+(a2-a1)*i/40,RA));
-      o+=`<path d="M${O} ${ap.map(p=>'L'+p.join(',')).join(' ')} Z" fill="#d0d0d0" stroke="none"/><polyline points="${ap.map(p=>p.join(',')).join(' ')}" fill="none" stroke="#000" stroke-width="1.6"/>`;}
-    return o+`<path d="M${A} L${O} L${Bp}" fill="none" stroke="#000" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><circle cx="${O[0]}" cy="${O[1]}" r="2.6"/>`;}
+  case 'ang':{   /* Mateixa escala a totes les caselles: un costat llarg (LL) i un de curt (LC), sector de radi RA, quadradet de costat RQ.
+                     El dibuix només es desplaça per centrar-lo; no canvia mai de mida. Sense punt al vèrtex. */
+    const [th,phi,l2]=d,a1=phi*Math.PI/180,a2=(phi+th)*Math.PI/180,LL=56,LC=40,RA=24,RQ=16,curt2=l2<1;
+    const P1=[(curt2?LL:LC)*Math.cos(a1),(curt2?LL:LC)*Math.sin(a1)],P2=[(curt2?LC:LL)*Math.cos(a2),(curt2?LC:LL)*Math.sin(a2)],ap=[];
+    if(th===90)ap.push([RQ*Math.cos(a1),RQ*Math.sin(a1)],[RQ*(Math.cos(a1)+Math.cos(a2)),RQ*(Math.sin(a1)+Math.sin(a2))],[RQ*Math.cos(a2),RQ*Math.sin(a2)]);
+    else for(let i=0;i<=60;i++){const a=a1+(a2-a1)*i/60;ap.push([RA*Math.cos(a),RA*Math.sin(a)]);}
+    const pts=[[0,0],P1,P2,...ap],xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
+    const T=p=>f1(50+p[0]-cx)+','+f1(50-(p[1]-cy)),O=T([0,0]),arc=ap.map(T).join(' ');
+    return `<polygon points="${O} ${arc}" fill="#d0d0d0" stroke="none"/><polyline points="${arc}" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="miter"/>`+
+      `<polyline points="${T(P1)} ${O} ${T(P2)}" fill="none" stroke="#000" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>`;}
   case 'dots':{const g=d[0],X=v=>f1(12+v*76/g);let o='';for(let i=0;i<=g;i++)for(let j=0;j<=g;j++)o+=`<circle cx="${X(i)}" cy="${X(j)}" r="1.9" fill="#777"/>`;
     const pts=[];for(let i=1;i<d.length;i+=2)pts.push(X(d[i])+','+X(g-d[i+1]));return o+`<polygon points="${pts.join(' ')}" fill="#d9d9d9" fill-opacity=".85" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>`;}
   case 'cells':{const w=Math.max(...d.map(p=>p[0]))+1,h=Math.max(...d.map(p=>p[1]))+1,s=Math.min(84/w,84/h,20),ox=50-w*s/2,oy=50-h*s/2;
