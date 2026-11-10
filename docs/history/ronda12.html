@@ -1,0 +1,232 @@
+<title>Reixeta · Ronda 12</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a single reading column of decision cards under a sticky progress bar; figures (mm drawings, tables) sit inside the card they explain. */
+:root{
+  --bg:#f3f6f5; --panel:#ffffff; --ink:#14201e; --muted:#566863; --line:#d3dcd9; --accent:#0f6f66; --accent-ink:#ffffff; --soft:#e6efed;
+  --si:#1c7c45; --si-bg:#e1f3e7; --no:#b3362b; --no-bg:#fae5e2; --des:#8a6100; --des-bg:#fbefcf; --par:#2456a6; --par-bg:#e2ebfa;
+  --paper:#ffffff; --mask:#c9d2cf; --draw:#14201e; --fill:#d6dbd9;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --f-head:"Space Grotesk","Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101615; --panel:#18211f; --ink:#e6eeec; --muted:#9bada8; --line:#2c3a37; --accent:#4fc0b3; --accent-ink:#06211e; --soft:#1f2c29;
+  --si:#6fd397; --si-bg:#173524; --no:#f08f84; --no-bg:#3d1c18; --des:#e6c260; --des-bg:#3a2f10; --par:#8fb4f2; --par-bg:#18294a;
+  --paper:#232e2c; --mask:#44534f; --draw:#e6eeec; --fill:#56645f; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101615; --panel:#18211f; --ink:#e6eeec; --muted:#9bada8; --line:#2c3a37; --accent:#4fc0b3; --accent-ink:#06211e; --soft:#1f2c29;
+  --si:#6fd397; --si-bg:#173524; --no:#f08f84; --no-bg:#3d1c18; --des:#e6c260; --des-bg:#3a2f10; --par:#8fb4f2; --par-bg:#18294a;
+  --paper:#232e2c; --mask:#44534f; --draw:#e6eeec; --fill:#56645f; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header.top{padding-top:28px;display:flex;flex-direction:column;gap:8px}
+h1{font:600 1.7rem/1.15 var(--f-head);margin:0;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:65ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+.count{font:600 .95rem var(--f-head);font-variant-numeric:tabular-nums}
+.meter{flex:1 1 120px;height:6px;border-radius:3px;background:var(--soft);overflow:hidden;min-width:80px}
+.meter i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.chip{font:500 .85rem var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.save{font-size:.82rem;color:var(--muted);min-width:9em;text-align:right}
+.save.bad{color:var(--no)}
+.warn{border:1px solid var(--des);background:var(--des-bg);color:var(--ink);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.warn textarea{width:100%;min-height:120px;font:12px/1.4 var(--f-mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+.results{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.results h2{font:600 1.05rem var(--f-head);margin:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.num b{display:block;font:600 1.5rem/1.1 var(--f-head);font-variant-numeric:tabular-nums}
+.num span{color:var(--muted);font-size:.86rem}
+h2.cat{font:600 .8rem var(--f-head);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:14px 0 -6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.done{border-color:var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline}
+.id{font:500 .8rem var(--f-mono);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:1px 6px;flex:none}
+.card h3{font:600 1.08rem/1.3 var(--f-head);margin:0;text-wrap:balance}
+.card p{margin:0;max-width:65ch}
+.lbl{font:600 .72rem var(--f-head);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.q{background:var(--soft);border-radius:8px;padding:10px 12px}
+.fig{overflow-x:auto}
+.fig svg{display:block;max-width:100%;height:auto}
+table{border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{text-align:left;padding:5px 10px 5px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 .72rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.ok{color:var(--si);font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btns button{font:500 .9rem var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+.btns button:hover{border-color:var(--ink)}
+.btns button[aria-pressed="true"][data-d="si"]{background:var(--si-bg);border-color:var(--si);color:var(--si);font-weight:600}
+.btns button[aria-pressed="true"][data-d="no"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:600}
+.btns button[aria-pressed="true"][data-d="despres"]{background:var(--des-bg);border-color:var(--des);color:var(--des);font-weight:600}
+.btns button[aria-pressed="true"][data-d="parlem"]{background:var(--par-bg);border-color:var(--par);color:var(--par);font-weight:600}
+textarea.com{width:100%;min-height:58px;resize:vertical;font:14px/1.45 var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reply{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+.reply p{white-space:pre-wrap}
+code{font:500 .86em var(--f-mono);background:var(--soft);padding:1px 5px;border-radius:4px}
+.foot{color:var(--muted);font-size:.88rem;text-align:center;margin-top:8px}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+main#cards{width:100%;margin:0;min-width:0}
+.fig{max-width:100%;min-width:0}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Ronda 12: talladora làser i impressora 3D</h1>
+    <p class="lead">Idees per treure partit de les dues màquines als jocs que ja tenim. Cada targeta diu què es faria, què hi guanya l'alumnat, quant costa de fer i on pot fallar. Els temps són aproximats: depenen de les vostres màquines. No he construït res d'això.</p>
+  </header>
+
+  <div class="bar">
+    <span class="count" id="count">Contestats: 0/0</span>
+    <span class="meter" aria-hidden="true"><i id="meter"></i></span>
+    <button class="chip" id="fTots" aria-pressed="true">Tots</button>
+    <button class="chip" id="fPend" aria-pressed="false">Sense resposta</button>
+    <span class="save" id="save" role="status">Connectant…</span>
+  </div>
+
+  <div class="warn" id="warn" hidden>
+    <strong>No puc desar les respostes automàticament en aquesta vista.</strong>
+    <span>Contesta igualment: quan acabis, copia aquest text i enganxa'l al xat.</span>
+    <textarea id="export" readonly aria-label="Respostes per copiar"></textarea>
+    <div class="btns"><button id="copy">Copia les respostes</button></div>
+  </div>
+
+  <section class="results" aria-label="Criteri">
+    <h2>Criteri que he seguit</h2>
+    <div class="nums">
+      <div class="num"><b>Pla → làser</b><span>tot el que és una peça plana (plantilles, fitxes, blocs) surt en minuts amb la talladora</span></div>
+      <div class="num"><b>Volum → 3D</b><span>la impressora només val la pena quan la peça necessita tres dimensions</span></div>
+      <div class="num"><b>2 min / 1 h</b><span>una plantilla del WODB: tallada amb làser o impresa en 3D</span></div>
+      <div class="num"><b>6 descartades</b><span>idees que semblen bones i no compensen; són a l'última targeta</span></div>
+    </div>
+  </section>
+
+  <main id="cards" class="wrap" style="gap:14px"></main>
+  <p class="empty" id="empty" hidden>No queda cap punt sense resposta.</p>
+  <p class="foot">Quan acabis, escriu «Revisa artifact» al xat.</p>
+</div>
+
+<script>
+const T=(h,rows)=>`<table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+const FIG_COS=T(['Cos','Com s\'imprimeix','Temps aprox.'],[['Cub, ortoedre, prismes','drets sobre una base','30–45 min'],['Piràmides, tetraedre, con','amb la punta amunt (queda una mica arrodonida)','25–40 min'],['Octaedre','en dues piràmides enganxades','40 min'],['Esfera','en dues semiesferes enganxades','50 min'],['Cilindre, semiesfera','sobre la cara plana','30 min']]);
+const FIG_BLO=T(['Atribut','Al full imprès','A la peça tallada'],[['Forma','dibuix','la forma mateixa'],['Color','color o trama','metacrilat de tres colors, o trama gravada en fusta'],['Mida','gran o petit','gran o petit'],['Ple o buit','ple o contorn (gruixut o prim en blanc i negre)','peça sencera o peça amb un forat al mig']]);
+const CATS=[['A','Abans de res'],['L','Talladora làser'],['D','Impressora 3D'],['N','El que no faria']];
+const ITEMS=[
+{id:'A1',cat:'A',t:'Quines màquines i materials teniu',
+ que:"He fet els càlculs suposant una talladora làser de CO₂ amb un llit de 300 × 200 mm com a mínim, que talla fusta DM o contraxapat de 3 mm i metacrilat de 3 mm, i una impressora 3D de filament (PLA) amb una base d'uns 200 mm. Si la vostra làser és de díode, el metacrilat transparent no el talla. A la làser no s'hi ha de posar mai PVC ni vinil, perquè desprenen clor.",
+ prop:"Escriu al comentari què teniu de debò (model o mida del llit, materials que feu servir, colors de filament) i ajusto les propostes.",
+ q:"Les suposicions s'acosten al que teniu?"},
+{id:'L1',cat:'L',t:'Plantilles en material rígid',
+ que:"La plantilla de paper es va trencar en tallar-la. Els SVG de tall dels quatre jocs ja existeixen, amb la convenció de vermell per tallar, blau per marcar i negre per gravar. En DM o metacrilat opac de 3 mm, una plantilla del WODB es talla en uns 2 minuts i no es fa malbé amb l'ús.",
+ prop:"Tallar en 3 mm les plantilles dels quatre jocs, amb el model d'un sol forat. Les barres de 3 mm continuarien sent fràgils en aquests materials; les de 6 mm sí que aguanten. Un límit: amb 3 mm de gruix, la vora del forat fa una mica d'ombra i, mirant de costat, tapa un pèl les caselles de la vora.",
+ q:"Tallo les plantilles pensant en 3 mm de gruix?"},
+{id:'L2',cat:'L',t:'Plantilla transparent amb el marc gravat',
+ que:"Una variant de l'anterior per al problema de col·locar bé la plantilla. En metacrilat transparent, el marc es grava amb un ratllat i queda glaçat; la finestra queda neta. Com que a través del marc es veuen les línies de la graella, alinear-la és immediat. El preu: el marc glaçat no amaga del tot les caselles veïnes, només les desdibuixa, i gravar el marc allarga la feina a uns 10 minuts per plantilla.",
+ prop:"Fer-ne una de prova del WODB i comparar-la a classe amb l'opaca abans de decidir.",
+ q:"Fem la prova de la plantilla transparent?"},
+{id:'L3',cat:'L',t:'Plantilles de la Sanefa trencada',
+ que:"És on la làser fa més falta: el forat té la forma del motiu i fa 16 mm, amb detalls de 2 mm que a mà no es poden tallar bé. Amb làser surt exacte en menys d'un minut per targeta. A més, es pot gravar una lletra en una sola cara: en capgirar la targeta es veu del revés (o no es veu, si el material és opac), i això diu quina cara hi ha a sobre sense haver de mirar l'osca.",
+ prop:"Tallar les quatre targetes de 54 mm amb el forat, l'osca i una «A» gravada a la cara de davant.",
+ q:"Afegeixo la lletra gravada als SVG de la sanefa?"},
+{id:'L4',cat:'L',t:'Blocs lògics de debò',
+ que:"Els fulls BLO i BLB dibuixen blocs lògics. Amb la làser es poden tallar els 48 blocs i l'alumnat els pot tocar, ordenar i posar de quatre en quatre sobre la taula per fer un WODB sense full. La taula diu com es tradueix cada atribut.",
+ fig:FIG_BLO,
+ prop:"Un joc de 48 blocs en DM de 3 mm amb les trames gravades (la versió en blanc i negre, d'un sol material), amb el costat del bloc gran de 40 mm. Són uns 15 minuts de tall i gravat per joc. La versió en color demana tres planxes de metacrilat i surt més cara.",
+ q:"T'interessen els blocs tallats? En fusta amb trames, o en metacrilat de colors?"},
+{id:'L5',cat:'L',t:'Poliòmins per comprovar amb les mans',
+ que:"Diverses propietats del full de poliòmins costen de veure en un dibuix i són evidents amb la peça: si queda igual en girar-la mitja volta, si té eix de simetria (es capgira i es compara), si cap dins d'un quadrat de 3 × 3 o si es pot cobrir amb fitxes de dòmino.",
+ prop:"Les 17 peces (5 tetròminos i 12 pentòminos) amb quadrets de 15 mm, tres dòminos i un marc de 3 × 3, tot en DM de 3 mm. Uns 5 minuts de tall per joc; en una planxa de 300 × 200 hi caben dos jocs.",
+ q:"Faig el fitxer de tall dels poliòmins?"},
+{id:'L6',cat:'L',t:'Fitxes soltes: construir un WODB',
+ que:"Una activitat nova que només es pot fer amb peces: 20 fitxes de 40 mm, cadascuna amb un element gravat, i una safata de 5 × 4. L'alumnat ha de col·locar-les de manera que totes les posicions de la plantilla siguin un WODB vàlid, o bé arreglar un full on se n'han intercanviat dues. La solució es comprova amb el constructor web, que ja marca en verd o vermell cada posició.",
+ prop:"Provar-ho amb un sol tema (nombres, que es graven de pressa: uns 10 minuts les 20 fitxes en traç). Un límit: gravant en traç es perd el gris de les figures, només queda el contorn.",
+ q:"Vols provar aquesta activitat amb un joc de fitxes de nombres?"},
+{id:'L7',cat:'L',t:'Escaire de 45° i 90°',
+ que:"Als fulls d'angles, triangles i quadrilàters hi ha propietats com «més petit de 45°», «té un angle recte» o «té un angle de 45°». Una targeta petita de metacrilat transparent amb una cantonada de 90° i una de 45° les fa comprovables sobre el paper.",
+ prop:"Una targeta de 60 mm, tallada en menys d'un minut. D'una planxa de 300 × 200 en surten una quinzena.",
+ q:"Faig el fitxer de l'escaire?"},
+{id:'D1',cat:'D',t:'Els cossos geomètrics del full, en la mà',
+ que:"És l'ús més clar de la impressora. El full de cossos demana comptar cares i mirar-ne la forma a partir d'un dibuix en perspectiva, i això és difícil. Amb el cos a la mà es compta. Els fitxers es poden generar amb les mateixes coordenades que dibuixen el full, de manera que cada cos imprès és exactament el del dibuix.",
+ fig:FIG_COS,
+ prop:"Els 14 cossos d'uns 40 mm. Un joc sencer són unes 9 hores d'impressió i uns 150 g de PLA. És lent: un joc per a cada grup de quatre alumnes voldria dir setmanes d'impressora, de manera que començaria per un o dos jocs.",
+ q:"Genero els fitxers dels 14 cossos per imprimir-ne un joc de prova?"},
+{id:'D2',cat:'D',t:'Pom per a la plantilla',
+ que:"Una plantilla rígida de 3 mm costa d'aixecar d'un full plastificat. Un pom petit imprès (10 minuts) i enganxat a una cantonada ho resol. Perquè no rellisqui, en canvi, el millor no és imprimir res: quatre punts adhesius de silicona comprats fan més bon servei que qualsevol peça impresa.",
+ prop:"Imprimir un pom de prova només si, un cop tallada la plantilla rígida, veieu que costa d'agafar.",
+ q:"Ho deixem pendent de la prova amb la plantilla rígida?"},
+{id:'D3',cat:'D',t:'Fitxes amb relleu per a alumnat amb baixa visió',
+ que:"Les figures, els poliòmins i els blocs es poden imprimir com a fitxes de 40 mm amb 1 mm de relleu, i les trames dels blocs com a textures que es noten amb el dit. Cada fitxa són uns 15 minuts; les 20 d'un full, unes 5 hores.",
+ prop:"Fer-ho només si hi ha algú que ho necessiti. No ho prepararia per si de cas.",
+ q:"Tens alumnat que ho necessiti ara?"},
+{id:'N1',cat:'N',t:'Sis idees descartades',
+ que:"Les he considerat i no les faria. (1) Plantilles impreses en 3D: una hora cadascuna, contra 2 minuts amb làser. (2) Una safata amb osques perquè la plantilla encaixi a cada posició: moltes peces per a un problema que les marques guia o la plantilla transparent ja resolen. (3) Un tauler de píxels per al Pinta per sumes: pintar amb retolador és més ràpid. (4) Un marcador gravat per al joc de comptar: el full plastificat i dues fitxes fan el mateix. (5) Segells o plantilles per dibuixar sanefes: és la versió creativa que ja vas descartar. (6) Gravar fulls sencers en fusta: lent, i el paper plastificat ja funciona.",
+ prop:"Deixar-les descartades. Si en vols recuperar alguna, digues-ho al comentari.",
+ q:"D'acord a descartar aquestes sis?"}
+];
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const NOM={si:'Sí, fes-ho',no:'No',despres:'Més endavant',parlem:'En parlem'};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const resp={},reply={};let db=null,filter='tots';
+const $=s=>document.querySelector(s);
+const answered=id=>!!(resp[id]&&(resp[id].decisio||(resp[id].comentari||'').trim()));
+
+function build(){let h='';
+  for(const [c,name] of CATS){h+=`<h2 class="cat" data-cat="${c}">${esc(name)}</h2>`;
+    for(const it of ITEMS.filter(x=>x.cat===c)){
+      h+=`<article class="card" id="card-${it.id}" data-id="${it.id}">
+        <div class="head"><span class="id">${it.id}</span><h3>${esc(it.t)}</h3></div>
+        <div><span class="lbl">Què passa</span><p>${esc(it.que)}</p></div>
+        ${it.fig?`<div class="fig">${it.fig}</div>`:''}
+        <div><span class="lbl">Què proposo</span><p>${esc(it.prop)}</p></div>
+        <div class="q"><span class="lbl">Pregunta</span><p>${esc(it.q)}</p></div>
+        <div class="btns" role="group" aria-label="Decisió per a ${it.id}">${DECS.map(([d,l])=>`<button id="b-${it.id}-${d}" data-d="${d}" aria-pressed="false">${l}</button>`).join('')}</div>
+        <textarea class="com" id="c-${it.id}" placeholder="Comentari (opcional)" aria-label="Comentari per a ${it.id}"></textarea>
+        <div class="reply" id="r-${it.id}" hidden><span class="lbl">Resposta de Claude</span><p></p></div>
+      </article>`;}}
+  $('#cards').innerHTML=h;
+  document.querySelectorAll('.card').forEach(card=>{const id=card.dataset.id;
+    card.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{const r=resp[id]||(resp[id]={});r.decisio=r.decisio===b.dataset.d?'':b.dataset.d;paint(id);save(id);});
+    const ta=card.querySelector('textarea');let t=null;
+    ta.oninput=()=>{const r=resp[id]||(resp[id]={});r.comentari=ta.value;draft(id,ta.value);paint(id,true);clearTimeout(t);t=setTimeout(()=>save(id),900);};
+    ta.onblur=()=>{clearTimeout(t);if(dirty[id])save(id);};});}
+const dirty={};
+function paint(id,keepText){const card=$('#card-'+id),r=resp[id]||{};
+  card.querySelectorAll('.btns button').forEach(b=>b.setAttribute('aria-pressed',String(r.decisio===b.dataset.d)));
+  const ta=card.querySelector('textarea');if(!keepText&&document.activeElement!==ta&&ta.value!==(r.comentari||''))ta.value=r.comentari||'';
+  card.classList.toggle('done',answered(id));
+  const rp=$('#r-'+id);rp.hidden=!reply[id];if(reply[id])rp.querySelector('p').textContent=reply[id];
+  summary();}
+function summary(){const n=ITEMS.filter(x=>answered(x.id)).length;$('#count').textContent=`Contestats: ${n}/${ITEMS.length}`;$('#meter').style.width=(100*n/ITEMS.length)+'%';
+  let vis=0;document.querySelectorAll('.card').forEach(c=>{const hide=filter==='pend'&&answered(c.dataset.id);c.hidden=hide;if(!hide)vis++;});
+  document.querySelectorAll('h2.cat').forEach(h=>{h.hidden=!ITEMS.some(x=>x.cat===h.dataset.cat&&!$('#card-'+x.id).hidden);});
+  $('#empty').hidden=vis>0;
+  $('#export').value=ITEMS.filter(x=>answered(x.id)).map(x=>`${x.id}: ${NOM[resp[x.id].decisio]||'(sense decisió)'}${(resp[x.id].comentari||'').trim()?' — '+resp[x.id].comentari.trim():''}`).join('\n');}
+function status(t,bad){const s=$('#save');s.textContent=t;s.classList.toggle('bad',!!bad);}
+function draft(id,v){try{localStorage.setItem('r12-'+id,v);}catch(e){}}
+/* one write at a time per document */
+const busy={};
+async function save(id){dirty[id]=true;if(!db){status('Sense desat automàtic',true);return;}
+  if(busy[id])return;busy[id]=true;
+  try{while(dirty[id]){dirty[id]=false;const r=resp[id]||{};status('Desant…');
+      await db.doc('respostes/'+id).set({decisio:r.decisio||'',comentari:r.comentari||'',actualitzat:new Date().toISOString()});}
+    status('Desat');try{localStorage.removeItem('r12-'+id);}catch(e){}}
+  catch(e){dirty[id]=true;status('No s\'ha pogut desar',true);$('#warn').hidden=false;}
+  finally{busy[id]=false;}}
+
+build();ITEMS.forEach(x=>{try{const d=localStorage.getItem('r12-'+x.id);if(d){resp[x.id]={comentari:d};}}catch(e){}paint(x.id);});
+$('#fTots').onclick=()=>{filter='tots';$('#fTots').setAttribute('aria-pressed','true');$('#fPend').setAttribute('aria-pressed','false');summary();};
+$('#fPend').onclick=()=>{filter='pend';$('#fPend').setAttribute('aria-pressed','true');$('#fTots').setAttribute('aria-pressed','false');summary();};
+$('#copy').onclick=async()=>{const ta=$('#export');try{await navigator.clipboard.writeText(ta.value);$('#copy').textContent='Copiat';}catch(e){ta.focus();ta.select();}};
+
+(async()=>{let timer=setTimeout(()=>{if(!db){status('Sense desat automàtic',true);$('#warn').hidden=false;}},10000);
+  try{db=await window.claude?.use?.('db');}catch(e){db=null;}
+  if(!db){clearTimeout(timer);status('Sense desat automàtic',true);$('#warn').hidden=false;return;}
+  db.collection('respostes').onSnapshot(snap=>{clearTimeout(timer);
+    snap.docs.forEach(d=>{const v=d.data()||{},id=d.id;if(!ITEMS.some(x=>x.id===id)||busy[id]||dirty[id])return;
+      const ta=$('#c-'+id);if(document.activeElement===ta)return;resp[id]={decisio:v.decisio||'',comentari:v.comentari||''};paint(id);});
+    status('Desat automàtic actiu');},()=>{status('Sense desat automàtic',true);$('#warn').hidden=false;});
+  db.collection('claude').onSnapshot(snap=>{snap.docs.forEach(d=>{const v=d.data()||{};if(ITEMS.some(x=>x.id===d.id)){reply[d.id]=String(v.text||'');paint(d.id);}});},()=>{});
+})();
+</script>
