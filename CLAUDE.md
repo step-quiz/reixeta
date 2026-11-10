@@ -114,6 +114,16 @@ The mask must never exceed the paper: 5·40 + 2·24 = 248 ≤ 297 and 4·40 + 2�
 - Letters (LLE): custom stroke font (`letters.py`, SVG paths) so that symmetries are exact; properties are geometric only.
 - Solids (COS): 3D convex hull projected orthographically; hidden edges dashed.
 
+### 4.6 Builder — `wodb/constructor.html` + `constructor.js` + `constructor.css` (round 5 J6, asked for on 2026-11-10)
+
+Teacher tool to make **own sheets, own grids and own masks** from the 12 existing banks (custom banks stay out: not wanted since round 7).
+- Grid 2–7 columns × 2–5 rows. Cell = min(40, (297 − 2·frame)/cols, (210 − 2·max(frame, 19))/rows) rounded down to 0.5 mm, so the mask always fits the paper (19 mm are needed above the grid for labels and code). Labels and drawing box scale with the cell.
+- Editing: click a cell, then an item of the palette; double-click empties a cell. A circle at every mask position is green (valid), red (not valid) or grey (incomplete); clicking it lists the reasons of each of the four items (this is "part 1" of J6). Summary: valid positions, most frequent reason type vs the 5/12 limit, repeated items, empty cells.
+- "Omple sol" = `WODB.cercaFull` on a copy of the bank with the chosen `rows/cols`, trying caps from max(1, ⌊5N/12⌋) upwards (3 seeds each) — the fixed sheets' cap (`objectiu`) is not used here.
+- Mask: model `un` / `barres`, frame 15 / 20 / 24 mm, ★ optional (radius = 0.2 · frame, centred in the corner); "Baixa l'SVG per al làser" downloads the cut file (red cut, blue guides, black ★).
+- State in the URL hash: `#c=BANK.CxR.model.frame.star.id-id-…` (ids in base 36, `_` = empty) + optional `/full|plantilla|solu`. Printed code = `BANK-` + 4 base-36 characters of a hash of the state. Invalid sheets can still be printed (the status line warns).
+- Test: `node tools/wodb/prova_constructor.js` (Playwright; set `NODE_PATH` to the global npm root if `playwright` is not found): seven bank/grid/mask combinations, validity re-checked with `WODB.valid`, paper fit, URL round trip, no JS errors.
+
 ## 5. Pipeline (rebuild everything)
 
 Python 3 with numpy, scipy, pypdf, playwright (`pip install scipy pypdf playwright`) + Chrome/Chromium at `/usr/bin/google-chrome` or `/usr/bin/chromium`; Node ≥ 18. Run from `tools/wodb/`:

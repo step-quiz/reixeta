@@ -54,6 +54,15 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 
 **Full nou.** A la pàgina `wodb/`, «Full nou núm.» genera un altre full amb les mateixes garanties (totes les posicions vàlides, cap element repetit i mai menys equilibrat que els fulls fixos; només a POL i COS, que han necessitat una cerca molt llarga, un full nou pot tenir un motiu en una posició més). El codi (per exemple, `NUM-4821`) torna a generar sempre el mateix full i el mateix solucionari. També es pot obrir directament: `wodb/#NUM-4821`.
 
+## Constructor de WODB
+
+A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 12 temes.
+
+- **Graella pròpia:** de 2 a 7 columnes i de 2 a 5 files. La casella es fa tan gran com permet el paper amb la plantilla a les posicions de les vores.
+- **Full a mà o automàtic:** es clica una casella i després un element de la llista. Cada posició de la plantilla té un cercle verd si és un WODB vàlid i vermell si no; clicant-lo es veuen els motius de cada element. «Omple sol» busca un full amb totes les posicions vàlides.
+- **Plantilla pròpia:** un sol forat o quatre forats amb barres de 6 mm, marc de 15, 20 o 24 mm, amb estrella o sense. Es pot baixar l'SVG per a la talladora làser.
+- **Per imprimir:** full 1, plantilla i solucionari. L'adreça de la pàgina desa el full sencer.
+
 ## Imprimir
 
 1. Imprimeix sempre a **mida real (100 %)**, mai amb «ajusta a la pàgina».
@@ -102,7 +111,7 @@ Framework preset: *None*. Build command: (buit). Build output directory: `/`.
 
 ## Altres jocs del projecte
 
-Joc aprovat que encara s'ha de fer (detalls a `docs/GAMES.md`): el **generador de WODB** per al professorat.
+Tots els jocs aprovats estan fets (detalls a `docs/GAMES.md`).
 
 Aparcats: *El robot llaminer* i *El dau amagat*.
 
