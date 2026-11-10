@@ -37,20 +37,23 @@ index.html                    Home page (links to games)
 README.md                     Human README (Catalan)
 CLAUDE.md                     This file
 TODO.md                       Prioritised next work, with exact specs
-docs/DECISIONS.md             Every decision taken with the owner (rounds 1–9 + 2026-11-09 redesign)
+docs/DECISIONS.md             Every decision taken with the owner, chronological (rounds 1–12, physical tests, corrections)
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
-                              revisio-v4.html = review of WODB v4, ronda10.html = format proposals for the next two games
+                              revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
+                              ronda12 = laser cutter + 3D printer ideas (answers pending)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
+wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§4.6)
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
 pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
+tools/check.js                Runs every verification of the repo in one go
 ```
 
 ## 4. WODB architecture
@@ -119,7 +122,7 @@ The mask must never exceed the paper: 5·40 + 2·24 = 248 ≤ 297 and 4·40 + 2�
 Teacher tool to make **own sheets, own grids and own masks** from the 12 existing banks (custom banks stay out: not wanted since round 7).
 - Grid 2–7 columns × 2–5 rows. Cell = min(40, (297 − 2·frame)/cols, (210 − 2·max(frame, 19))/rows) rounded down to 0.5 mm, so the mask always fits the paper (19 mm are needed above the grid for labels and code). Labels and drawing box scale with the cell.
 - Editing: click a cell, then an item of the palette; double-click empties a cell. A circle at every mask position is green (valid), red (not valid) or grey (incomplete); clicking it lists the reasons of each of the four items (this is "part 1" of J6). Summary: valid positions, most frequent reason type vs the 5/12 limit, repeated items, empty cells.
-- "Omple sol" = `WODB.cercaFull` on a copy of the bank with the chosen `rows/cols`, trying caps from max(1, ⌊5N/12⌋) upwards (3 seeds each) — the fixed sheets' cap (`objectiu`) is not used here.
+- "Omple sol" = `WODB.cercaFull` on a copy of the bank with the chosen `rows/cols`, trying caps from max(1, ⌊5N/12⌋) upwards (3 seeds each) — the fixed sheets' cap (`objectiu`) is not used here. On a partly filled sheet it keeps the placed cells (`anneal` option `fix` = indices that may not change, `init` with −1 for free cells) and fills only the empty ones; if that fails, `impossibles()` brute-forces every position with ≤ 2 empty cells and names those that cannot be completed (e.g. regular hexagon + regular octagon share every property).
 - Mask: model `un` / `barres`, frame 15 / 20 / 24 mm, ★ optional (radius = 0.2 · frame, centred in the corner); "Baixa l'SVG per al làser" downloads the cut file (red cut, blue guides, black ★).
 - State in the URL hash: `#c=BANK.CxR.model.frame.star.id-id-…` (ids in base 36, `_` = empty) + optional `/full|plantilla|solu`. Printed code = `BANK-` + 4 base-36 characters of a hash of the state. Invalid sheets can still be printed (the status line warns).
 - Test: `node tools/wodb/prova_constructor.js` (Playwright; set `NODE_PATH` to the global npm root if `playwright` is not found): seven bank/grid/mask combinations, validity re-checked with `WODB.valid`, paper fit, URL round trip, no JS errors.
@@ -144,8 +147,8 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 6. Checklist before delivering
 
-1. `node --check` on every `.js` of the game you touched.
-2. `node tools/wodb/check.js`, `node tools/comptar/check.js`, `node tools/sanefa/check.js`, `node tools/pinta/check.js` print `ALL OK` (run the ones affected).
+1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the four game checks, and the browser test of the builder; `--rapid` for small samples).
+2. If you changed a single game you may run only its own `tools/<game>/check.js` (must print `ALL OK`).
 3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
 5. Delivery: either commit + push to the working branch (cloud sessions), or a ZIP from the repo root: `cd reixeta && zip -qr ../reixeta-vN.zip . -x "*.DS_Store" "*/__pycache__/*" ".git/*"` uploaded by the owner to `_uploads/`.
@@ -155,10 +158,11 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 - F1: 6 columns × 4 rows of 40 mm cells, 24 **distinct** numbers; F2: 3×2 window (168 × 128 mm, frame 24, no ★), same two models as WODB: default one single hole of 117 × 77, optional six holes of 34 with 6 mm bars. The mask is used horizontally (12 positions) and vertically (10) = **22 positions**, named by the top-left visible cell + orientation (`B2 horitzontal`, `A5 vertical`). Paper check: 240 + 48 = 288 ≤ 297 (4.5 mm left), 160 + 48 = 208 ≤ 210 (1 mm left).
 - Questions (`PROPS` in `comptar/motor.js`): how many primes / multiples of 3 / perfect squares are visible (answer 0–6), or "add them" = sum of the visible numbers **with the property**. 22 × 3 × 2 = 132 plays per sheet. Team rules (owner): A vs B, first to answer, +5 / −10, start at 40, first to 100.
-- Levels: `CO1` numbers 2–50, `CO2` numbers 2–150. One sheet serves the three questions. A sheet is good (`COMPTAR.bo`) iff, for every question, each answer 0..kmax appears in at least `min` of the 22 positions (CO1: min 1, kmax 6/6/5 because 2–50 holds only six squares; CO2: min 2, kmax 6) and no answer appears in more than 6 positions.
+- Levels: `CO1` numbers 2–50, `CO2` numbers 2–150. One sheet serves the three questions. A sheet is good (`COMPTAR.bo`) iff, for every question, each answer 0..kmax appears in at least `min` of the 22 positions (CO1: min 1, kmax 6/6/5 because 2–50 holds only six squares; CO2: min 2, kmax 6) and no answer appears in more than `maxrep` = 6 positions.
+- **Simple variant** (the owner's "keep it simple" note, built 2026-11-11 for comparison): levels `CS1` (2–50) and `CS2` (2–150) on a 5×4 sheet with the **WODB 2×2 mask** (12 positions, answers 0–4, 72 plays, position names without orientation; thresholds min 1 / 2 for answers 0–4, `maxrep` 4). Every level carries its own geometry in `NIVELLS` (`R`, `C`, `formes`); use `posicions(niv)`, `histograma(T, niv)`, `jugades(T, niv)`. The owner has not yet chosen between CO and CS.
 - `genera(niv, num)`: deterministic annealing on the three histograms (up to 8 attempts of 60 000 iterations, ~0.3–0.5 s). Fixed sheets A–D per level are stored in `comptar/fulls.js`, written by `tools/comptar/fulls.js` (best of 16 seeds).
 - Answer key = **game script** (`guio(T, code, k)`): the 132 plays shuffled deterministically by sheet code, 40 per page side, two scripts printed per sheet (a third exists, k = 2). Plus a printable score track (`marcadorSVG`). Codes `CO1-A…D`, `CO2-A…D`, generated `CO1-4821`.
-- Open point noted by the owner: check later whether a 2×2 mask on 5×4 would be more "easy-going / keep it simple" (see `TODO.md`).
+- `tools/comptar/fulls.js` keeps the fixed sheets of levels already present in `comptar/fulls.js` and only searches new levels (set `TOT=1` to search everything again).
 
 ## 8. Sanefa trencada — `sanefa/` (round 4 S1; format approved in round 10)
 

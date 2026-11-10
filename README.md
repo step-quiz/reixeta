@@ -59,7 +59,7 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 12 temes.
 
 - **Graella pròpia:** de 2 a 7 columnes i de 2 a 5 files. La casella es fa tan gran com permet el paper amb la plantilla a les posicions de les vores.
-- **Full a mà o automàtic:** es clica una casella i després un element de la llista. Cada posició de la plantilla té un cercle verd si és un WODB vàlid i vermell si no; clicant-lo es veuen els motius de cada element. «Omple sol» busca un full amb totes les posicions vàlides.
+- **Full a mà o automàtic:** es clica una casella i després un element de la llista. Cada posició de la plantilla té un cercle verd si és un WODB vàlid i vermell si no; clicant-lo es veuen els motius de cada element. «Omple sol» busca un full amb totes les posicions vàlides; si ja hi has posat elements, els respecta i només omple les caselles buides, i si no és possible et diu quina posició ho impedeix.
 - **Plantilla pròpia:** un sol forat o quatre forats amb barres de 6 mm, marc de 15, 20 o 24 mm, amb estrella o sense. Es pot baixar l'SVG per a la talladora làser.
 - **Per imprimir:** full 1, plantilla i solucionari. L'adreça de la pàgina desa el full sencer.
 
@@ -82,6 +82,7 @@ A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 12
 Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar horitzontal o vertical: 22 posicions per full. Dos equips; qui fa d'àrbitre col·loca la plantilla i pregunta quants primers, múltiples de 3 o quadrats perfectes es veuen, o quant sumen (només els que compleixen la propietat). El primer equip que respon guanya 5 punts si l'encerta i en perd 10 si falla; es comença amb 40 i guanya qui arriba a 100.
 
 - **Nivells:** `CO1`, nombres de 2 a 50; `CO2`, de 2 a 150. Quatre fulls fixos per nivell (A–D) i «Full nou».
+- **Versió senzilla:** `CS1` i `CS2` fan servir un full de 5 × 4 i la mateixa plantilla de 2 × 2 del WODB: 12 posicions, respostes de 0 a 4 i 72 jugades per full.
 - **Un sol full per a totes les preguntes:** a cada full, les respostes de cada pregunta surten repartides entre les 22 posicions, de manera que no es poden endevinar. Al nivell 1 només hi ha sis quadrats perfectes, i veure'n cinc o sis alhora és poc freqüent o impossible.
 - **Guió de partida:** fa de solucionari. Són 40 jugades barrejades per cara (posició, pregunta i resposta), dos guions per full.
 - **Marcador:** un full a part amb una pista de 0 a 100 per a cada equip.
@@ -122,4 +123,4 @@ Aparcats: *El robot llaminer* i *El dau amagat*.
 - `docs/DECISIONS.md`: totes les decisions preses.
 - `docs/GAMES.md`: tots els jocs (fets, aprovats, aparcats i descartats).
 - `docs/history/`: les propostes revisades (rondes 1 a 9), amb les demos.
-- `tools/wodb/`, `tools/comptar/`, `tools/sanefa/`: scripts que busquen i verifiquen els fulls i fan els PDF.
+- `tools/`: scripts que busquen i verifiquen els fulls i fan els PDF. `node tools/check.js` passa totes les verificacions de cop.

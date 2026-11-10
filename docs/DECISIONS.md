@@ -1,6 +1,6 @@
 # DECISIONS.md — decisions taken with the owner
 
-Chronological. "Round" = one review artifact (`docs/history/rondaN.html`).
+Chronological; later entries override earlier ones (e.g. the 10×5 board, the 26 mm cell and the 82 mm mask of the first sections are obsolete — current values are in `CLAUDE.md`). "Round" = one review artifact (`docs/history/rondaN.html`).
 
 ## Device and general rules
 - F1: m×n grid, m > n, A4 (A5 rejected: cells too small). F2: mask with square holes, never larger than F1; may be translated, rotated, flipped.
@@ -104,3 +104,10 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - Pinta per sumes examples corrected by the owner: π with equal legs; PIN-C = little man (instead of a star that "did not look like a star"), arrow with a 1-pixel shaft, cat with two eyes and one nose. Lesson: he checks every drawing pixel by pixel; keep bitmaps symmetric and unambiguous.
 - The owner ordered the WODB builder ("lloc per construir fulls i plantilles pròpies") directly, without a proposals round; built with the options of `CLAUDE.md` §4.6. Not yet reviewed by him.
 - Round 12 (laser cutter + 3D printer brainstorming) published as a review artifact; see `TODO.md`.
+
+## 2026-11-11 — work done while the owner reviews round 12 (chosen by him in an option dialog)
+- Counting game with the 2×2 mask built as levels `CS1`/`CS2` next to `CO1`/`CO2`, so that he can compare; no decision yet on which stays.
+- Builder: "Omple sol" keeps the cells already placed and names the positions that cannot be completed.
+- One verification command: `node tools/check.js`.
+- Documentation tidied (`TODO.md` rewritten).
+- Note: the published site showed an old `PIN-C.pdf` after PR 6 was merged; `main` had the new file, so it was a cache/deploy delay on the owner's side (the cloud session cannot reach the published site).

@@ -9,7 +9,7 @@ for f in glob.glob(OUT+'/*.pdf')+glob.glob(OUT+'/*.svg'): os.remove(f)
 class Q(http.server.SimpleHTTPRequestHandler):
     def log_message(self,*a): pass
 srv=http.server.ThreadingHTTPServer(('127.0.0.1',8767),functools.partial(Q,directory=ROOT)); threading.Thread(target=srv.serve_forever,daemon=True).start()
-errs=[]; TMP=OUT+'/_tmp.pdf'; NIV=['CO1','CO2']
+errs=[]; TMP=OUT+'/_tmp.pdf'; NIV=['CO1','CO2','CS1','CS2']
 with sync_playwright() as p:
     b=p.chromium.launch(executable_path=CHROME,args=['--no-sandbox'])
     pg=b.new_page(); pg.on('pageerror',lambda e: errs.append(str(e))); pg.emulate_media(media='print')
@@ -33,8 +33,9 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write('''<!DOCTYPE html><html lan
 <style>body{font:16px/1.5 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:24px 18px;color:#111}a{color:#0f766e}li{margin:4px 0}</style></head><body>
 <p><a href="../../">Reixeta</a> · <a href="../../comptar/">Joc de comptar</a></p><h1>PDF · Joc de comptar</h1>
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
-<h2>Full 1</h2><ul><li><a href="CO1.pdf">CO1</a> · Nivell 1, nombres de 2 a 50 (fulls A–D)</li><li><a href="CO2.pdf">CO2</a> · Nivell 2, nombres de 2 a 150 (fulls A–D)</li></ul>
-<h2>Plantilla</h2><ul><li><a href="plantilla-3x2.pdf">Plantilla d'un sol forat (2 per full A4)</a> · <a href="plantilla-3x2-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-3x2-barres.pdf">Plantilla de 6 forats separats per barres de 6 mm</a> · <a href="plantilla-3x2-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
+<h2>Full 1 · plantilla de 3×2</h2><ul><li><a href="CO1.pdf">CO1</a> · Nivell 1, nombres de 2 a 50 (fulls A–D)</li><li><a href="CO2.pdf">CO2</a> · Nivell 2, nombres de 2 a 150 (fulls A–D)</li></ul>
+<h2>Full 1 · versió senzilla, amb la plantilla de 2×2 del WODB</h2><ul><li><a href="CS1.pdf">CS1</a> · Nivell 1, nombres de 2 a 50 (fulls A–D)</li><li><a href="CS2.pdf">CS2</a> · Nivell 2, nombres de 2 a 150 (fulls A–D)</li></ul>
+<h2>Plantilla de 3×2</h2><p>Per als fulls CS serveix la <a href="../wodb/plantilla-2x2.pdf">plantilla de 2×2 del WODB</a>.</p><ul><li><a href="plantilla-3x2.pdf">Plantilla d'un sol forat (2 per full A4)</a> · <a href="plantilla-3x2-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-3x2-barres.pdf">Plantilla de 6 forats separats per barres de 6 mm</a> · <a href="plantilla-3x2-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
 <h2>Per jugar</h2><ul><li><a href="guions.pdf">Guions de partida</a> (dos per full, un per cara)</li><li><a href="marcador.pdf">Marcador</a></li></ul>
 </body></html>''')
 print('errors',errs)

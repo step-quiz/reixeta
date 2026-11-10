@@ -22,4 +22,14 @@ const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]
   const man=await pg.evaluate(()=>{const K=window.__constructor,s=K.st;Object.assign(s,{banc:'NUM',C:2,R:2,T:[0,0,1,2],pos:-1,vista:'editor'});K.canvi();return K.resum();});
   if(man.ok!==0||man.no!==1)bad++;
   console.log('manual sheet with a repeated item reported as invalid:',man.no===1);
+  // partly filled sheet: "Omple sol" must keep the cells already placed and still make every position valid
+  const par=await pg.evaluate(()=>{const K=window.__constructor,s=K.st;Object.assign(s,{banc:'FIG',C:5,R:4,T:new Array(20).fill(-1),pos:-1,vista:'editor'});
+    const posats={0:3,6:17,13:40,19:22};for(const i in posats)s.T[i]=posats[i];const ok=K.omple();K.canvi();
+    const B=Object.assign({},window.BANCS.FIG,{rows:4,cols:5});return {ok,valides:ok?window.WODB.valid(B,s.T):-1,kept:Object.keys(posats).every(i=>s.T[i]===posats[i]),distinct:new Set(s.T).size};});
+  if(!par.ok||par.valides!==12||!par.kept||par.distinct!==20)bad++;
+  console.log(`partly filled sheet: valid ${par.valides}/12, the 4 placed cells kept: ${par.kept}, distinct items ${par.distinct}/20`);
+  // two placed items with identical properties (regular hexagon and octagon) in one position: no sheet exists and the page must name the position
+  const imp=await pg.evaluate(()=>{const K=window.__constructor,s=K.st;Object.assign(s,{banc:'FIG',C:5,R:4,T:new Array(20).fill(-1),pos:-1,vista:'editor'});s.T[13]=40;s.T[19]=55;const ok=K.omple();return {ok,imp:K.impossibles(),kept:s.T[13]===40&&s.T[19]===55};});
+  if(imp.ok||imp.imp.join()!=='C4'||!imp.kept)bad++;
+  console.log('impossible pair detected at position:',imp.imp.join(),'(expected C4), sheet left untouched:',imp.kept&&!imp.ok);
   if(errs.length)bad++;console.log('errors',errs);console.log(bad?`FAILURES: ${bad}`:'ALL OK');await b.close();srv.close();process.exit(bad?1:0);});

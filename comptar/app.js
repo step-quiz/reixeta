@@ -10,7 +10,7 @@ const st={niv:'CO1',ver:'A',vista:'full',model:'un',tria:new Set([].concat(...K.
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 function full(id){const [n,v]=id.split('-');return FULLS[n][v]||generats[id];}
 /* ---------- full 1 ---------- */
-function fullSVG(id){const T=full(id),R=K.R,C=K.C,w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2;
+function fullSVG(id){const T=full(id),N=K.NIVELLS[K.nivellDe(id)],R=N.R,C=N.C,w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2;
   let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
   o+=`<text x="${x0+w}" y="${y0-15}" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
   for(let r=0;r<R;r++)o+=`<text x="${x0-8}" y="${y0+r*CEL+CEL/2+2.5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${'ABCD'[r]}</text>`;
@@ -21,20 +21,21 @@ function fullSVG(id){const T=full(id),R=K.R,C=K.C,w=C*CEL,h=R*CEL,x0=(297-w)/2,y
   return o+`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/></svg>`;}
 /* ---------- plantilla de 3×2 ---------- */
 /* Dos models: 'un' = un sol forat gran (per defecte); 'barres' = sis forats separats per barres de BARRA mm. */
-function plantillaCos(ox,oy,laser,model){const W=3*CEL+2*MARC,H=2*CEL+2*MARC,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
+function plantillaCos(ox,oy,laser,model){const nc=K.NIVELLS[st.niv].formes[0][2],W=nc*CEL+2*MARC,H=2*CEL+2*MARC,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
   let holes='';
-  if(model==='barres'){const f=CEL-BARRA,m=BARRA/2;for(let i=0;i<2;i++)for(let j=0;j<3;j++){const x=ox+MARC+j*CEL+m,y=oy+MARC+i*CEL+m;holes+=` M${x},${y} h${f} v${f} h${-f} Z`;}}
-  else holes=` M${ox+MARC+MARGE},${oy+MARC+MARGE} h${3*CEL-2*MARGE} v${2*CEL-2*MARGE} h${-(3*CEL-2*MARGE)} Z`;
+  if(model==='barres'){const f=CEL-BARRA,m=BARRA/2;for(let i=0;i<2;i++)for(let j=0;j<nc;j++){const x=ox+MARC+j*CEL+m,y=oy+MARC+i*CEL+m;holes+=` M${x},${y} h${f} v${f} h${-f} Z`;}}
+  else holes=` M${ox+MARC+MARGE},${oy+MARC+MARGE} h${nc*CEL-2*MARGE} v${2*CEL-2*MARGE} h${-(nc*CEL-2*MARGE)} Z`;
   let o=laser?`<path d="M${ox},${oy} h${W} v${H} h${-W} Z${holes}" ${cut}/>`:`<path d="M${ox},${oy} h${W} v${H} h${-W} Z${holes}" fill="#d4d4d4" fill-rule="evenodd" ${cut}/>`;
   const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=6;   // marques guia: continuen les línies de la graella
-  for(const k of [0,1,2,3]){const t=MARC+k*CEL;o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+H-L}" x2="${ox+t}" y2="${oy+H}" ${g}/>`;}
+  for(let k=0;k<=nc;k++){const t=MARC+k*CEL;o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+H-L}" x2="${ox+t}" y2="${oy+H}" ${g}/>`;}
   for(const k of [0,1,2]){const t=MARC+k*CEL;o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+W-L}" y1="${oy+t}" x2="${ox+W}" y2="${oy+t}" ${g}/>`;}
+  if(nc===2){const p=[];for(let i=0;i<10;i++){const an=-Math.PI/2+i*Math.PI/5,r=i%2?4.9*.42:4.9;p.push((ox+MARC/2+r*Math.cos(an)).toFixed(2)+','+(oy+MARC/2+r*Math.sin(an)).toFixed(2));}o+=`<polygon points="${p.join(' ')}" fill="#000"/>`;}   // la de 2×2 és la mateixa plantilla del WODB, amb l'estrella
   return o;}
-function plantillaSVG(model){const W=3*CEL+2*MARC,H=2*CEL+2*MARC,x=(210-W)/2,g=(297-2*H)/3;   // dues plantilles per A4 vertical
+function plantillaSVG(model){const W=K.NIVELLS[st.niv].formes[0][2]*CEL+2*MARC,H=2*CEL+2*MARC,x=(210-W)/2,g=(297-2*H)/3;   // dues plantilles per A4 vertical
   return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+H,false,model)}</svg>`;}
-function plantillaLaser(model){const W=3*CEL+2*MARC,H=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}">${plantillaCos(0,0,true,model)}</svg>`;}
+function plantillaLaser(model){const W=K.NIVELLS[st.niv].formes[0][2]*CEL+2*MARC,H=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}">${plantillaCos(0,0,true,model)}</svg>`;}
 /* ---------- guió de partida ---------- */
-function guioHTML(id,k){const J=K.guio(full(id),id,k),fila=(j,i)=>`<tr><td class="n">${i+1}</td><td class="pos">${esc(j.pos)}</td><td>${esc(j.text)}</td><td class="res"><b>${j.resposta}</b>${j.nombres.length?` <span>(${j.nombres.join(', ')})</span>`:''}</td></tr>`;
+function guioHTML(id,k){const J=K.guio(full(id),id,k),NJ=K.jugades(full(id),K.nivellDe(id)).length,fila=(j,i)=>`<tr><td class="n">${i+1}</td><td class="pos">${esc(j.pos)}</td><td>${esc(j.text)}</td><td class="res"><b>${j.resposta}</b>${j.nombres.length?` <span>(${j.nombres.join(', ')})</span>`:''}</td></tr>`;
   return `<div class="guio"><div class="cap"><span class="codi">${esc(id)} · guió ${k+1}</span><span class="nota">La posició és la casella que es veu a dalt a l'esquerra. Encert: +5 · Error: −10 · Es comença a 40 · Guanya qui arriba a 100.</span></div>
     <div class="cols"><table>${J.slice(0,20).map(fila).join('')}</table><table>${J.slice(20).map((j,i)=>fila(j,i+20)).join('')}</table></div></div>`;}
 /* ---------- marcador ---------- */
@@ -83,7 +84,7 @@ $('#btnPrint').onclick=()=>window.print();
 window.addEventListener('resize',escala);
 window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1)));
 window.addEventListener('afterprint',escala);
-function aplicaHash(){const m=/^#(CO\d)-([A-Z]|\d{4})(?:\/(full|plantilla|plantilla-barres|guio|marcador))?$/.exec(location.hash);
+function aplicaHash(){const m=/^#(C[OS]\d)-([A-Z]|\d{4})(?:\/(full|plantilla|plantilla-barres|guio|marcador))?$/.exec(location.hash);
   if(m&&FULLS[m[1]]&&(/\d/.test(m[2])||FULLS[m[1]][m[2]])){st.niv=m[1];st.vista=(m[3]||'full').replace('-barres','');st.model=m[3]==='plantilla-barres'?'barres':'un';if(FULLS[m[1]][m[2]]){st.ver=m[2];marca();pinta();}else{marca();genera(+m[2]);}}else{marca();pinta();}}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
 window.__reixeta={fullSVG,plantillaLaser,guioHTML,generats,st,pinta};
