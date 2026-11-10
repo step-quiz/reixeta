@@ -49,9 +49,9 @@ const EX={
  B:[['....X....','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','.XXXXXXX.','.XX.X.XX.','.XX.XXXX.','.XX.XXXX.'],
     ['....X....','...XXX...','..XXXXX..','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','....X....','....X....'],
     ['....X....','....XX...','....XXX..','....XXXX.','....X....','XXXXXXXXX','.XXXXXXX.','..XXXXX..','.........']],
- C:[['....X....','....X....','...XXX...','XXXXXXXXX','.XXXXXXX.','..XXXXX..','..XXXXX..','.XX...XX.','.X.....X.'],
-    ['....X....','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','...XXX...','...XXX...','...XXX...','...XXX...'],
-    ['.X.....X.','.XX...XX.','.XXXXXXX.','.X.X.X.X.','.XXXXXXX.','.XX.X.XX.','..XXXXX..','...X.X...','..XX.XX..']]};
-const EXNOM={A:'cor, cara i lletra pi',B:'casa, arbre i veler',C:'estrella, fletxa i gat'};
+ C:[['...XXX...','...XXX...','....X....','.XXXXXXX.','.X.XXX.X.','...XXX...','...X.X...','...X.X...','..XX.XX..'],
+    ['....X....','...XXX...','..XXXXX..','.XXXXXXX.','XXXXXXXXX','....X....','....X....','....X....','....X....'],
+    ['.X.....X.','.XX...XX.','.XXXXXXX.','.XXXXXXX.','.X.XXX.X.','.XXXXXXX.','.XXX.XXX.','..XXXXX..','...XXX...']]};
+const EXNOM={A:'cor, cara i lletra pi',B:'casa, arbre i veler',C:'ninot, fletxa i gat'};
 G.PINTA={REGLES,MIDES,EX,EXNOM,buit,teNegre,resol,pinta,comprova,codifica,descodifica,codiCurt,mulberry32,hashSeed};
 })(typeof window!=='undefined'?window:globalThis);
