@@ -56,12 +56,12 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 ## Imprimir
 
 1. Imprimeix sempre a **mida real (100 %)**, mai amb «ajusta a la pàgina».
-2. Abans d'imprimir-ne molts, fes una prova: imprimeix un full 1 i la plantilla i comprova que les caselles fan 40 mm i que els forats (37 mm) hi encaixen.
+2. Abans d'imprimir-ne molts, fes una prova: imprimeix un full 1 i la plantilla i comprova que les caselles fan 40 mm i que el forat de la plantilla hi encaixa.
 3. Solucionaris: una cara per tema, amb els fulls A–D. Es poden imprimir a doble cara.
 
 ## Plantilla
 
-- Exterior de 110 × 110 mm (marc de 15 mm) i 4 forats de 37 mm, amb 1,5 mm de marge respecte de cada casella. A les posicions de les vores, la plantilla no surt del full.
+- Exterior de 128 × 128 mm (marc de 24 mm). Hi ha dos models: el d'**un sol forat** de 77 mm (per defecte; no té cap part fràgil i es talla bé a mà) i el de **4 forats** de 34 mm separats per barres de 6 mm. A les posicions de les vores, la plantilla no surt del full, però a dalt i a baix només hi queda 1 mm de paper.
 - Cada dibuix ocupa com a màxim 28 mm dins de la casella de 40 mm: queda lluny de la vora del forat.
 - Les marques de la vora continuen les línies de la graella: serveixen per alinear-la.
 - SVG per a talladora làser: **vermell** = tall, **blau** = marcat (marques guia), **negre** = gravat (★). Unitats en mm.
@@ -75,7 +75,7 @@ Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar 
 - **Un sol full per a totes les preguntes:** a cada full, les respostes de cada pregunta surten repartides entre les 22 posicions, de manera que no es poden endevinar. Al nivell 1 només hi ha sis quadrats perfectes, i veure'n cinc o sis alhora és poc freqüent o impossible.
 - **Guió de partida:** fa de solucionari. Són 40 jugades barrejades per cara (posició, pregunta i resposta), dos guions per full.
 - **Marcador:** un full a part amb una pista de 0 a 100 per a cada equip.
-- **Plantilla:** 150 × 110 mm, marc de 15 mm i forats de 37 mm. La posició es diu per la casella que es veu a dalt a l'esquerra.
+- **Plantilla:** 168 × 128 mm, marc de 24 mm, amb un sol forat (per defecte) o amb sis forats separats per barres de 6 mm. La posició es diu per la casella que es veu a dalt a l'esquerra.
 
 ## Sanefa trencada
 
