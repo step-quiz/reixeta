@@ -53,12 +53,12 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 ## Imprimir
 
 1. Imprimeix sempre a **mida real (100 %)**, mai amb «ajusta a la pàgina».
-2. Abans d'imprimir-ne molts, fes una prova: imprimeix un full 1 i la plantilla i comprova que les caselles fan 40 mm i que els forats (36 mm) hi encaixen.
+2. Abans d'imprimir-ne molts, fes una prova: imprimeix un full 1 i la plantilla i comprova que les caselles fan 40 mm i que els forats (37 mm) hi encaixen.
 3. Solucionaris: una cara per tema, amb els fulls A–D. Es poden imprimir a doble cara.
 
 ## Plantilla
 
-- Exterior de 110 × 110 mm (marc de 15 mm) i 4 forats de 36 mm, amb 2 mm de marge respecte de cada casella. A les posicions de les vores, la plantilla no surt del full.
+- Exterior de 110 × 110 mm (marc de 15 mm) i 4 forats de 37 mm, amb 1,5 mm de marge respecte de cada casella. A les posicions de les vores, la plantilla no surt del full.
 - Cada dibuix ocupa com a màxim 28 mm dins de la casella de 40 mm: queda lluny de la vora del forat.
 - Les marques de la vora continuen les línies de la graella: serveixen per alinear-la.
 - SVG per a talladora làser: **vermell** = tall, **blau** = marcat (marques guia), **negre** = gravat (★). Unitats en mm.

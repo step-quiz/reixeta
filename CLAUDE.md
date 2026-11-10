@@ -90,9 +90,9 @@ The fixed sheets A–D are found by the same engine (`tools/wodb/fulls.js`: best
 |---|---|
 | F1 | A4 landscape, grid 5 × 4 centred, cell 40, grid line 0.35, outer 0.8 |
 | Labels | letters at x0−8, numbers at y0−5, 7 mm Arial; code 5.5 mm Courier bold at (x0+w, y0−15) right-aligned |
-| Item drawing box | 28 × 28 centred in the cell (4 mm clearance to the hole edge) |
+| Item drawing box | 28 × 28 centred in the cell (4.5 mm clearance to the hole edge) |
 | Text | Arial bold; size so width ≤ 84/100 of the box (`midaText`); fractions stacked, 30/100 |
-| Mask | frame 15, 4 holes of 36 (2 inset from each cell), outer 110 × 110; guide marks 6 long at 15/55/95 on every edge (they continue the grid lines); ★ near the top-left hole; 2 masks per A4 portrait |
+| Mask | frame 15, 4 holes of 37 (1.5 inset from each cell — owner's explicit choice — so 3 mm bars between holes), outer 110 × 110; guide marks 6 long at 15/55/95 on every edge (they continue the grid lines); ★ near the top-left hole; 2 masks per A4 portrait |
 | Laser SVG | red `#FF0000` 0.01 = cut, blue `#0000FF` = score (guides), black fill = engrave (★) |
 | Answer keys | A4 landscape, 4 keys per side (148.5 × 105 each) = sheets A–D of one topic, 12 rows each, 2.45 mm text; generated sheets are grouped 4 per page |
 

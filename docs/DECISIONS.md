@@ -57,7 +57,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 
 ## Redesign session (2026-11-09, cloud session, answered through option dialogs)
 - **Fewer cells per F1.** The owner found that a 10×5 sheet holds far too many puzzles (36 per sheet). Decision: WODB board = **5 columns × 4 rows = 12 positions**; the 10×5 sheets are **replaced** (not kept as an alternative). General preference for the project: few cells per F1, several F1 sheets per topic.
-- **F1 is always A4, never A5** (explicit). The cells grow instead: 40 mm cell, 36 mm hole, 28 mm drawing box, frame 15 mm, mask 110 × 110 mm (the 82 mm mask is obsolete).
+- **F1 is always A4, never A5** (explicit). The cells grow instead: 40 mm cell, 37 mm hole (the 1.5 mm inset of round 8 is kept), 28 mm drawing box, frame 15 mm, mask 110 × 110 mm (the 82 mm mask is obsolete).
 - **Four fixed sheets per topic: A, B, C, D** (plus "Full nou"). One PDF per topic with 4 pages; answer keys: one page per topic with the 4 keys.
 - **Delivery in cloud sessions: commit + push to the working branch** (the ZIP → `_uploads/` route remains valid for chat sessions).
 - **"Full nou" was broken in v3** (found by the study): the annealer always failed and the fallback only flipped sheet A (BLO/BLB had just 4 possible sheets). Rewritten: incremental scoring, cap consistent with the acceptance test, two phases. Now every tested number gives a genuinely new good sheet.

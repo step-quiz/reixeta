@@ -3,7 +3,7 @@
 'use strict';
 const W=window.WODB,BANCS=window.BANCS,ORDRE=window.BANCS_ORDRE;
 const $=s=>document.querySelector(s);
-const CEL=40,FORAT=36,MARGE=(CEL-FORAT)/2,ITEM=28,MARC=15;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
+const CEL=40,FORAT=37,MARGE=(CEL-FORAT)/2,ITEM=28,MARC=15;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
 const FIXOS=c=>Object.keys(BANCS[c].fulls);              // fulls fixos d'un banc: A, B, C, D
 const generats={};               // 'NUM-4821' -> tauler
 const st={banc:'NUM',ver:'A',vista:'full',solu:new Set(ORDRE)};   // solu: temes (els 4 fulls fixos) i fulls generats triats

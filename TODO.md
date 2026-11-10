@@ -6,7 +6,7 @@ Status (2026-11-09, after the redesign session): WODB v4 is on branch `claude/fr
 
 The owner has to print a 5×4 sheet and cut the new 110 mm mask (the old 82 mm mask is obsolete). Ask for feedback on:
 
-- Cell size 40 mm / hole 36 mm / drawing box 28 mm / frame 15 mm (all constants at the top of `wodb/app.js`; if any changes, recheck that the mask never exceeds the paper and rerun `make_pdfs.py`).
+- Cell size 40 mm / hole 37 mm (1.5 mm inset, fixed by the owner) / drawing box 28 mm / frame 15 mm (all constants at the top of `wodb/app.js`; if any changes, recheck that the mask never exceeds the paper and rerun `make_pdfs.py`).
 - "Extremely easy to place F2 on F1": current solution = frame with guide marks that continue the grid lines.
 - Wording of the round-9 properties that were adapted (see `docs/DECISIONS.md`, "Round 9 implemented"): COS "cares planes de dues formes diferents", LLE "punt d'on surten tres línies o més" (includes X and Q), FRA "amb un sol decimal", "amb els dos termes parells/primers", "quadrat perfecte" (includes every k/k = 1).
 - The fraction pool was extended (denominator 9 and 9/4, 16/9, 1/16, 9/16, 4/25, 9/25, 16/25) so that "perfect square" has examples; the owner has not seen this yet.
