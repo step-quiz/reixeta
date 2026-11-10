@@ -81,3 +81,9 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - E3 no old generated sheet has to be preserved: **beta mode** until the owner says otherwise.
 - S1 pull request opened for the branch. S2 the owner agrees that other games need their own grid (some with many more cells, some with a 3×2 mask) and asked for the proposals round (round 10).
 - Meaning of the buttons, stated by the owner: «Sí, fes-ho» = agreement with the proposal / the first option, nothing else requested.
+
+## Round 10 (2026-11-10, artifact `docs/history/ronda10.html`, 11 points, all answered)
+- K1 counting game on **6×4 with a 3×2 mask** (horizontal + vertical, 22 positions). The owner added: note in the TODO that we must see whether the 2×2 mask is more "easy-going and keep-it-simple".
+- K2 one sheet for all the questions; K3 accept the scarcity of squares at level 1; K4 answer key as a shuffled game script; K5 printable score track; K6 four fixed sheets per level, codes `CO1-…`, `CO2-…`: all approved.
+- F1 **single sheet with the seven friezes** (not the two-sheet layout: "massa barroc, té massa informació, un alumne no tindrà ganes de jugar-hi perquè li semblarà inassumible"). Lesson for future proposals: the owner judges a sheet by how approachable it looks to a pupil.
+- F2 mask with a notch that reveals the isometry: approved. F3 motifs: approved, **but figurative ones are preferred if they keep all the mathematical properties** → boot, flag, sailboat, duck, with measured asymmetry. F4 error kinds and F5 answer key: approved. Codes became `SAN-BOT1`, `SAN-BOT2`, … (one sheet per code) instead of `SAN-F1/F2`.

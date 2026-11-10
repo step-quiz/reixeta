@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Joc de comptar</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../wodb/wodb.css">
+<link rel="stylesheet" href="comptar.css">
+<style id="mida-pagina">@page{size:A4 landscape;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>Joc de comptar</h1>
+  </div>
+  <div class="fila">
+    <label>Nivell <select id="nivell"></select></label>
+    <span class="grup">
+      <span>Full fix</span>
+      <span id="vers" class="grup"></span>
+      <span class="sep">o bé</span>
+      <label class="num">Full nou núm. <input id="num" type="number" min="1000" max="9999" step="1" inputmode="numeric"></label>
+      <button id="btnGen">Genera</button>
+      <button id="btnAtzar" title="Tria un número a l'atzar">A l'atzar</button>
+    </span>
+  </div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="full" class="on">Full 1</button>
+      <button data-vista="plantilla">Plantilla</button>
+      <button data-vista="guio">Guions</button>
+      <button data-vista="marcador">Marcador</button>
+    </span>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <div id="tria" class="fila amagat"></div>
+  <p id="estat" class="estat" role="status"></p>
+</header>
+<main id="pagines"></main>
+<script src="motor.js"></script>
+<script src="fulls.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
