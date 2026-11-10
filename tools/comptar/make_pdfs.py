@@ -20,8 +20,9 @@ with sync_playwright() as p:
         for v in 'ABCD': go(f'{n}-{v}'); pdf(TMP); w.append(TMP)
         w.write(f'{OUT}/{n}.pdf')
     os.remove(TMP)
-    go('CO1-A/plantilla'); pdf(f'{OUT}/plantilla-3x2.pdf')
-    open(f'{OUT}/plantilla-3x2-tall-laser.svg','w').write('<?xml version="1.0" encoding="UTF-8"?>\n'+pg.evaluate("window.__reixeta.plantillaLaser()"))
+    for model,suf in (('un',''),('barres','-barres')):      # default: one big hole; alternative: six holes with 6 mm bars
+        go('CO1-A/plantilla'+suf); pdf(f'{OUT}/plantilla-3x2{suf}.pdf')
+        open(f'{OUT}/plantilla-3x2{suf}-tall-laser.svg','w').write('<?xml version="1.0" encoding="UTF-8"?>\n'+pg.evaluate(f"window.__reixeta.plantillaLaser('{model}')"))
     go('CO1-A/guio'); pdf(f'{OUT}/guions.pdf')
     over=pg.evaluate("""[...document.querySelectorAll('.guio')].map(s=>s.scrollHeight>s.clientHeight+1?s.querySelector('.codi')?.textContent:null).filter(Boolean)""")
     print('guio overflow:',over)
@@ -33,7 +34,7 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write('''<!DOCTYPE html><html lan
 <p><a href="../../">Reixeta</a> · <a href="../../comptar/">Joc de comptar</a></p><h1>PDF · Joc de comptar</h1>
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Full 1</h2><ul><li><a href="CO1.pdf">CO1</a> · Nivell 1, nombres de 2 a 50 (fulls A–D)</li><li><a href="CO2.pdf">CO2</a> · Nivell 2, nombres de 2 a 150 (fulls A–D)</li></ul>
-<h2>Plantilla</h2><ul><li><a href="plantilla-3x2.pdf">Plantilla de 6 forats (2 per full A4)</a></li><li><a href="plantilla-3x2-tall-laser.svg">Plantilla per a talladora làser (SVG)</a></li></ul>
+<h2>Plantilla</h2><ul><li><a href="plantilla-3x2.pdf">Plantilla d'un sol forat (2 per full A4)</a> · <a href="plantilla-3x2-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-3x2-barres.pdf">Plantilla de 6 forats separats per barres de 6 mm</a> · <a href="plantilla-3x2-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
 <h2>Per jugar</h2><ul><li><a href="guions.pdf">Guions de partida</a> (dos per full, un per cara)</li><li><a href="marcador.pdf">Marcador</a></li></ul>
 </body></html>''')
 print('errors',errs)

@@ -87,3 +87,11 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - K2 one sheet for all the questions; K3 accept the scarcity of squares at level 1; K4 answer key as a shuffled game script; K5 printable score track; K6 four fixed sheets per level, codes `CO1-…`, `CO2-…`: all approved.
 - F1 **single sheet with the seven friezes** (not the two-sheet layout: "massa barroc, té massa informació, un alumne no tindrà ganes de jugar-hi perquè li semblarà inassumible"). Lesson for future proposals: the owner judges a sheet by how approachable it looks to a pupil.
 - F2 mask with a notch that reveals the isometry: approved. F3 motifs: approved, **but figurative ones are preferred if they keep all the mathematical properties** → boot, flag, sailboat, duck, with measured asymmetry. F4 error kinds and F5 answer key: approved. Codes became `SAN-BOT1`, `SAN-BOT2`, … (one sheet per code) instead of `SAN-F1/F2`.
+
+## Physical test of the v4 mask (2026-11-10) and angle fix
+- The owner cut the printed 110 mm mask by hand: the **3 mm bars between holes tore**. Decision: keep two models — default **one single big hole** (no bars); optional **6 mm bars** (to be offered by the teacher builder site). Applied to WODB and to the counting game.
+- **Outer margins of the mask 60 % larger** (frame 15 → 24 mm), same window. Consequence the owner was warned about: only 1 mm of paper remains above/below the mask at the extreme rows.
+- **★ 40 % larger and centred in its corner.**
+- Angles (ANG): same scale in every cell, larger sector, no vertex dot (see `CLAUDE.md` §4.5). Third time the owner had to ask for consistent angle drawings: do not reintroduce per-cell scaling.
+- Sanefa mask: the owner chose the 60 % larger frame too (12 → 19 mm, card 54 mm), knowing that only 3 mm of paper remain below the last frieze.
+- Standing instruction: always open a pull request when changes are pushed.

@@ -27,6 +27,7 @@ Three games are built: **WODB** (§4), the **counting game** (§7) and **Sanefa 
 - **«Sí, fes-ho» means: the owner agrees with the proposal / the first option of the question, with no further request.** Extra wishes come in the comment box.
 - **Beta mode** (owner, 2026-11-10): until he says otherwise nothing old has to be preserved (generated sheet numbers, old PDFs, old masks may change freely).
 - Every game has its own grid and mask (the owner expects some games with many more cells and some with a 3×2 mask); only WODB is fixed at 5×4 + 2×2.
+- **Always open a pull request to `main` whenever changes are pushed** (owner, 2026-11-10: standing instruction, do not ask each time). He merges it himself; a merged PR is finished, so later changes go in a new PR.
 - Verify before claiming: every property and every "all positions valid" claim in this repo was checked by computer. Keep it that way.
 
 ## 3. Repository map
@@ -99,11 +100,11 @@ The fixed sheets A–D are found by the same engine (`tools/wodb/fulls.js`: best
 | Labels | letters at x0−8, numbers at y0−5, 7 mm Arial; code 5.5 mm Courier bold at (x0+w, y0−15) right-aligned |
 | Item drawing box | 28 × 28 centred in the cell (4.5 mm clearance to the hole edge); ANG uses 31 × 31 (3 mm clearance, the minimum the owner accepts) |
 | Text | Arial bold; size so width ≤ 84/100 of the box (`midaText`); fractions stacked, 30/100 |
-| Mask | frame 15, 4 holes of 37 (1.5 inset from each cell — owner's explicit choice — so 3 mm bars between holes), outer 110 × 110; guide marks 6 long at 15/55/95 on every edge (they continue the grid lines); ★ near the top-left hole; 2 masks per A4 portrait |
+| Mask | frame **24** (owner asked for margins 60 % larger than 15), outer 128 × 128; guide marks 6 long at 24/64/104 on every edge (they continue the grid lines); ★ of radius 4.9 **centred** in the top-left corner square (12, 12); 2 masks per A4 portrait. Two models: **`un` (default) = one single hole of 77 × 77** (1.5 inset from the 2×2 block, no bars: the 3 mm bars of the old 4-hole mask tore when the owner cut it by hand); **`barres` = 4 holes of 34 separated by 6 mm bars**, kept as an option (page toggle, `#…/plantilla-barres`, and meant to be offered by the future builder) |
 | Laser SVG | red `#FF0000` 0.01 = cut, blue `#0000FF` = score (guides), black fill = engrave (★) |
 | Answer keys | A4 landscape, 4 keys per side (148.5 × 105 each) = sheets A–D of one topic, 12 rows each, 2.45 mm text; generated sheets are grouped 4 per page |
 
-The mask must never exceed the paper: 5·40 + 2·15 = 230 ≤ 297 and 4·40 + 2·15 = 190 ≤ 210. If you change cell size, board size or frame, recheck this. All sizes are the constants `CEL, FORAT, ITEM, MARC` at the top of `wodb/app.js`.
+The mask must never exceed the paper: 5·40 + 2·24 = 248 ≤ 297 and 4·40 + 2·24 = 208 ≤ 210 — **only 1 mm of paper is left above/below the mask at rows A and C** (24.5 mm at the sides); the owner was told. If you change cell size, board size or frame, recheck this. All sizes are the constants `CEL, FORAT, ITEM, MARC, BARRA, ESTRELLA` at the top of `wodb/app.js`.
 
 ### 4.5 Drawing rules
 
@@ -141,7 +142,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 7. Counting game — `comptar/` (owner's idea; format approved in round 10)
 
-- F1: 6 columns × 4 rows of 40 mm cells, 24 **distinct** numbers; F2: 3×2 holes (150 × 110 mm, frame 15, holes 37, no ★). The mask is used horizontally (12 positions) and vertically (10) = **22 positions**, named by the top-left visible cell + orientation (`B2 horitzontal`, `A5 vertical`). Paper check: 240 + 30 = 270 ≤ 297, 160 + 30 = 190 ≤ 210.
+- F1: 6 columns × 4 rows of 40 mm cells, 24 **distinct** numbers; F2: 3×2 window (168 × 128 mm, frame 24, no ★), same two models as WODB: default one single hole of 117 × 77, optional six holes of 34 with 6 mm bars. The mask is used horizontally (12 positions) and vertically (10) = **22 positions**, named by the top-left visible cell + orientation (`B2 horitzontal`, `A5 vertical`). Paper check: 240 + 48 = 288 ≤ 297 (4.5 mm left), 160 + 48 = 208 ≤ 210 (1 mm left).
 - Questions (`PROPS` in `comptar/motor.js`): how many primes / multiples of 3 / perfect squares are visible (answer 0–6), or "add them" = sum of the visible numbers **with the property**. 22 × 3 × 2 = 132 plays per sheet. Team rules (owner): A vs B, first to answer, +5 / −10, start at 40, first to 100.
 - Levels: `CO1` numbers 2–50, `CO2` numbers 2–150. One sheet serves the three questions. A sheet is good (`COMPTAR.bo`) iff, for every question, each answer 0..kmax appears in at least `min` of the 22 positions (CO1: min 1, kmax 6/6/5 because 2–50 holds only six squares; CO2: min 2, kmax 6) and no answer appears in more than 6 positions.
 - `genera(niv, num)`: deterministic annealing on the three histograms (up to 8 attempts of 60 000 iterations, ~0.3–0.5 s). Fixed sheets A–D per level are stored in `comptar/fulls.js`, written by `tools/comptar/fulls.js` (best of 16 seeds).
@@ -154,6 +155,6 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 - Orientations are 2-bit codes combined by XOR: 0 as is, 1 vertical mirror, 2 horizontal mirror, 3 half-turn. `TIPUS` (period per row): T `[0]`, V `[0,1]`, L `[0,2]`, R `[0,3]`, VR `[0,1,2,3]`, H `[0]/[2]`, VH `[0,1]/[2,3]`, each with a random global orientation and phase.
 - The wrong copy shows one of the other three orientations (never a quarter turn), never in the first two columns, and must be the **only** single-copy change that yields a correct frieze of any type (`arreglos` in `motor.js`; re-verified by `tools/sanefa/check.js` with an independent definition).
 - Motifs (owner asked for figurative ones if they keep the mathematical properties): boot `BOT`, flag `BAN`, sailboat `VEL`, duck `ANE` — polygons in a 0–100 box. Asymmetry is measured, not assumed: for the three frieze transforms the non-overlapping area fraction after the best translation is ≥ 0.20 (values 0.21–0.55; the weakest is the sailboat's vertical mirror, 0.21).
-- F2: a 40 mm card (motif box 16 + frame 12) with a motif-shaped hole (0.6 mm clearance) and a **notch** at one corner. Fitting the mask on a copy leaves the notch at a corner that tells the orientation: ↖ as is, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn. Pupils write the notch sequence of each frieze; the wrong copy breaks the rhythm. One mask per motif (PDF with 4 copies of each + one laser SVG per motif).
+- F2: a 54 mm card (motif box 16 + frame 19; the owner asked for the frame 60 % larger than 12) with a motif-shaped hole (0.6 mm clearance) and a **notch** at one corner. Fitting the mask on a copy leaves the notch at a corner that tells the orientation: ↖ as is, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn. Pupils write the notch sequence of each frieze; the wrong copy breaks the rhythm. One mask per motif (PDF with 3 copies of each + one laser SVG per motif).
 - Sheets are generated on the fly: `genera(motiu, num)` is deterministic; fixed sheets are numbers 1 and 2 of each motif (`SAN-BOT1`, `SAN-BOT2`, …), any number 1000–9999 is a "Full nou" (`SAN-VEL4821`). Answer key: wrong cell (e.g. `B10`, with "fila de dalt/baix" for two-row friezes), found vs expected notch, and the correct notch sequence.
-- Paper check (done on the real page by `make_pdfs.py`): around the mask at the outermost copies there remain 40.5 mm at the sides, 14 mm at the top and 10 mm at the bottom.
+- Paper check (done on the real page by `make_pdfs.py`): around the mask at the outermost copies there remain 33.5 mm at the sides, 7 mm at the top and 3 mm at the bottom.

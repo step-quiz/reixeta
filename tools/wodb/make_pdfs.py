@@ -27,8 +27,9 @@ with sync_playwright() as p:
             go(f'{c}-{v}'); pdf(TMP); w.append(TMP); tots.append(TMP)
         w.write(f'{OUT}/{c}.pdf')
     os.remove(TMP); tots.write(f'{OUT}/tots-els-fulls.pdf')
-    go('NUM-A/plantilla'); pdf(f'{OUT}/plantilla-2x2.pdf')
-    svg=pg.evaluate("window.__reixeta.plantillaLaser()"); open(f'{OUT}/plantilla-2x2-tall-laser.svg','w').write('<?xml version="1.0" encoding="UTF-8"?>\n'+svg)
+    for model,suf in (('un',''),('barres','-barres')):      # default: one big hole; alternative: four holes with 6 mm bars
+        go('NUM-A/plantilla'+suf); pdf(f'{OUT}/plantilla-2x2{suf}.pdf')
+        svg=pg.evaluate(f"window.__reixeta.plantillaLaser('{model}')"); open(f'{OUT}/plantilla-2x2{suf}-tall-laser.svg','w').write('<?xml version="1.0" encoding="UTF-8"?>\n'+svg)
     go('NUM-A/solu'); pdf(f'{OUT}/solucionaris.pdf')
     # an answer key must fit in its quarter of the page
     over=pg.evaluate("""[...document.querySelectorAll('.solu')].map(s=>s.scrollHeight>s.clientHeight+1?s.querySelector('.codi')?.textContent:null).filter(Boolean)""")
@@ -42,7 +43,7 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <p><a href="../../">Reixeta</a> · <a href="../../wodb/">WODB</a></p><h1>PDF · WODB</h1>
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Full 1</h2><p>Cada PDF porta els {len(fulls)} fulls del tema, un per pàgina (A4 apaïsat, 12 enigmes per full).</p><ul>{li}<li><a href="tots-els-fulls.pdf">Tots els fulls en un sol PDF</a></li></ul>
-<h2>Plantilla</h2><ul><li><a href="plantilla-2x2.pdf">Plantilla de 4 forats (2 per full A4)</a></li><li><a href="plantilla-2x2-tall-laser.svg">Plantilla per a talladora làser (SVG)</a></li></ul>
+<h2>Plantilla</h2><ul><li><a href="plantilla-2x2.pdf">Plantilla d'un sol forat (2 per full A4)</a> · <a href="plantilla-2x2-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-2x2-barres.pdf">Plantilla de 4 forats separats per barres de 6 mm</a> · <a href="plantilla-2x2-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
 <h2>Solucionaris</h2><ul><li><a href="solucionaris.pdf">Solucionaris de tots els fulls</a> (una cara per tema)</li></ul>
 </body></html>''')
 print('errors',errs)
