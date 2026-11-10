@@ -95,3 +95,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - Angles (ANG): same scale in every cell, larger sector, no vertex dot (see `CLAUDE.md` §4.5). Third time the owner had to ask for consistent angle drawings: do not reintroduce per-cell scaling.
 - Sanefa mask: the owner chose the 60 % larger frame too (12 → 19 mm, card 54 mm), knowing that only 3 mm of paper remain below the last frieze.
 - Standing instruction: always open a pull request when changes are pushed.
+
+## Round 11 — Pinta per sumes (2026-11-10, artifact `docs/history/ronda11.html`, 8 points, all answered)
+- P1 sheet 10×10 (pictures 9×9) by default, 8×8 as an option; P2 plain 2×2 mask and one rule per picture (no orientations); P3 base rules sum even / multiple of 3 / multiple of 5; P5 repeated numbers accepted (never inside one position); P6 answer sheet with empty grids; E1 teacher editor; E2 three example sheets: all approved.
+- P4 **No** to existential rules: "ens quedem només amb les regles de suma".

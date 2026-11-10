@@ -26,11 +26,11 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - Rejected in round 10: splitting the seven friezes over two sheets with larger motifs (the owner found it too "baroque": too much information puts pupils off).
 - Full spec: `CLAUDE.md` §8.
 
-## APPROVED — Pinta per sumes (round 2, A1)
+## DONE — Pinta per sumes (round 2 A1; format round 11) — `pinta/`
 
-- F1 numbers that look random. Place the mask at each position, add the 4 visible numbers; if the sum satisfies the rule, colour the corresponding cell on an answer grid. When the class has done all positions, a picture appears. The same F1 hides up to **three** pictures, one per mask orientation (demo: upright + "even sum" → heart; flipped + "multiple of 3" → smiley; rotated 180° + "multiple of 5" → π). The demo used an asymmetric 4-hole mask on a 9×10 sheet with numbers 10–99 (before the "few cells per sheet" preference; rediscuss the size).
-- Owner decisions: the generator must let the teacher **design his own bitmap drawings**; up to 3 per sheet; more and simpler rules, e.g. "there is a multiple of 7", "there is a prime" (rules about the visible numbers, not only about the sum).
-- Open: drawing size (9×9 on a 10×10 sheet was proposed). With arbitrary rules, three simultaneous pictures become a constraint-satisfaction problem; verify feasibility by computer before promising.
+- A 10×10 sheet of two-digit numbers (A4 portrait) and a small 2×2 mask; at each of the 81 positions the pupils add the four visible numbers and paint a cell of a 9×9 grid if the sum satisfies the rule; a picture appears. Up to three pictures per sheet, one per rule (sum even / multiple of 3 / multiple of 5), all with the same mask.
+- The teacher draws his own bitmaps in the editor; any bitmap is possible. Three example sheets. Full spec: `CLAUDE.md` §9.
+- Rejected in round 11: rules of the kind "there is a multiple of 7" (only thick drawings are drawable).
 
 ## APPROVED — WODB builder for teachers (round 5, J6)
 
