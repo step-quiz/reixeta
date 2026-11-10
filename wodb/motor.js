@@ -77,8 +77,8 @@ function anneal(B,rnd,q){const st=makeState(B,q.cap,q.pen,q),NC=st.NC,N=st.N,Bd=
 /* Un full en dues fases: (1) trobar un tauler vàlid i equilibrat; (2) polir-lo perquè les posicions veïnes
    repeteixin tan pocs motius com es pugui, sense deixar de ser vàlid ni equilibrat. Torna null si la fase 1 falla. */
 const POLIT={w1:60,balw:30,adjw:8,t0:5,decay:0.99994,iters:150000};
-function cercaFull(B,rnd,cap,pen){const o=B.gen||{};
-  const Bd=anneal(B,rnd,{cap,pen,iters:o.iters,t0:o.t0,decay:o.decay});if(!bo(B,Bd,cap))return null;
+function cercaFull(B,rnd,cap,pen,q){const o=B.gen||{};   // q (opcional): paràmetres de la fase 1 (cerca intensiva dels fulls fixos)
+  const Bd=anneal(B,rnd,Object.assign({cap,pen,iters:o.iters,t0:o.t0,decay:o.decay},q));if(!bo(B,Bd,cap))return null;
   const B2=anneal(B,rnd,Object.assign({},POLIT,{cap,pen,init:Bd}));return bo(B,B2,cap)&&repVeins(B,B2)<=repVeins(B,Bd)?B2:Bd;}
 function valid(B,Bd){const P=B.items.map(x=>x.p),ALL=(1<<B.props.length)-1;let n=0;
   for(const [r,c] of wins(B)){const ids=cellsOf(B,r,c).map(i=>Bd[i]);if(new Set(ids.map(i=>B.items[i].k)).size<4)continue;
@@ -108,8 +108,10 @@ function variantA(B,rnd){const [R,C]=dims(B),F=Object.keys(B.fulls),A=B.fulls[F[
 const senseRepetits=(B,Bd)=>new Set(Bd).size===Bd.length||Bd.length>B.items.length;
 function bo(B,Bd,cap){return valid(B,Bd)===wins(B).length&&maxMotiu(B,Bd)<=cap&&senseRepetits(B,Bd);}
 /* Límit d'equilibri d'un full nou: mai no és menys equilibrat que el pitjor dels fulls fixos
-   (ni cal que ho sigui més que la regla: cap motiu en més de 5/12 de les posicions). */
-function objectiu(B){return Math.max(Math.floor(5*wins(B).length/12),...Object.values(B.fulls).map(A=>maxMotiu(B,A)));}
+   (ni cal que ho sigui més que la regla: cap motiu en més de 5/12 de les posicions).
+   Excepció: els bancs amb gen.marge (fulls fixos trobats amb una cerca molt llarga) admeten aquest marge de més. */
+const pitjorFix=B=>Math.max(...Object.values(B.fulls).map(A=>maxMotiu(B,A)));
+function objectiu(B){return Math.max(Math.floor(5*wins(B).length/12),pitjorFix(B)+((B.gen||{}).marge||0));}
 /* Genera el full número «num» del banc B. Sempre dona el mateix resultat per al mateix número. */
 function genera(B,num){const o=B.gen||{},cap=objectiu(B);
   for(let a=0;a<(o.tries||6);a++){const Bd=cercaFull(B,mulberry32(hashSeed(B.code+'-'+num+'-'+a)),cap);if(Bd)return Bd;}
@@ -151,5 +153,5 @@ function dibuixa(B,id){const it=B.items[id],d=it.d;
   case 'svg':return d;}
   return '';}
 const etiqueta=(B,id)=>{const d=B.items[id].d;if(B.tipus==='txt')return String(d);if(B.tipus==='fra')return typeof d==='string'?d:d[0]+'/'+d[1];return null;};
-G.WODB={dims,wins,cellsOf,veines,tipus,repVeins,maxMotiu,motius,motiuCurt,genera,valid,bo,dibuixa,etiqueta,mulberry32,hashSeed,anneal,cercaFull,variantA,objectiu};
+G.WODB={dims,wins,cellsOf,veines,tipus,repVeins,maxMotiu,motius,motiuCurt,genera,valid,bo,dibuixa,etiqueta,mulberry32,hashSeed,anneal,cercaFull,variantA,objectiu,pitjorFix};
 })(typeof window!=='undefined'?window:globalThis);

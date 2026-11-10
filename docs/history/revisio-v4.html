@@ -1,0 +1,257 @@
+<title>Reixeta · Revisió WODB v4</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: a single reading column of decision cards under a sticky progress bar; figures (mm drawings, tables) sit inside the card they explain. */
+:root{
+  --bg:#f3f6f5; --panel:#ffffff; --ink:#14201e; --muted:#566863; --line:#d3dcd9; --accent:#0f6f66; --accent-ink:#ffffff; --soft:#e6efed;
+  --si:#1c7c45; --si-bg:#e1f3e7; --no:#b3362b; --no-bg:#fae5e2; --des:#8a6100; --des-bg:#fbefcf; --par:#2456a6; --par-bg:#e2ebfa;
+  --paper:#ffffff; --mask:#c9d2cf; --draw:#14201e;
+  --f-body:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif; --f-head:"Space Grotesk","Inter",system-ui,sans-serif; --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#101615; --panel:#18211f; --ink:#e6eeec; --muted:#9bada8; --line:#2c3a37; --accent:#4fc0b3; --accent-ink:#06211e; --soft:#1f2c29;
+  --si:#6fd397; --si-bg:#173524; --no:#f08f84; --no-bg:#3d1c18; --des:#e6c260; --des-bg:#3a2f10; --par:#8fb4f2; --par-bg:#18294a;
+  --paper:#232e2c; --mask:#44534f; --draw:#e6eeec; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#101615; --panel:#18211f; --ink:#e6eeec; --muted:#9bada8; --line:#2c3a37; --accent:#4fc0b3; --accent-ink:#06211e; --soft:#1f2c29;
+  --si:#6fd397; --si-bg:#173524; --no:#f08f84; --no-bg:#3d1c18; --des:#e6c260; --des-bg:#3a2f10; --par:#8fb4f2; --par-bg:#18294a;
+  --paper:#232e2c; --mask:#44534f; --draw:#e6eeec; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);padding-block:0 48px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:760px;margin:0 auto;display:flex;flex-direction:column;gap:18px}
+header.top{padding-top:28px;display:flex;flex-direction:column;gap:8px}
+h1{font:600 1.7rem/1.15 var(--f-head);margin:0;text-wrap:balance}
+.lead{color:var(--muted);margin:0;max-width:65ch}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--bg);padding-block:10px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;border-bottom:1px solid var(--line)}
+.count{font:600 .95rem var(--f-head);font-variant-numeric:tabular-nums}
+.meter{flex:1 1 120px;height:6px;border-radius:3px;background:var(--soft);overflow:hidden;min-width:80px}
+.meter i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.chip{font:500 .85rem var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:999px;padding:5px 12px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.save{font-size:.82rem;color:var(--muted);min-width:9em;text-align:right}
+.save.bad{color:var(--no)}
+.warn{border:1px solid var(--des);background:var(--des-bg);color:var(--ink);border-radius:10px;padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+.warn textarea{width:100%;min-height:120px;font:12px/1.4 var(--f-mono);background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px}
+.results{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.results h2{font:600 1.05rem var(--f-head);margin:0}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.num b{display:block;font:600 1.5rem/1.1 var(--f-head);font-variant-numeric:tabular-nums}
+.num span{color:var(--muted);font-size:.86rem}
+h2.cat{font:600 .8rem var(--f-head);letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin:14px 0 -6px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card.done{border-color:var(--accent)}
+.head{display:flex;gap:10px;align-items:baseline}
+.id{font:500 .8rem var(--f-mono);color:var(--accent);border:1px solid var(--accent);border-radius:6px;padding:1px 6px;flex:none}
+.card h3{font:600 1.08rem/1.3 var(--f-head);margin:0;text-wrap:balance}
+.card p{margin:0;max-width:65ch}
+.lbl{font:600 .72rem var(--f-head);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);display:block;margin-bottom:2px}
+.q{background:var(--soft);border-radius:8px;padding:10px 12px}
+.fig{overflow-x:auto}
+.fig svg{display:block;max-width:100%;height:auto}
+table{border-collapse:collapse;font-size:.88rem;font-variant-numeric:tabular-nums;min-width:100%}
+th,td{text-align:left;padding:5px 10px 5px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+th{font:600 .72rem var(--f-head);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+td.ok{color:var(--si);font-weight:600}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+.btns button{font:500 .9rem var(--f-body);border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:8px;padding:8px 14px;cursor:pointer}
+.btns button:hover{border-color:var(--ink)}
+.btns button[aria-pressed="true"][data-d="si"]{background:var(--si-bg);border-color:var(--si);color:var(--si);font-weight:600}
+.btns button[aria-pressed="true"][data-d="no"]{background:var(--no-bg);border-color:var(--no);color:var(--no);font-weight:600}
+.btns button[aria-pressed="true"][data-d="despres"]{background:var(--des-bg);border-color:var(--des);color:var(--des);font-weight:600}
+.btns button[aria-pressed="true"][data-d="parlem"]{background:var(--par-bg);border-color:var(--par);color:var(--par);font-weight:600}
+textarea.com{width:100%;min-height:58px;resize:vertical;font:14px/1.45 var(--f-body);background:var(--bg);color:var(--ink);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.reply{border-left:3px solid var(--accent);padding:4px 0 4px 12px}
+.reply p{white-space:pre-wrap}
+code{font:500 .86em var(--f-mono);background:var(--soft);padding:1px 5px;border-radius:4px}
+.foot{color:var(--muted);font-size:.88rem;text-align:center;margin-top:8px}
+.empty{color:var(--muted);text-align:center;padding:24px 0}
+main#cards{width:100%;margin:0;min-width:0}
+.fig{max-width:100%;min-width:0}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <h1>Revisió del WODB v4</h1>
+    <p class="lead">Ja és a la branca <code>claude/friendly-planck-6sha1i</code>: tauler de 5×4, quatre fulls per tema, propietats de la ronda 9, «Full nou» arreglat i regla dels veïns. Aquí hi ha el que he hagut de decidir pel camí i el que necessito que confirmis.</p>
+  </header>
+
+  <div class="bar">
+    <span class="count" id="count">Contestats: 0/0</span>
+    <span class="meter" aria-hidden="true"><i id="meter"></i></span>
+    <button class="chip" id="fTots" aria-pressed="true">Tots</button>
+    <button class="chip" id="fPend" aria-pressed="false">Sense resposta</button>
+    <span class="save" id="save" role="status">Connectant…</span>
+  </div>
+
+  <div class="warn" id="warn" hidden>
+    <strong>No puc desar les respostes automàticament en aquesta vista.</strong>
+    <span>Contesta igualment: quan acabis, copia aquest text i enganxa'l al xat.</span>
+    <textarea id="export" readonly aria-label="Respostes per copiar"></textarea>
+    <div class="btns"><button id="copy">Copia les respostes</button></div>
+  </div>
+
+  <section class="results" aria-label="Resultats verificats">
+    <h2>Resultats verificats per ordinador</h2>
+    <div class="nums">
+      <div class="num"><b>48 / 48</b><span>fulls fixos amb les 12 posicions vàlides i cap element repetit</span></div>
+      <div class="num"><b>9 de 12</b><span>temes que compleixen la regla dels 5/12 (abans, 3)</span></div>
+      <div class="num"><b>300 / 300</b><span>fulls nous de prova realment nous (25 per tema); abans, 0</span></div>
+      <div class="num"><b>≈ −45 %</b><span>motius repetits entre posicions veïnes als fulls fixos</span></div>
+    </div>
+  </section>
+
+  <main id="cards" class="wrap" style="gap:14px"></main>
+  <p class="empty" id="empty" hidden>No queda cap punt sense resposta.</p>
+  <p class="foot">Quan acabis, escriu «Revisa artifact» al xat.</p>
+</div>
+
+<script>
+const FIG_MIDES=`<svg viewBox="0 0 640 250" width="640" role="img" aria-label="Full 1 de 5 per 4 caselles de 40 mil·límetres i plantilla de 110 mil·límetres">
+<g font-family="JetBrains Mono, monospace" font-size="11" fill="var(--muted)">
+<rect x="8" y="20" width="297" height="210" fill="var(--paper)" stroke="var(--line)"/>
+<g stroke="var(--draw)" stroke-width=".8" fill="none">${[0,1,2,3,4,5].map(i=>`<line x1="${56.5+i*40}" y1="45" x2="${56.5+i*40}" y2="205"/>`).join('')}${[0,1,2,3,4].map(i=>`<line x1="56.5" y1="${45+i*40}" x2="256.5" y2="${45+i*40}"/>`).join('')}</g>
+<rect x="161.5" y="110" width="110" height="110" fill="var(--mask)" fill-opacity=".85" stroke="var(--draw)" stroke-width=".8"/>
+${[[0,0],[1,0],[0,1],[1,1]].map(([a,b])=>`<rect x="${178+a*40}" y="${126.5+b*40}" width="37" height="37" fill="var(--paper)" stroke="var(--draw)" stroke-width=".6"/>`).join('')}
+<text x="8" y="14">A4 apaïsat 297 × 210</text><text x="57" y="40">casella 40</text><text x="164" y="244">plantilla 110, marc 15</text>
+<rect x="360" y="30" width="110" height="110" fill="var(--mask)" stroke="var(--draw)" stroke-width=".8"/>
+${[[0,0],[1,0],[0,1],[1,1]].map(([a,b])=>`<rect x="${376.5+a*40}" y="${46.5+b*40}" width="37" height="37" fill="var(--paper)" stroke="var(--draw)" stroke-width=".6"/>`).join('')}
+<rect x="381" y="51" width="28" height="28" fill="none" stroke="var(--accent)" stroke-dasharray="3 2"/>
+<text x="360" y="22">plantilla nova</text><text x="360" y="158">forat 37 · dibuix 28 (traç discontinu)</text>
+<rect x="500" y="30" width="82" height="82" fill="none" stroke="var(--muted)" stroke-dasharray="4 3"/>
+<text x="500" y="22">antiga: 82</text><text x="500" y="128">forat 23 · dibuix 18</text>
+<text x="360" y="200">Tot a escala: 1 unitat = 1 mm.</text><text x="360" y="216">A la cantonada, la plantilla</text><text x="360" y="232">queda a 33,5 mm de la vora.</text>
+</g></svg>`;
+const T=(h,rows)=>`<table><thead><tr>${h.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(c=>String(c).endsWith('✓')?`<td class="ok">${c}</td>`:`<td>${c}</td>`).join('')}</tr>`).join('')}</tbody></table>`;
+const FIG_VEINS=T(['Tema','Motiu que més surt','Repeticions entre veïnes, abans','Ara (fulls A–D)'],[
+ ['NUM','5 de 12 ✓','46, 43, 32, 46','23, 21, 27, 25'],['FIG','5 de 12 ✓','44, 48, 35, 44','20, 30, 28, 35'],['FRA','5 de 12 ✓','41, 46, 39, 41','18, 18, 20, 21'],
+ ['BLO / BLB','5 de 12 ✓','42, 26, 41, 33','18, 16, 21, 24'],['LLE','5 de 12 ✓','40, 40, 42, 39','22, 23, 25, 23'],['TR5','5 de 12 ✓','38, 37, 43, 32','24, 26, 27, 28'],
+ ['TR4','5 de 12 ✓','48, 42, 49, 46','35, 31, 32, 31'],['QUA','5 de 12 ✓','48, 47, 54, 55','24, 24, 26, 22'],['POL','6 de 12','50, 55, 44, 52','37, 38, 42, 42'],
+ ['COS','7 de 12','60, 55, 57, 44','36, 41, 38, 39'],['ANG','10 de 12','68, 71, 70, 69','51, 51, 52, 51']]);
+const FIG_LLE=T(['Lletres','Branques al punt de trobada'],[['A, E, F, H, P, T, Y','3'],['B, K, Q, R, X','4'],['les altres 14','1 o 2 (no compten)']]);
+
+const CATS=[['M','Mides i impressió'],['P','Propietats de la ronda 9: redacció'],['E','Equilibri i regla dels veïns'],['S','Passos següents']];
+const ITEMS=[
+{id:'M1',cat:'M',t:'Mides noves del full i de la plantilla',
+ que:"Amb 5×4 caselles en un A4 he fet la casella de 40 mm, el forat de 37 mm (el marge d'1,5 mm que vas fixar), el dibuix de 28 mm com a màxim i el marc de 15 mm. La plantilla passa a fer 110 × 110 mm i en surten dues per A4. La plantilla de 82 mm que vas tallar ja no serveix.",
+ fig:FIG_MIDES,
+ prop:"Imprimeix un full qualsevol i la plantilla nova a mida real i prova-ho.",
+ q:"Et van bé aquestes mides, o vols la casella més gran (hi cap fins a 45 mm) o el marc més ample?"},
+{id:'M2',cat:'M',t:'Un PDF per tema, amb els quatre fulls',
+ que:"A la ronda 8 vas aprovar un PDF per full. Amb quatre fulls per tema serien 48 fitxers, així que n'he fet un per tema (NUM.pdf, FIG.pdf…) amb els fulls A, B, C i D, un per pàgina, més un PDF amb els 48 fulls.",
+ prop:"Deixar-ho així: 12 PDF de tema i un de conjunt.",
+ q:"T'està bé, o prefereixes també els 48 PDF solts?"},
+{id:'M3',cat:'M',t:'Solucionaris: una cara per tema',
+ que:"Cada cara A4 apaïsada porta els quatre solucionaris d'un tema (A, B, C, D), amb 12 posicions cadascun i la lletra una mica més gran que abans. Els fulls generats amb «Full nou» s'agrupen de quatre en quatre.",
+ prop:"Deixar-ho així: 12 cares, 6 fulls a doble cara.",
+ q:"Et va bé aquest format?"},
+{id:'P1',cat:'P',t:'Cossos: «cares planes de dues formes diferents»',
+ que:"Vas aprovar «té cares de dues formes diferents». Amb el cilindre, el con i la semiesfera un alumne pot dir que també en tenen dues (un cercle i una superfície corba), i el solucionari quedaria discutible.",
+ prop:"Ho he redactat «És l'únic amb cares planes de dues formes diferents». Així ho compleixen els tres prismes i les piràmides de base quadrada, pentagonal i hexagonal, i cap cos rodó.",
+ q:"Acceptes «cares planes»?"},
+{id:'P2',cat:'P',t:"Lletres: «algun punt d'on surten tres línies o més»",
+ que:"Vas aprovar «té algun punt on es troben tres o més línies (com la T o la Y)». A la T només es troben dues línies; el que n'hi ha tres són branques. Per això ho he calculat comptant branques a partir de la lletra de traços, i la X i la Q (quatre branques) també compten.",
+ fig:FIG_LLE,
+ prop:"Redacció: «És l'única amb algun punt d'on surten tres línies o més». Conjunt: A B E F H K P Q R T X Y.",
+ q:"Estàs d'acord que la X i la Q hi entrin, i amb la frase?"},
+{id:'P3',cat:'P',t:'Fraccions: frases més curtes',
+ que:"Les frases llargues no cabien al solucionari. He escrit «amb un sol decimal» (3/5 = 0,6) en lloc de «equival a un decimal d'una sola xifra decimal», i «amb els dos termes parells» i «amb els dos termes primers» en lloc de «el numerador i el denominador…».",
+ prop:"Mantenir les versions curtes.",
+ q:"T'agraden, o vols una altra redacció?"},
+{id:'P4',cat:'P',t:'Fraccions: quadrats perfectes i banc ampliat',
+ que:"Amb el banc que hi havia, els únics quadrats perfectes eren 1/4 (i 2/8, 3/12) i les fraccions que valen 1. He afegit el denominador 9 (1/9 … 15/9) i set fraccions: 9/4, 16/9, 1/16, 9/16, 4/25, 9/25 i 16/25. El banc passa de 85 a 107 fraccions. Les que valen 1 (3/3, 5/5…) compten com a quadrat perfecte.",
+ prop:"Mantenir l'ampliació i comptar k/k com a quadrat perfecte.",
+ q:"Hi estàs d'acord? Vols que les que valen 1 no hi comptin?"},
+{id:'P5',cat:'P',t:'Fraccions: «és irreductible» no s\'ha afegit',
+ que:"La vas demanar, però és la mateixa propietat que «es pot simplificar», mirada al revés: el motiu «És l'única que no es pot simplificar» ja existeix.",
+ prop:"No afegir-ne un duplicat. Si vols, canvio aquell text per «És l'única irreductible».",
+ q:"Canvio el text per «És l'única irreductible»?"},
+{id:'E1',cat:'E',t:'Regla dels veïns: fins on arriba',
+ que:"He implementat la teva idea. Compto, per a cada parella de posicions veïnes (n'hi ha 17 per full), quants motius es repeteixen, i la cerca ho redueix sense trencar la validesa ni l'equilibri. No pot arribar a zero, perquè dues posicions veïnes comparteixen dues caselles. Té un preu: com menys repeticions, menys motius de recanvi per posició (de 5–6 de mitjana cap a 4–5).",
+ fig:FIG_VEINS,
+ prop:"Deixar-ho en aquest punt: aproximadament la meitat de repeticions que abans.",
+ q:"N'hi ha prou, o vols que hi insisteixi més encara que cada posició tingui menys motius possibles?"},
+{id:'E2',cat:'E',t:'Poliòmins i cossos queden per sobre dels 5/12',
+ que:"POL queda a 6 de 12 i COS a 7 de 12. A POL no vas voler propietats noves; a la ronda 9 n'hi havia dues de proposades: «té un eix de simetria en diagonal» i «té exactament dues puntes». A COS es podria afegir «té més de 10 arestes».",
+ prop:"Provar aquestes tres propietats i quedar-me-les només si fan baixar el màxim a 5.",
+ q:"Ho provo, o ho deixem com està?"},
+{id:'E3',cat:'E',t:'«Full nou» dona fulls diferents dels d\'abans',
+ que:"El generador antic no funcionava (sempre retornava una variant del full A). El nou sí, però el mateix número ja no dona el mateix full que a la v3: per exemple, NUM-4821 ara és un altre full. Qualsevol canvi futur de propietats tornarà a canviar-los.",
+ prop:"Acceptar-ho ara, i a partir d'aquí no tocar el generador sense avisar-te.",
+ q:"Tens algun full generat amb la v3 que necessitis conservar?"},
+{id:'S1',cat:'S',t:'Passar la feina a la branca principal',
+ que:"Tot és a la branca de treball; la web publicada (branca main) encara mostra la v3. Per publicar-ho cal fusionar la branca.",
+ prop:"Obro un pull request i t'explico pas a pas com fusionar-lo des de GitHub.",
+ q:"Obro el pull request ara, o primer vols imprimir i provar?"},
+{id:'S2',cat:'S',t:'Jocs següents amb poques caselles',
+ que:"Has dit que prefereixes poques caselles per full i més fulls per tema. Això afecta els jocs que venen: la Sanefa trencada i el joc de comptar s'hi adapten bé; el Pinta per sumes necessita moltes caselles per fer un dibuix i caldrà parlar-ne.",
+ prop:"Quan donis el WODB per bo, començar per la Sanefa trencada i el joc de comptar amb una ronda de propostes.",
+ q:"Començo aquesta ronda de propostes, o espero que hagis provat el WODB imprès?"}
+];
+const DECS=[['si','Sí, fes-ho'],['no','No'],['despres','Més endavant'],['parlem','En parlem']];
+const NOM={si:'Sí, fes-ho',no:'No',despres:'Més endavant',parlem:'En parlem'};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const resp={},reply={};let db=null,filter='tots';
+const $=s=>document.querySelector(s);
+const answered=id=>!!(resp[id]&&(resp[id].decisio||(resp[id].comentari||'').trim()));
+
+function build(){let h='';
+  for(const [c,name] of CATS){h+=`<h2 class="cat" data-cat="${c}">${esc(name)}</h2>`;
+    for(const it of ITEMS.filter(x=>x.cat===c)){
+      h+=`<article class="card" id="card-${it.id}" data-id="${it.id}">
+        <div class="head"><span class="id">${it.id}</span><h3>${esc(it.t)}</h3></div>
+        <div><span class="lbl">Què passa</span><p>${esc(it.que)}</p></div>
+        ${it.fig?`<div class="fig">${it.fig}</div>`:''}
+        <div><span class="lbl">Què proposo</span><p>${esc(it.prop)}</p></div>
+        <div class="q"><span class="lbl">Pregunta</span><p>${esc(it.q)}</p></div>
+        <div class="btns" role="group" aria-label="Decisió per a ${it.id}">${DECS.map(([d,l])=>`<button id="b-${it.id}-${d}" data-d="${d}" aria-pressed="false">${l}</button>`).join('')}</div>
+        <textarea class="com" id="c-${it.id}" placeholder="Comentari (opcional)" aria-label="Comentari per a ${it.id}"></textarea>
+        <div class="reply" id="r-${it.id}" hidden><span class="lbl">Resposta de Claude</span><p></p></div>
+      </article>`;}}
+  $('#cards').innerHTML=h;
+  document.querySelectorAll('.card').forEach(card=>{const id=card.dataset.id;
+    card.querySelectorAll('.btns button').forEach(b=>b.onclick=()=>{const r=resp[id]||(resp[id]={});r.decisio=r.decisio===b.dataset.d?'':b.dataset.d;paint(id);save(id);});
+    const ta=card.querySelector('textarea');let t=null;
+    ta.oninput=()=>{const r=resp[id]||(resp[id]={});r.comentari=ta.value;draft(id,ta.value);paint(id,true);clearTimeout(t);t=setTimeout(()=>save(id),900);};
+    ta.onblur=()=>{clearTimeout(t);if(dirty[id])save(id);};});}
+const dirty={};
+function paint(id,keepText){const card=$('#card-'+id),r=resp[id]||{};
+  card.querySelectorAll('.btns button').forEach(b=>b.setAttribute('aria-pressed',String(r.decisio===b.dataset.d)));
+  const ta=card.querySelector('textarea');if(!keepText&&document.activeElement!==ta&&ta.value!==(r.comentari||''))ta.value=r.comentari||'';
+  card.classList.toggle('done',answered(id));
+  const rp=$('#r-'+id);rp.hidden=!reply[id];if(reply[id])rp.querySelector('p').textContent=reply[id];
+  summary();}
+function summary(){const n=ITEMS.filter(x=>answered(x.id)).length;$('#count').textContent=`Contestats: ${n}/${ITEMS.length}`;$('#meter').style.width=(100*n/ITEMS.length)+'%';
+  let vis=0;document.querySelectorAll('.card').forEach(c=>{const hide=filter==='pend'&&answered(c.dataset.id);c.hidden=hide;if(!hide)vis++;});
+  document.querySelectorAll('h2.cat').forEach(h=>{h.hidden=!ITEMS.some(x=>x.cat===h.dataset.cat&&!$('#card-'+x.id).hidden);});
+  $('#empty').hidden=vis>0;
+  $('#export').value=ITEMS.filter(x=>answered(x.id)).map(x=>`${x.id}: ${NOM[resp[x.id].decisio]||'(sense decisió)'}${(resp[x.id].comentari||'').trim()?' — '+resp[x.id].comentari.trim():''}`).join('\n');}
+function status(t,bad){const s=$('#save');s.textContent=t;s.classList.toggle('bad',!!bad);}
+function draft(id,v){try{localStorage.setItem('rv4-'+id,v);}catch(e){}}
+/* one write at a time per document */
+const busy={};
+async function save(id){dirty[id]=true;if(!db){status('Sense desat automàtic',true);return;}
+  if(busy[id])return;busy[id]=true;
+  try{while(dirty[id]){dirty[id]=false;const r=resp[id]||{};status('Desant…');
+      await db.doc('respostes/'+id).set({decisio:r.decisio||'',comentari:r.comentari||'',actualitzat:new Date().toISOString()});}
+    status('Desat');try{localStorage.removeItem('rv4-'+id);}catch(e){}}
+  catch(e){dirty[id]=true;status('No s\'ha pogut desar',true);$('#warn').hidden=false;}
+  finally{busy[id]=false;}}
+
+build();ITEMS.forEach(x=>{try{const d=localStorage.getItem('rv4-'+x.id);if(d){resp[x.id]={comentari:d};}}catch(e){}paint(x.id);});
+$('#fTots').onclick=()=>{filter='tots';$('#fTots').setAttribute('aria-pressed','true');$('#fPend').setAttribute('aria-pressed','false');summary();};
+$('#fPend').onclick=()=>{filter='pend';$('#fPend').setAttribute('aria-pressed','true');$('#fTots').setAttribute('aria-pressed','false');summary();};
+$('#copy').onclick=async()=>{const ta=$('#export');try{await navigator.clipboard.writeText(ta.value);$('#copy').textContent='Copiat';}catch(e){ta.focus();ta.select();}};
+
+(async()=>{let timer=setTimeout(()=>{if(!db){status('Sense desat automàtic',true);$('#warn').hidden=false;}},10000);
+  try{db=await window.claude?.use?.('db');}catch(e){db=null;}
+  if(!db){clearTimeout(timer);status('Sense desat automàtic',true);$('#warn').hidden=false;return;}
+  db.collection('respostes').onSnapshot(snap=>{clearTimeout(timer);
+    snap.docs.forEach(d=>{const v=d.data()||{},id=d.id;if(!ITEMS.some(x=>x.id===id)||busy[id]||dirty[id])return;
+      const ta=$('#c-'+id);if(document.activeElement===ta)return;resp[id]={decisio:v.decisio||'',comentari:v.comentari||''};paint(id);});
+    status('Desat automàtic actiu');},()=>{status('Sense desat automàtic',true);$('#warn').hidden=false;});
+  db.collection('claude').onSnapshot(snap=>{snap.docs.forEach(d=>{const v=d.data()||{};if(ITEMS.some(x=>x.id===d.id)){reply[d.id]=String(v.text||'');paint(d.id);}});},()=>{});
+})();
+</script>

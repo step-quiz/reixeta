@@ -24,7 +24,7 @@ python3 export_bancs.py && node fulls.js && python3 export_bancs.py && node chec
 |---|---|
 | `export_bancs.py` | Builds `wodb/bancs.js`. FRA pool and its 7 base properties are inline. `maxrep` (max items with the same key per sheet) = ceil(20 / number of keys). |
 | `props9.py` | Round-9 properties, each computed from the item's own data: TR5/TR4 (integer lattice arithmetic), QUA (exact fractions), FIG (from `domains.SHAPES`), LLE (junctions and stroke kinds parsed from the SVG paths of `letters.py`), COS (face lists), FRA. `python3 props9.py` prints the LLE sets and the FIG / COS tables for visual checking. |
-| `fulls.js [CODE …]` | Searches sheets A–D: smallest balance cap starting at floor(5N/12); each sheet = best of `SEEDS` (env, default 24) two-phase searches (`WODB.cercaFull` in `wodb/motor.js`), cost = neighbour repeats + reuse of items of the previous sheets. Writes `fulls_bal.json` and `bal_final.json` (`{CODE: [max positions of one reason type, positions, [neighbour repeats of A–D]]}`). Deterministic. |
+| `fulls.js [CODE …]` | Searches sheets A–D: smallest balance cap starting at floor(5N/12); each sheet = best of `SEEDS` (env, default 24) two-phase searches (`WODB.cercaFull` in `wodb/motor.js`), cost = neighbour repeats + reuse of items of the previous sheets. Heavy mode for the banks in `HARD` (env, default `POL,COS`): when the normal pass finds nothing, up to `HSEEDS` (150) seeds × 3 long phase-1 configurations, stopping at 3 good sheets; `MINCAP` in the script skips caps proven out of reach (COS 5). Writes `fulls_bal.json` and `bal_final.json` (`{CODE: [max positions of one reason type, positions, [neighbour repeats of A–D]]}`). Deterministic. |
 | `check.js [N]` | Validity, no repeated item, balance cap, neighbour figures, and `WODB.genera` (deterministic, valid, searched vs fallback). Exit code 1 on failure. |
 | `make_pdfs.py` | Serves the repo on 127.0.0.1:8766, prints with headless Chrome, merges with pypdf, checks that no answer key overflows its quarter page (`solu overflow: []`) and that the page raised no JS error (`errors []`). Deletes old PDFs/SVG in `pdf/wodb/` first. |
 
@@ -42,6 +42,8 @@ python3 export_bancs.py && node fulls.js && python3 export_bancs.py && node chec
 | COS | `out_sol2.json` (`solids.py`) |
 
 The `board` arrays inside the `out_*.json` / `data5.json` files are the old 10×5 boards and are **ignored**.
+
+`export_bancs.py` sets `gen.marge = 1` for POL and COS (`MARGE`): "Full nou" cannot afford the heavy search, so its cap is one above their fixed sheets.
 
 ## Adding or changing a property
 

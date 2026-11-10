@@ -127,7 +127,9 @@ def branches(d, r=4.0):
 def _path(x):
     from letters import F
     return F[x['ch']]
-LLE = [("És l'única amb algun punt d'on surten tres línies o més", "És l'única sense cap punt d'on surtin tres línies o més", lambda x: branches(_path(x)) >= 3),
+# Owner decision (2026-11-10): the Q does not count as a junction letter, although its tail crosses the oval (4 branches).
+NO_JUNCTION = {'Q'}
+LLE = [("És l'única amb algun punt d'on surten tres línies o més", "És l'única sense cap punt d'on surtin tres línies o més", lambda x: branches(_path(x)) >= 3 and x['ch'] not in NO_JUNCTION),
        ("És l'única que barreja línies rectes i corbes", "És l'única que no barreja línies rectes i corbes", lambda x: {k for k, _ in strokes(_path(x))} == {'l', 'a'})]
 
 # ---------- COS: face lists (number of sides of every flat face); round solids have no polygonal faces ----------
@@ -145,12 +147,21 @@ FRA = [("És l'única amb un sol decimal", "És l'única que no té un sol decim
        ("És l'única amb els dos termes primers", "És l'única que no té els dos termes primers", lambda a, b: isprime(a) and isprime(b)),
        ("És l'única que és un quadrat perfecte", "És l'única que no és un quadrat perfecte", lambda a, b: perfect_square(a, b))]
 
-EXTRA = {'TR5': TRI, 'TR4': TRI, 'QUA': QUA, 'FIG': FIG, 'LLE': LLE, 'COS': COS}
+# ---------- POL (review of 2026-11-10, point E2): with these two, POL reaches the 5/12 rule ----------
+def _cells(x): return {tuple(c) for c in x['cells']}
+def _norm(S): mx = min(a for a, _ in S); my = min(b for _, b in S); return frozenset((a - mx, b - my) for a, b in S)
+def pol_diag(x): S = _cells(x); return _norm(S) == _norm({(b, a) for a, b in S}) or _norm(S) == _norm({(-b, -a) for a, b in S})
+def pol_tips(x): S = _cells(x); return sum(1 for a, b in S if sum((a + da, b + db) in S for da, db in ((1, 0), (-1, 0), (0, 1), (0, -1))) == 1)
+POL = [("És l'únic amb un eix de simetria en diagonal", "És l'únic sense cap eix de simetria en diagonal", pol_diag),
+       ("És l'únic amb exactament dos quadrats que només en toquen un", "És l'únic que no té exactament dos quadrats que només en toquen un", lambda x: pol_tips(x) == 2)]
+# Tried and rejected for COS: "more than 10 edges" (cap 5 was never reached in 600 heavy searches, with or without it).
+
+EXTRA = {'TR5': TRI, 'TR4': TRI, 'QUA': QUA, 'FIG': FIG, 'LLE': LLE, 'COS': COS, 'POL': POL}
 
 if __name__ == '__main__':
     from letters import F
     from domains import SHAPES
-    print('LLE junction (3+ branches):', ''.join(ch for ch in F if branches(F[ch]) >= 3), {ch: branches(F[ch]) for ch in F})
+    print('LLE junction (3+ branches, minus NO_JUNCTION):', ''.join(ch for ch in F if branches(F[ch]) >= 3 and ch not in NO_JUNCTION), {ch: branches(F[ch]) for ch in F})
     print('LLE straight+curved:', ''.join(ch for ch in F if {k for k, _ in strokes(F[ch])} == {'l', 'a'}))
     for k, P in SHAPES.items():
         a = fig_angles(P); print(f'FIG {k:14s} obtuse={int(any(90+1e-6<x<180-1e-6 for x in a))} equal={int(max(a)-min(a)<1e-6)} axes={fig_axes(P)}')

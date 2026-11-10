@@ -24,6 +24,9 @@ The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin n
 - F1 must be **completely clean**: only the grid, row letters on the left (A–D), column numbers on top (1–5), and the sheet code (e.g. `NUM-A`) at the top-right corner. No title, no instructions, no control squares.
 - **Originality**: the owner rejects "existing games adapted to the format". Proposals must exploit what only this F1/F2 device can do.
 - Reviews: when a reply has many points (> 5–6) to decide, build a **review artifact** (cards grouped by category, short IDs, proposal + concrete question, buttons «Sí, fes-ho» / «No» / «Més endavant» / «En parlem», a comment box, answers auto-saved, an answered counter and an «Sense resposta» filter). In chat give only a 2–3 sentence summary and the link. When he writes «Revisa artifact», read his answers, reply to each point inside the same artifact and do what he approved.
+- **«Sí, fes-ho» means: the owner agrees with the proposal / the first option of the question, with no further request.** Extra wishes come in the comment box.
+- **Beta mode** (owner, 2026-11-10): until he says otherwise nothing old has to be preserved (generated sheet numbers, old PDFs, old masks may change freely).
+- Every game has its own grid and mask (the owner expects some games with many more cells and some with a 3×2 mask); only WODB is fixed at 5×4 + 2×2.
 - Verify before claiming: every property and every "all positions valid" claim in this repo was checked by computer. Keep it that way.
 
 ## 3. Repository map
@@ -35,7 +38,8 @@ CLAUDE.md                     This file
 TODO.md                       Prioritised next work, with exact specs
 docs/DECISIONS.md             Every decision taken with the owner (rounds 1–9 + 2026-11-09 redesign)
 docs/GAMES.md                 Specs of approved / parked / rejected games
-docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (they show the old 10×5 layout)
+docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
+                              revisio-v4.html = review of WODB v4, ronda10.html = format proposals for the next two games
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
@@ -69,7 +73,7 @@ tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Nod
 - Reason type = property + direction (e.g. "the only even one" and "the only odd one" are two types). Item k of a window has reason j iff bit j of `p[k]` differs from bit j of each of the other three. `uniqMask = AND_i (p_k XOR p_i)`. A property can give a reason to at most one item of a window, so every valid window shows at least 4 reason types.
 - A window is **valid** iff the 4 keys are distinct and every item has ≥ 1 reason. A sheet is valid iff every window is valid.
 - A sheet is **good** (`WODB.bo`) iff it is valid, no item appears twice in it, and no reason type appears in more positions than the bank's cap.
-- **Balance rule** (owner decision): no reason type in more than **5/12** of the positions = 5 of 12. `maxMotiu(B, board)` measures it. Met by 9 banks; POL 6, COS 7, ANG 10 (ANG is structural: 7 properties; the owner said to leave ANG and POL as they are). The cap of a bank = `objectiu(B)` = max(5, worst fixed sheet). Figures in `tools/wodb/bal_final.json`.
+- **Balance rule** (owner decision): no reason type in more than **5/12** of the positions = 5 of 12. `maxMotiu(B, board)` measures it. Met by 10 banks; COS 6 (cap 5 was never reached in 600 heavy searches), ANG 10 (structural: 7 properties; the owner said to leave it). The cap used by "Full nou" = `objectiu(B)` = max(5, worst fixed sheet + `gen.marge`); `marge` is 1 for POL and COS, whose fixed sheets needed the heavy search of `fulls.js`, so a generated POL/COS sheet may have one reason type in one more position than the fixed ones. Figures in `tools/wodb/bal_final.json`.
 - **Neighbour rule** (owner idea, 2026-11-09): when the mask moves one cell (up, down, left, right), as few reason types as possible should repeat. `repVeins(B, board)` = Σ over the 17 pairs of neighbouring positions of the number of shared reason types. It is a soft objective (minimised, never guaranteed to be 0); reducing it also reduces the number of spare reasons per position.
 - Answer key (solucionari): one reason per item, the **shortest** phrase, `"És "` stripped.
 
@@ -115,13 +119,13 @@ node check.js              # validity, balance, neighbour rule, "Full nou" (must
 python3 make_pdfs.py       # serves the repo locally, prints every sheet/mask/key to ../../pdf/wodb/
 ```
 
-Board search (only when properties, pools or `motor.js` scoring change; about 10 minutes):
+Board search (only when properties, pools or `motor.js` scoring change; about 10 minutes, plus about 25 for the heavy mode of POL and COS):
 
 ```bash
 python3 export_bancs.py && node fulls.js && python3 export_bancs.py   # fulls.js [CODE ...] writes fulls_bal.json + bal_final.json
 ```
 
-Round-9 properties live in `tools/wodb/props9.py` (computed from each item's data and appended as new bits). See `tools/wodb/README.md` for every script.
+Round-9 properties (and the two POL properties added on 2026-11-10) live in `tools/wodb/props9.py` (computed from each item's data and appended as new bits). One explicit owner exception there: the letter Q does not count as a "junction" letter (`NO_JUNCTION`). See `tools/wodb/README.md` for every script.
 
 ## 6. Checklist before delivering
 

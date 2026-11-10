@@ -4,6 +4,8 @@ sys.path.insert(0,'.')
 import props9
 ROWS,COLS=4,5                      # board: 5 columns x 4 rows = 12 mask positions (owner decision, 2026-11-09)
 FULLS='ABCD'                       # fixed sheets per bank
+# Banks whose fixed sheets needed the heavy search of fulls.js: "Full nou" (a few seconds) may exceed their cap by this much.
+MARGE={'POL':1,'COS':1}
 D5=json.load(open('data5.json'))
 def P(p): return p if isinstance(p,int) else sum(b<<j for j,b in enumerate(p))
 def props(L): return [{'si':x['yes'],'no':x['no']} for x in L]
@@ -18,6 +20,7 @@ def add(code,nom,tipus,props_,items,gen=None,extra=None):
             if test(x['src']): x['p']|=1<<j
     for x in items: x.pop('src',None)
     nk=len({x['k'] for x in items}); g={'maxrep':max(1,math.ceil(ROWS*COLS/nk))}; g.update(gen or {})
+    if code in MARGE: g['marge']=MARGE[code]
     fulls=FB.get('BLO' if code=='BLB' else code) or {'A':list(range(ROWS*COLS))}   # placeholder until fulls.js has run
     b={'code':code,'nom':nom,'tipus':tipus,'props':props_,'items':items,'rows':ROWS,'cols':COLS,'fulls':fulls,'gen':g}
     if extra: b.update(extra)
@@ -44,7 +47,7 @@ for a,b in [(a,b) for b in DEN for a in range(1,min(2*b,15)+1)]+SQ:
 FRA_P=[{'si':"És l'única més gran que 1",'no':"És l'única que no és més gran que 1"},
        {'si':"És l'única més petita que 1/2",'no':"És l'única que no és més petita que 1/2"},
        {'si':"És l'única entre 1/2 i 1",'no':"És l'única que no és entre 1/2 i 1"},
-       {'si':"És l'única que es pot simplificar",'no':"És l'única que no es pot simplificar"},
+       {'si':"És l'única que es pot simplificar",'no':"És l'única irreductible"},
        {'si':"És l'única amb numerador 1",'no':"És l'única que no té numerador 1"},
        {'si':"És l'única que equival a un nombre enter",'no':"És l'única que no equival a un nombre enter"},
        {'si':"És l'única amb decimals periòdics",'no':"És l'única que no té decimals periòdics"}]+[{'si':si,'no':no} for si,no,_ in props9.FRA]
@@ -73,7 +76,7 @@ for code,src,nom,g in (('TR5','out_tri_g','Triangles (trama 5×5)',4),('TR4','ou
     S=load(src); its=[{'k':x['k'],'p':P(x['p']),'d':[g]+[c for pt in x['pts'] for c in pt],'src':x} for x in S['items']]
     add(code,nom,'dots',props(S['props']),its)
 # POL
-S=load('out_pol_b'); add('POL','Poliòmins','cells',props(S['props']),[{'k':x['k'],'p':P(x['p']),'d':x['cells']} for x in S['items']])
+S=load('out_pol_b'); add('POL','Poliòmins','cells',props(S['props']),[{'k':x['k'],'p':P(x['p']),'d':x['cells'],'src':x} for x in S['items']])
 # COS
 S=load('out_sol2'); add('COS','Cossos geomètrics','svg',props(S['props']),[{'k':x['k'],'p':P(x['p']),'d':x['svg'],'src':x} for x in S['items']])
 ORDER=['NUM','FIG','FRA','BLO','BLB','LLE','ANG','TR5','TR4','QUA','POL','COS']
