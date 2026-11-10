@@ -13,9 +13,10 @@ wodb/                      WODB · Quin no hi encaixa?
   motor.js                 Motius, dibuix dels elements i generador de fulls nous
   bancs.js                 Elements, propietats i fulls fixos (A–D) dels 12 temes
   app.js, wodb.css         Interfície i estils d'impressió
+pinta/                     Pinta per sumes (editor de dibuixos i pàgina d'impressió)
 comptar/                   Joc de comptar (pàgina d'impressió, motor i fulls fixos)
 sanefa/                    Sanefa trencada (pàgina d'impressió i motor)
-pdf/comptar/, pdf/sanefa/  PDF ja preparats d'aquests dos jocs
+pdf/comptar/, pdf/sanefa/, pdf/pinta/  PDF ja preparats d'aquests jocs
 pdf/wodb/                  PDF ja preparats
   NUM.pdf … COS.pdf        Un PDF per tema, amb els fulls A, B, C i D (un per pàgina)
   tots-els-fulls.pdf       Els 48 fulls en un sol PDF
@@ -86,16 +87,22 @@ Cada full té les set classes de sanefa fetes amb un mateix motiu, amb 12 còpie
 - **Fulls:** dos de fixos per motiu (`SAN-BOT1`, `SAN-BOT2`…) i «Full nou» amb un número. L'error no és mai a les dues primeres còpies i és l'única manera d'arreglar la sanefa canviant una sola còpia.
 - **Solucionari:** la casella errònia de cada sanefa i el ritme correcte d'osques.
 
+## Pinta per sumes
+
+Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i una plantilla de 2 × 2. A cada una de les 81 posicions se sumen els quatre nombres que es veuen i es pinta la casella corresponent d'una graella de 9 × 9 si la suma compleix la regla. El mateix full amaga fins a tres dibuixos, un per regla: la suma és parella, és múltiple de 3 o és múltiple de 5.
+
+- **Editor:** a `pinta/` es pinten els tres dibuixos clicant i el full de nombres es genera sol. Qualsevol dibuix és possible. L'adreça de la pàgina desa els dibuixos, i cada full té un codi (per exemple `PIN-E746`).
+- **Fulls d'exemple:** `PIN-A`, `PIN-B` i `PIN-C`, amb tres dibuixos cadascun.
+- **Garanties:** els dibuixos es recuperen exactament dels nombres i cap nombre es repeteix dins d'una mateixa posició de la plantilla (al full sí que se'n repeteixen).
+- **Per imprimir:** full de nombres, plantilla (un sol forat o quatre forats amb barres de 6 mm), full de respostes amb les graelles buides i solucionari. També hi ha la mida de 8 × 8 nombres, amb dibuixos de 7 × 7.
+
 ## Publicar amb Cloudflare Pages
 
 Framework preset: *None*. Build command: (buit). Build output directory: `/`.
 
 ## Altres jocs del projecte
 
-Jocs aprovats que encara s'han de fer (detalls a `docs/GAMES.md`):
-
-1. **Pinta per sumes**: amb un generador on el professor dibuixa els seus propis dibuixos.
-2. **Generador de WODB** per al professorat.
+Joc aprovat que encara s'ha de fer (detalls a `docs/GAMES.md`): el **generador de WODB** per al professorat.
 
 Aparcats: *El robot llaminer* i *El dau amagat*.
 

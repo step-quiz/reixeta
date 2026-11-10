@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Three games are built: **WODB** (§4), the **counting game** (§7) and **Sanefa trencada** (§8). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Four games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8) and **Pinta per sumes** (§9). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -41,15 +41,16 @@ docs/DECISIONS.md             Every decision taken with the owner (rounds 1–9 
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4, ronda10.html = format proposals for the next two games
+pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/, pdf/comptar/, pdf/sanefa/   GENERATED PDFs + laser SVGs + index.html
+pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
-tools/comptar/, tools/sanefa/ fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
+tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
 ```
 
 ## 4. WODB architecture
@@ -134,7 +135,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 ## 6. Checklist before delivering
 
 1. `node --check` on every `.js` of the game you touched.
-2. `node tools/wodb/check.js`, `node tools/comptar/check.js`, `node tools/sanefa/check.js` print `ALL OK` (run the ones affected).
+2. `node tools/wodb/check.js`, `node tools/comptar/check.js`, `node tools/sanefa/check.js`, `node tools/pinta/check.js` print `ALL OK` (run the ones affected).
 3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
 5. Delivery: either commit + push to the working branch (cloud sessions), or a ZIP from the repo root: `cd reixeta && zip -qr ../reixeta-vN.zip . -x "*.DS_Store" "*/__pycache__/*" ".git/*"` uploaded by the owner to `_uploads/`.
@@ -158,3 +159,11 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 - F2: a 54 mm card (motif box 16 + frame 19; the owner asked for the frame 60 % larger than 12) with a motif-shaped hole (0.6 mm clearance) and a **notch** at one corner. Fitting the mask on a copy leaves the notch at a corner that tells the orientation: ↖ as is, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn. Pupils write the notch sequence of each frieze; the wrong copy breaks the rhythm. One mask per motif (PDF with 3 copies of each + one laser SVG per motif).
 - Sheets are generated on the fly: `genera(motiu, num)` is deterministic; fixed sheets are numbers 1 and 2 of each motif (`SAN-BOT1`, `SAN-BOT2`, …), any number 1000–9999 is a "Full nou" (`SAN-VEL4821`). Answer key: wrong cell (e.g. `B10`, with "fila de dalt/baix" for two-row friezes), found vs expected notch, and the correct notch sequence.
 - Paper check (done on the real page by `make_pdfs.py`): around the mask at the outermost copies there remain 33.5 mm at the sides, 7 mm at the top and 3 mm at the bottom.
+
+## 9. Pinta per sumes — `pinta/` (round 2 A1; format approved in round 11)
+
+- F1: N×N two-digit numbers, A4 **portrait**; N = 10 with 18 mm cells (default, pictures 9×9, 81 positions) or N = 8 with 22 mm cells (pictures 7×7). F2: a small 2×2 mask (frame 14, ★ centred in the corner; default one single hole, optional four holes with 6 mm bars; 64 mm outer for N = 10). Paper check N = 10: 180 + 28 = 208 ≤ 210 (1 mm left at the sides).
+- Play: at each position (named by the top-left cell, A1…I9) add the four visible numbers and paint the matching cell of an answer grid if the sum satisfies the rule. One sheet hides up to **three pictures, one per rule, with the same mask** (the owner approved dropping "one orientation per picture"): `REGLES` = sum even / multiple of 3 / multiple of 5. Existential rules ("there is a multiple of 7") were **rejected** by the owner after seeing that only thick drawings are possible.
+- Maths: for modulus m the residues of the first row and first column are free and every other cell follows from the window whose bottom-right corner it is (target 0 for a black pixel, any non-zero residue for a white one), so **any bitmap is solvable**; the three moduli are coprime, so each cell needs a residue mod 30 = three candidates among 10–99. Numbers repeat on the sheet (accepted) but never inside one mask position (`resol` retries with new random free residues, up to 200 attempts; `comprova` re-derives the pictures).
+- A drawing with no black pixel is unused (its rule is not printed). State = `N.hex1.hex2.hex3.seed` in the URL hash (`#p=…`); printed code = `PIN-` + 4 base-36 characters of a hash of the state; examples `PIN-A`, `PIN-B`, `PIN-C` (`EX` in `motor.js`). Views: editor (screen only), Full 1, mask, answer sheet (empty grids + rule above each), key.
+- This page is a teacher tool (click-to-paint editor); nothing is meant for pupils on screen.

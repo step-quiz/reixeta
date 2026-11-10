@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Pinta per sumes</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../wodb/wodb.css">
+<link rel="stylesheet" href="pinta.css">
+<style id="mida-pagina">@page{size:A4 portrait;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>Pinta per sumes</h1>
+  </div>
+  <div class="fila">
+    <span class="grup"><span>Exemples</span><span id="exemples" class="grup"></span></span>
+    <label>Mida <select id="mida"><option value="10">10×10 nombres · dibuixos de 9×9</option><option value="8">8×8 nombres · dibuixos de 7×7</option></select></label>
+    <button id="btnNou" title="Mateixos dibuixos, altres nombres">Altres nombres</button>
+  </div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="editor" class="on">Dibuixos</button>
+      <button data-vista="full">Full 1</button>
+      <button data-vista="plantilla">Plantilla</button>
+      <button data-vista="respostes">Full de respostes</button>
+      <button data-vista="solu">Solucionari</button>
+    </span>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <div id="modelTria" class="fila amagat"><span>Model de plantilla:</span><span class="grup"><button data-model="un" class="on">Un sol forat</button><button data-model="barres">Quatre forats separats (barres de 6 mm)</button></span></div>
+  <p id="estat" class="estat" role="status"></p>
+</header>
+<main id="pagines"></main>
+<script src="motor.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
