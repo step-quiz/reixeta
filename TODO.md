@@ -1,30 +1,31 @@
 # TODO — Reixeta
 
-Status (2026-11-09, after the redesign session): WODB v4 is on branch `claude/friendly-planck-6sha1i` — 5×4 board (12 positions), 40 mm cells, 110 mm mask, 4 fixed sheets (A–D) per topic, round-9 properties implemented, neighbour rule, working "Full nou". Work order agreed with the owner: **(1) WODB → (4) Sanefa trencada + (5) counting game → (3) Pinta per sumes → (2) WODB builder**. Do not start a new game until the owner says so.
+Status (2026-11-10): WODB v4 is on branch `claude/friendly-planck-6sha1i` with a pull request to `main` open. The owner reviewed it (13 points, all answered and applied, see `docs/DECISIONS.md`). Round 10 (format proposals for the counting game and Sanefa trencada) is published as a review artifact and **awaits the owner's answers**. Work order agreed: **(1) WODB → (4) Sanefa trencada + (5) counting game → (3) Pinta per sumes → (2) WODB builder**.
 
-## P0 — WODB: waiting for the owner's physical test of v4
+## P0 — WODB: only the owner's physical test is pending
 
-The owner has to print a 5×4 sheet and cut the new 110 mm mask (the old 82 mm mask is obsolete). Ask for feedback on:
+The owner still has to print a 5×4 sheet and cut the 110 mm mask. Possible follow-ups:
 
-- Cell size 40 mm / hole 36 mm / drawing box 28 mm / frame 15 mm (all constants at the top of `wodb/app.js`; if any changes, recheck that the mask never exceeds the paper and rerun `make_pdfs.py`).
-- "Extremely easy to place F2 on F1": current solution = frame with guide marks that continue the grid lines.
-- Wording of the round-9 properties that were adapted (see `docs/DECISIONS.md`, "Round 9 implemented"): COS "cares planes de dues formes diferents", LLE "punt d'on surten tres línies o més" (includes X and Q), FRA "amb un sol decimal", "amb els dos termes parells/primers", "quadrat perfecte" (includes every k/k = 1).
-- The fraction pool was extended (denominator 9 and 9/4, 16/9, 1/16, 9/16, 4/25, 9/25, 16/25) so that "perfect square" has examples; the owner has not seen this yet.
-- Neighbour rule: it is a soft objective. If the owner wants it stronger, raise `adjw` in `POLIT` (`wodb/motor.js`) and `SEEDS` in `tools/wodb/fulls.js`, rerun the board search; the price is fewer spare reasons per position.
+- Framing: only 10 mm of paper remain above/below the mask at rows A and C. If he frames the sheets, change `CEL` to 38 and/or `MARC` to 12 in `wodb/app.js`, recheck the paper bound, rerun `make_pdfs.py`.
+- LLE: the Q is excluded from "punt d'on surten tres línies o més" by owner decision although its tail crosses the oval; if pupils argue, redraw the Q in `letters.py` or revisit.
+- COS is at 6/12 and ANG at 10/12 (accepted).
 
-Possible improvements (not requested): POL (6/12) and COS (7/12) are above the 5/12 rule; POL has no new properties because the owner said to leave it; ANG (10/12) is structural.
+## P1 — Round 10: next two games (artifact https://claude.ai/artifact/8iqngG5w4ed2P2Y68CVBgt, offline copy `docs/history/ronda10.html`)
 
-## P1 — Next games (in this order; full specs in `docs/GAMES.md`)
+When the owner writes «Revisa artifact», read collection `respostes` of that artifact (doc ids K1–K6, F1–F5), reply in collection `claude` (doc id = point id, field `text`), then build what he approved. Proposals made (not decisions yet):
 
-General preference stated by the owner on 2026-11-09: **few cells per F1 and several F1 sheets per topic** rather than one big sheet; F1 is always A4.
+- **Counting game**: K1 board 6×4 of 40 mm cells + new 3×2 mask of 150 × 110 mm, used horizontally (12 positions) and vertically (10) = 22 positions, answers 0–6 (alternative: 5×4 + the WODB mask); K2 one sheet serves the three questions at once (primes, multiples of 3, squares; histograms computed by annealing, see the artifact); K3 accept that N1 (2–50) has only six squares; K4 answer key = shuffled game script (position, orientation, question, answer), 40 plays per side; K5 printable score track 0–100; K6 four fixed sheets per level, codes `CO1-A…D`, `CO2-A…D`, generated `CO1-4821`.
+- **Sanefa trencada**: F1 the 7 frieze types on two sheets per motif (sheet 1: translation, vertical mirrors, glide, half-turns — one row each; sheet 2: mirrors + half-turns, horizontal mirror, all mirrors), motif box 30 mm, 8 copies per frieze (alternative: one sheet with 7 friezes and 17 mm motifs); F2 mask = 54 mm card with a motif-shaped hole and a notch in one corner, the notch corner tells which isometry was needed (↖ identity, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn); F3 four polyomino-like motifs without symmetry (all 8 images under D4 distinct, verified); F4 the wrong copy is one of the other three frieze orientations, never a quarter turn, never among the first two copies; F5 half-page answer key per motif, codes `SAN-F1`, `SAN-F2`.
+- Scratch code used for the figures (not in the repo): exhaustive search of balanced 0/1 patterns and an annealer for the three-question sheet; a frieze SVG generator. Rewrite them inside the repo (`tools/comptar/`, `tools/sanefa/`) when the games are built.
 
-1. **Sanefa trencada** (round 4, S1): approved **without** the "creative" version. Printable sheets with friezes, each containing exactly one wrong motif; mask = the motif outline; answer key separate. Same motif within one sheet, different motif on different sheets (owner clarified).
-2. **Counting game** (the owner's idea, round 1 comment): mask 2×2 or 3×2 over a numbers sheet; the question is "how many primes / multiples of 3 / perfect squares can you see?" or "add them" (= add **only** the numbers that satisfy the property). Two levels: N1 numbers 2–50, N2 numbers 2–150. Team rules: A vs B, first team to answer; +5 if right, −10 if wrong; start at 40; first to 100 wins. Balance the sheet so that every possible answer (0..4 or 0..6) appears with similar frequency.
-3. **Pinta per sumes** (round 2, A1): approved; the generator must let the teacher design his own bitmap drawings. Up to 3 drawings per sheet (one per mask orientation). Rules must be simple and more varied than parity/mod 3/mod 5, e.g. "there is a multiple of 7", "there is a prime". Drawing size not decided (ask; note that a picture needs many cells, which conflicts with the "few cells" preference — discuss). Feasibility of 3 simultaneous arbitrary rules = constraint satisfaction; check by computer.
-4. **WODB builder** (round 5, J6): static vanilla HTML for teachers, very intuitive, parts (1) choose 4 items from a bank → show reasons; (2) generate a full sheet from a bank (already done by the "Full nou" button; reuse `motor.js`). Part (3) custom banks: **not** wanted.
+General preference stated by the owner on 2026-11-09: few cells per F1 and several F1 sheets per topic; F1 is always A4. Each game chooses its own grid and mask.
+
+## P2 — Later games (full specs in `docs/GAMES.md`)
+
+1. **Pinta per sumes** (round 2, A1): approved; teacher designs his own bitmap drawings; up to 3 drawings per sheet; simple varied rules. A picture needs many cells: discuss the size with the owner. Check feasibility by computer.
+2. **WODB builder** (round 5, J6): static vanilla HTML; parts (1) choose 4 items → reasons, (2) generate a sheet (exists as "Full nou"). Part (3) custom banks: not wanted.
 
 ## Parked (do not work on them unless asked)
 
-- **El robot llaminer** (round 2, P3) — "més endavant".
-- **El dau amagat** (round 4, C1) — "més endavant".
+- **El robot llaminer** (round 2, P3), **El dau amagat** (round 4, C1) — "més endavant".
 - Other content for new WODB sheets: "later; mainly geometry".

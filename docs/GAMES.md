@@ -11,6 +11,7 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - Two quality rules on top of validity: balance (no reason type in more than 5 of the 12 positions) and neighbours (moving the mask one cell should change the reasons as much as possible). See `CLAUDE.md` §4.2.
 - Teacher page `wodb/` prints F1, the mask (PDF + laser SVG) and answer keys (one page per topic), and generates new sheets ("Full nou", reproducible by number).
 - Pending: the owner's physical test of the new sizes (see `TODO.md` P0).
+- Format proposals for the next two games (counting game, Sanefa trencada) are in `docs/history/ronda10.html`; the owner's answers are pending (see `TODO.md` P1). Do not treat those proposals as decisions.
 
 ## APPROVED — Sanefa trencada (round 4, S1) — *without the creative version*
 

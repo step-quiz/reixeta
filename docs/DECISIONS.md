@@ -57,7 +57,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 
 ## Redesign session (2026-11-09, cloud session, answered through option dialogs)
 - **Fewer cells per F1.** The owner found that a 10×5 sheet holds far too many puzzles (36 per sheet). Decision: WODB board = **5 columns × 4 rows = 12 positions**; the 10×5 sheets are **replaced** (not kept as an alternative). General preference for the project: few cells per F1, several F1 sheets per topic.
-- **F1 is always A4, never A5** (explicit). The cells grow instead: 40 mm cell, 36 mm hole, 28 mm drawing box, frame 15 mm, mask 110 × 110 mm (the 82 mm mask is obsolete).
+- **F1 is always A4, never A5** (explicit). The cells grow instead: 40 mm cell, 37 mm hole (the 1.5 mm inset of round 8 is kept), 28 mm drawing box, frame 15 mm, mask 110 × 110 mm (the 82 mm mask is obsolete).
 - **Four fixed sheets per topic: A, B, C, D** (plus "Full nou"). One PDF per topic with 4 pages; answer keys: one page per topic with the 4 keys.
 - **Delivery in cloud sessions: commit + push to the working branch** (the ZIP → `_uploads/` route remains valid for chat sessions).
 - **"Full nou" was broken in v3** (found by the study): the annealer always failed and the fallback only flipped sheet A (BLO/BLB had just 4 possible sheets). Rewritten: incremental scoring, cap consistent with the acceptance test, two phases. Now every tested number gives a genuinely new good sheet.
@@ -67,3 +67,17 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
   - LLE "three or more lines meet" is worded "algun punt d'on **surten** tres línies o més" (branch count, computed from the stroke font): A B E F H K P Q R T X Y. X and Q count (4 branches).
   - FRA wording shortened to fit the answer key: "amb un sol decimal", "amb els dos termes parells", "amb els dos termes primers", "que és un quadrat perfecte". Every k/k (= 1) is a perfect square. Pool extended with denominator 9 and 9/4, 16/9, 1/16, 9/16, 4/25, 9/25, 16/25, otherwise the only squares were 1 and 1/4.
 - Result: 9 of 12 topics meet the 5/12 rule exactly (5 of 12 positions): NUM, FIG, FRA, BLO, BLB, LLE, TR5, TR4, QUA. POL 6, COS 7, ANG 10 (accepted as "leave as is" for ANG and POL; COS is close).
+
+## Review of WODB v4 (2026-11-10, artifact `docs/history/revisio-v4.html`, 13 points, all answered)
+- Hole inset stays **1.5 mm** (round-8 decision; a 2 mm deviation was corrected): hole 37 mm in the 40 mm cell.
+- M1 sizes approved (cell 40, hole 37, drawing 28, frame 15, mask 110). The owner may frame the A4 sheets in the future: at the extreme positions the mask leaves 33.5 mm of paper at the sides and only **10 mm at top and bottom**; if that becomes a problem, cell 38 mm and/or frame 12 mm were offered.
+- M2 one PDF per topic (4 pages) and M3 one answer-key page per topic: approved.
+- P1 COS "cares planes de dues formes diferents": approved.
+- P2 LLE junction property: **X counts, Q does not** (owner). Set: A B E F H K P R T X Y. Known risk: the drawn Q does show a crossing, so a pupil may argue it.
+- P3 short FRA wording, P4 extended fraction pool and k/k = perfect square: approved.
+- P5 the "no" reason of "es pot simplificar" is now worded **"És l'única irreductible"**.
+- E1 neighbour rule: the level reached is enough.
+- E2 trial of new properties: POL got "eix de simetria en diagonal" and "exactament dos quadrats que només en toquen un"; with them (and a heavy search) POL meets the 5/12 rule. COS "més de 10 arestes" was rejected: cap 5 was never reached with or without it; COS improved from 7 to 6 by the heavy search alone. Side effect: POL fixed sheets repeat more reasons between neighbours (43–50) than before (37–42).
+- E3 no old generated sheet has to be preserved: **beta mode** until the owner says otherwise.
+- S1 pull request opened for the branch. S2 the owner agrees that other games need their own grid (some with many more cells, some with a 3×2 mask) and asked for the proposals round (round 10).
+- Meaning of the buttons, stated by the owner: «Sí, fes-ho» = agreement with the proposal / the first option, nothing else requested.
