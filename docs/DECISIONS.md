@@ -120,3 +120,15 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - The owner, after cutting a single-hole mask by hand (photo: hard to do), remembered an "origami + simetries" course: fold the paper, one scissor cut, unfold, and the frame is done. Verified by simulation for every rectangular mask of the repo: **three folds and one straight cut** (half, half, bisector of the outer corner; cut along the window line). Works because the frame is uniform; also for the 3×2 mask.
 - Asked where to put the instructions (option dialog): he chose **on the mask page itself, drawn small next to the masks** (over a separate sheet, or waiting for a paper test). Built as `comu/plec.js` (`CLAUDE.md` §10): single-hole masks moved to the left, five drawn steps at the right, black and white.
 - Told to the owner: 8 layers (card untested), do it before laminating, creases remain, does not apply to the bars model nor to the Sanefa mask. Not tested on paper yet.
+
+## Round 12 — laser cutter and 3D printer (answered 2026-11-11, artifact `docs/history/ronda12.html`)
+- **L1 yes**: masks cut in 3 mm rigid material, single-hole model. No geometry change was needed (the laser SVGs already exist); recorded in the PDF index of the Sanefa and in `CLAUDE.md`.
+- **N1 yes**: the six rejected ideas stay rejected.
+- **No**: L2 transparent mask with engraved frame, L4 real logic blocks, L5 polyomino pieces, L6 loose tiles + tray, L7 set square, D1 printed solids, D2 knob, D3 tactile tiles. The 3D printer gets no work at all.
+- **Later**: A1 (he did not say which machines/materials the school has), L3 (letter engraved on the Sanefa cards).
+- Reading: the owner wants the laser only as a better way to make the existing masks, not new physical material.
+
+## Round 13 — the Sanefa mask (answered 2026-11-11, artifact `docs/history/ronda13.html`)
+- **P1 yes** straight-cut motifs with the drawing inside (sail, cheese, shed, simple boot). **P2 yes** edge-bite card cut with scissors as the default model, hole card as the second model. **P3 yes** portrait sheet, 8 copies, 22 mm motif, card frame 15 mm (2 mm of paper left at the sides).
+- **No**: P4 square window with the motif printed beside it, P5 transparent overlay, P6 laser only. **N1 yes**: four rejected ways stay rejected.
+- Built the same day (`CLAUDE.md` §8). The old motifs (boot, flag, sailboat, duck) and sheet codes `SAN-BAN*`, `SAN-ANE*` are gone (beta mode).
