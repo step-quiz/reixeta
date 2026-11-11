@@ -41,7 +41,7 @@ docs/DECISIONS.md             Every decision taken with the owner, chronological
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
-                              ronda12 = laser cutter + 3D printer ideas (answers pending)
+                              ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (answers pending for both)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
@@ -173,6 +173,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 - F2: a 54 mm card (motif box 16 + frame 19; the owner asked for the frame 60 % larger than 12) with a motif-shaped hole (0.6 mm clearance) and a **notch** at one corner. Fitting the mask on a copy leaves the notch at a corner that tells the orientation: ↖ as is, ↗ vertical mirror, ↙ horizontal mirror, ↘ half-turn. Pupils write the notch sequence of each frieze; the wrong copy breaks the rhythm. One mask per motif (PDF with 3 copies of each + one laser SVG per motif).
 - Sheets are generated on the fly: `genera(motiu, num)` is deterministic; fixed sheets are numbers 1 and 2 of each motif (`SAN-BOT1`, `SAN-BOT2`, …), any number 1000–9999 is a "Full nou" (`SAN-VEL4821`). Answer key: wrong cell (e.g. `B10`, with "fila de dalt/baix" for two-row friezes), found vs expected notch, and the correct notch sequence.
 - Paper check (done on the real page by `make_pdfs.py`): around the mask at the outermost copies there remain 33.5 mm at the sides, 7 mm at the top and 3 mm at the bottom.
+- **Known defect (2026-11-11):** the motif-shaped holes cannot be cut by hand (7–14 cuts, shortest 0.6–2.1 mm, inward corners); only a laser can make these masks. Round 13 proposes straight-cut motifs, an edge-bite mask for scissors and a portrait sheet with 22 mm motifs; wait for the owner's answers before changing this game (`TODO.md`).
 
 ## 9. Pinta per sumes — `pinta/` (round 2 A1; format approved in round 11)
 
