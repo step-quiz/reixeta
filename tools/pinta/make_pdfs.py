@@ -32,6 +32,6 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <p><a href="../../">Reixeta</a> · <a href="../../pinta/">Pinta per sumes</a></p><h1>PDF · Pinta per sumes</h1>
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Fulls d'exemple</h2><ul>{li}</ul>
-<h2>Plantilla (caselles de 18 mm)</h2><ul><li><a href="plantilla-2x2-petita.pdf">Plantilla d'un sol forat (6 per full A4)</a> · <a href="plantilla-2x2-petita-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-2x2-petita-barres.pdf">Plantilla de 4 forats separats per barres de 6 mm</a> · <a href="plantilla-2x2-petita-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
+<h2>Plantilla (caselles de 18 mm)</h2><ul><li><a href="plantilla-2x2-petita.pdf">Plantilla d'un sol forat (6 per full A4, amb els passos per fer la finestra amb 3 plecs i 1 tall)</a> · <a href="plantilla-2x2-petita-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-2x2-petita-barres.pdf">Plantilla de 4 forats separats per barres de 6 mm</a> · <a href="plantilla-2x2-petita-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
 </body></html>''')
 print('errors',errs)

@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Four games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8) and **Pinta per sumes** (§9). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Four games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8) and **Pinta per sumes** (§9). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -45,6 +45,7 @@ docs/history/rondaN.html      The review artifacts (proposals + demos) as offlin
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
+comu/plec.js                  Shared by every mask page: fold-and-one-cut instructions (drawings + the simulation that proves them), §10
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§4.6)
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
@@ -53,6 +54,7 @@ wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
 pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
+tools/plec/                   check.js (maths of the fold-and-cut recipe) and prova.js (browser test of the mask pages)
 tools/check.js                Runs every verification of the repo in one go
 ```
 
@@ -104,7 +106,7 @@ The fixed sheets A–D are found by the same engine (`tools/wodb/fulls.js`: best
 | Labels | letters at x0−8, numbers at y0−5, 7 mm Arial; code 5.5 mm Courier bold at (x0+w, y0−15) right-aligned |
 | Item drawing box | 28 × 28 centred in the cell (4.5 mm clearance to the hole edge); ANG uses 31 × 31 (3 mm clearance, the minimum the owner accepts) |
 | Text | Arial bold; size so width ≤ 84/100 of the box (`midaText`); fractions stacked, 30/100 |
-| Mask | frame **24** (owner asked for margins 60 % larger than 15), outer 128 × 128; guide marks 6 long at 24/64/104 on every edge (they continue the grid lines); ★ of radius 4.9 **centred** in the top-left corner square (12, 12); 2 masks per A4 portrait. Two models: **`un` (default) = one single hole of 77 × 77** (1.5 inset from the 2×2 block, no bars: the 3 mm bars of the old 4-hole mask tore when the owner cut it by hand); **`barres` = 4 holes of 34 separated by 6 mm bars**, kept as an option (page toggle, `#…/plantilla-barres`, and meant to be offered by the future builder) |
+| Mask | frame **24** (owner asked for margins 60 % larger than 15), outer 128 × 128; guide marks 6 long at 24/64/104 on every edge (they continue the grid lines); ★ of radius 4.9 **centred** in the top-left corner square (12, 12); 2 masks per A4 portrait, with the fold-and-cut instructions next to them (§10). Two models: **`un` (default) = one single hole of 77 × 77** (1.5 inset from the 2×2 block, no bars: the 3 mm bars of the old 4-hole mask tore when the owner cut it by hand); **`barres` = 4 holes of 34 separated by 6 mm bars**, kept as an option (page toggle, `#…/plantilla-barres`, and meant to be offered by the future builder) |
 | Laser SVG | red `#FF0000` 0.01 = cut, blue `#0000FF` = score (guides), black fill = engrave (★) |
 | Answer keys | A4 landscape, 4 keys per side (148.5 × 105 each) = sheets A–D of one topic, 12 rows each, 2.45 mm text; generated sheets are grouped 4 per page |
 
@@ -147,7 +149,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 6. Checklist before delivering
 
-1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the four game checks, and the browser test of the builder; `--rapid` for small samples).
+1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the four game checks, the fold-and-cut check, and the two browser tests: builder and mask pages; `--rapid` for small samples).
 2. If you changed a single game you may run only its own `tools/<game>/check.js` (must print `ALL OK`).
 3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
@@ -182,3 +184,16 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 - Maths: for modulus m the residues of the first row and first column are free and every other cell follows from the window whose bottom-right corner it is (target 0 for a black pixel, any non-zero residue for a white one), so **any bitmap is solvable**; the three moduli are coprime, so each cell needs a residue mod 30 = three candidates among 10–99. Numbers repeat on the sheet (accepted) but never inside one mask position (`resol` retries with new random free residues, up to 200 attempts; `comprova` re-derives the pictures).
 - A drawing with no black pixel is unused (its rule is not printed). State = `N.hex1.hex2.hex3.seed` in the URL hash (`#p=…`); printed code = `PIN-` + 4 base-36 characters of a hash of the state; examples `PIN-A`, `PIN-B`, `PIN-C` (`EX` in `motor.js`). Views: editor (screen only), Full 1, mask, answer sheet (empty grids + rule above each), key.
 - This page is a teacher tool (click-to-paint editor); nothing is meant for pupils on screen.
+
+## 10. Fold and one cut — `comu/plec.js` (owner's idea, 2026-11-11)
+
+Cutting a window out of the middle of a sheet by hand is hard (the scissors must be stabbed into the paper). The owner remembered an "origami + symmetry" course: fold, **one straight cut**, unfold. For our masks it takes **three folds**:
+
+1. Cut out the outer rectangle. 2. Fold in half. 3. Fold in half again (the mask centre is where the two folded edges meet). 4. Fold the outer corner along its bisector, so that the two outer edges lie on each other. 5. One straight cut along the printed window line, from one edge of the packet to the other. Unfold.
+
+- **Why it works:** folds 1–2 use the two mirror axes of the mask; the frame has the same width on the four sides, so the bisector of the outer corner passes through the window corner and fold 3 lays the vertical window side on the horizontal one. Condition (`PLEC.serveix`): one centred window, uniform frame, `W ≥ H`. It holds for the square masks and for the 168 × 128 mask of the counting game (there fold 3 stops before the centre and the packet is a quadrilateral).
+- **Not applicable:** the `barres` models (several holes; the 2×2 one would need a fourth fold = 16 layers, the 3×2 one has no simple recipe) and the Sanefa mask (motif-shaped hole, §8).
+- `PLEC.comprova(W,H,Wh,Hh,step)` simulates the folds point by point and returns the number of misclassified lattice points (must be 0). `PLEC.instruccions({x,y,w,h,mode,g})` returns SVG (mm, black and white) with a title, a short note and the five drawn steps, to scale, inside the box: `mode:'columna'` (upright, captions below; boxes ≥ ~35 mm wide) or `mode:'tira'` (narrow box, drawn rotated 90°, read bottom to top, captions beside). `g = {W,H,Wh,Hh,estrella:{x,y,r}|null,cols,files}`. Catalan texts are the constants `TITOL`, `INTRO`, `PASSOS`.
+- **Mask pages:** with the single-hole model the masks are no longer centred: they sit at the left (WODB, CS and builder at x = 10; counting game 3×2 at x = 6; Pinta at x = 8 with a 7 mm gap) and the instructions fill the free strip at the right (column 56–86 mm wide; for the 3×2 mask a 27 mm rotated strip, the only room left). With `barres` the page is as before (centred, no instructions). The laser SVGs are unchanged.
+- **Tests:** `tools/plec/check.js` (212 mask sizes — every one in the repo plus 200 random — checked with `comprova` and with an independent model; negative controls for non-uniform frames) and `tools/plec/prova.js` (browser: on 12 mask pages the instruction sizes equal the mask really drawn, nothing leaves its box or touches a mask, ≥ 4 mm to the paper edge, no text over a drawing, none with the bars model). Both run from `tools/check.js`.
+- **Limits told to the owner:** 8 paper layers (fine with 80 g paper, card untested); fold and cut **before laminating**; the creases stay (two medians, four corner diagonals). **Not tested on paper yet.**

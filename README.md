@@ -16,11 +16,12 @@ wodb/                      WODB · Quin no hi encaixa?
 pinta/                     Pinta per sumes (editor de dibuixos i pàgina d'impressió)
 comptar/                   Joc de comptar (pàgina d'impressió, motor i fulls fixos)
 sanefa/                    Sanefa trencada (pàgina d'impressió i motor)
+comu/plec.js               Els passos dibuixats de «plegar i un sol tall», per a totes les pàgines de plantilla
 pdf/comptar/, pdf/sanefa/, pdf/pinta/  PDF ja preparats d'aquests jocs
 pdf/wodb/                  PDF ja preparats
   NUM.pdf … COS.pdf        Un PDF per tema, amb els fulls A, B, C i D (un per pàgina)
   tots-els-fulls.pdf       Els 48 fulls en un sol PDF
-  plantilla-2x2.pdf        Plantilla de 4 forats (2 per A4)
+  plantilla-2x2.pdf        Plantilla d'un sol forat (2 per A4), amb els passos per fer la finestra plegant el paper
   plantilla-2x2-tall-laser.svg   Plantilla per a talladora làser
   solucionaris.pdf         Solucionaris (una cara per tema)
 ```
@@ -72,6 +73,7 @@ A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 12
 ## Plantilla
 
 - Exterior de 128 × 128 mm (marc de 24 mm). Hi ha dos models: el d'**un sol forat** de 77 mm (per defecte; no té cap part fràgil i es talla bé a mà) i el de **4 forats** de 34 mm separats per barres de 6 mm. A les posicions de les vores, la plantilla no surt del full, però a dalt i a baix només hi queda 1 mm de paper.
+- **La finestra es fa amb 3 plecs i 1 sol tall recte**, sense clavar les tisores al mig del paper. Primer es retalla el contorn; després es plega per la meitat, es torna a plegar per la meitat, es plega la cantonada de fora en diagonal (una vora exterior sobre l'altra) i es talla seguint la línia de la finestra. Cal plegar sempre cap enrere (el dibuix a fora) i fer-ho abans de plastificar. Els cinc passos surten dibuixats al costat de les plantilles d'un sol forat del WODB, del joc de comptar, de Pinta per sumes i del constructor. Són 8 capes de paper: amb paper normal va bé; amb cartolina no s'ha provat. Comprovat per ordinador (`tools/plec/`), encara no en paper. No serveix per al model de barres ni per a la plantilla de la sanefa.
 - Cada dibuix ocupa com a màxim 28 mm dins de la casella de 40 mm: queda lluny de la vora del forat.
 - Les marques de la vora continuen les línies de la graella: serveixen per alinear-la.
 - SVG per a talladora làser: **vermell** = tall, **blau** = marcat (marques guia), **negre** = gravat (★). Unitats en mm.

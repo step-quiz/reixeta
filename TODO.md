@@ -9,6 +9,7 @@ What is known about each piece, so that nobody takes "built" for "validated":
 | WODB sheets + generator | yes (`tools/wodb/check.js`) | v3 yes; v4 (5×4) printed, mask cut by hand (bars tore → single-hole mask) |
 | WODB new masks (single hole / 6 mm bars, frame 24) | geometry only | no |
 | WODB builder | yes (browser test) | not reviewed at all |
+| Fold-and-one-cut instructions on the mask pages (`comu/plec.js`) | yes (`tools/plec/check.js`, `prova.js`) | no — 8 layers; card stock untested |
 | Counting game (CO 3×2 and CS 2×2) | yes | no |
 | Sanefa trencada | yes | mask printed: the motif-shaped hole cannot be cut by hand → round 13 |
 | Pinta per sumes | yes | no (he reviewed the example drawings on screen) |

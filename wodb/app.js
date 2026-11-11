@@ -33,8 +33,10 @@ function plantillaCos(ox,oy,laser,model){const S=2*CEL+2*MARC,cut=laser?'stroke=
     o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/>`;
     o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
   o+=`<polygon points="${estrella(ox+MARC/2,oy+MARC/2,ESTRELLA)}" fill="#000"/>`;return o;}   // estrella centrada a la cantonada de dalt a l'esquerra
-function plantillaSVG(model){const S=2*CEL+2*MARC,x=(210-S)/2,g=(297-2*S)/3;   // dues plantilles per A4 vertical
-  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+S,false,model)}</svg>`;}
+/* Dues plantilles per A4 vertical. Amb el model d'un sol forat van a l'esquerra i a la dreta hi ha com es fa la finestra plegant el paper (comu/plec.js). */
+function plantillaSVG(model){const S=2*CEL+2*MARC,un=model!=='barres',x=un?10:(210-S)/2,g=(297-2*S)/3,bx=x+S+8,f=2*CEL-2*MARGE;
+  const ins=un?PLEC.instruccions({x:bx,y:g,w:202-bx,h:297-2*g,g:{W:S,H:S,Wh:f,Hh:f,estrella:{x:MARC/2,y:MARC/2,r:ESTRELLA},cols:2,files:2}}):'';
+  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+S,false,model)}${ins}</svg>`;}
 function plantillaLaser(model){const S=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true,model)}</svg>`;}
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];

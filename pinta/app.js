@@ -28,8 +28,12 @@ function plantillaCos(ox,oy,laser){const c=P.MIDES[st.N].cel,S=2*c+2*MARC,cut=la
   const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=5;
   for(const k of [0,1,2]){const t=MARC+k*c;o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/><line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
   return o+`<polygon points="${estrella(ox+MARC/2,oy+MARC/2,ESTRELLA)}" fill="#000"/>`;}
-function plantillaSVG(){const S=2*P.MIDES[st.N].cel+2*MARC,gx=(210-2*S)/3,gy=(297-3*S)/4;let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
-  for(let i=0;i<3;i++)for(let j=0;j<2;j++)o+=plantillaCos(gx+j*(S+gx),gy+i*(S+gy),false);return o+'</svg>';}   // sis plantilles per A4
+/* Sis plantilles per A4. Amb el model d'un sol forat van a l'esquerra i a la dreta hi ha com es fa la finestra plegant el paper (comu/plec.js). */
+function plantillaSVG(){const c=P.MIDES[st.N].cel,S=2*c+2*MARC,un=st.model!=='barres',gx=un?7:(210-2*S)/3,x0=un?8:gx,gy=(297-3*S)/4,bx=x0+2*S+gx+8,f=2*c-2*MARGE;
+  let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<3;i++)for(let j=0;j<2;j++)o+=plantillaCos(x0+j*(S+gx),gy+i*(S+gy),false);
+  if(un)o+=PLEC.instruccions({x:bx,y:gy,w:202-bx,h:297-2*gy,g:{W:S,H:S,Wh:f,Hh:f,estrella:{x:MARC/2,y:MARC/2,r:ESTRELLA},cols:2,files:2}});
+  return o+'</svg>';}
 function plantillaLaser(){const S=2*P.MIDES[st.N].cel+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true)}</svg>`;}
 /* ---------- full de respostes i solucionari: una graella per dibuix ---------- */
 function graellesSVG(ple){const n=st.N-1,us=[0,1,2].filter(k=>P.teNegre(st.dib[k])),u=80/n,w=n*u,gx=(297-3*w)/4;

@@ -115,3 +115,8 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 ## 2026-11-11 — the Sanefa mask cannot be cut by hand
 - The owner printed the boot mask: "com podrà un ésser humà retallar el forat que marca aquesta bota?" Claude had flagged the problem (TODO) but shipped the design anyway. Lesson: **every mask must be checked for hand-cutting before it is proposed** — count the cuts, the shortest cut and the inward corners at real size; a hole with cuts under about 5 mm or with inward corners is a laser-only part.
 - Round 13 published with the measurements and six alternatives (see `TODO.md`). No decision yet.
+
+## 2026-11-11 — fold and one cut (owner's idea)
+- The owner, after cutting a single-hole mask by hand (photo: hard to do), remembered an "origami + simetries" course: fold the paper, one scissor cut, unfold, and the frame is done. Verified by simulation for every rectangular mask of the repo: **three folds and one straight cut** (half, half, bisector of the outer corner; cut along the window line). Works because the frame is uniform; also for the 3×2 mask.
+- Asked where to put the instructions (option dialog): he chose **on the mask page itself, drawn small next to the masks** (over a separate sheet, or waiting for a paper test). Built as `comu/plec.js` (`CLAUDE.md` §10): single-hole masks moved to the left, five drawn steps at the right, black and white.
+- Told to the owner: 8 layers (card untested), do it before laminating, creases remain, does not apply to the bars model nor to the Sanefa mask. Not tested on paper yet.
