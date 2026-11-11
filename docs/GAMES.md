@@ -20,11 +20,12 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - Simple variant for comparison: levels `CS1`/`CS2` on a 5×4 sheet with the WODB 2×2 mask (12 positions, answers 0–4). The owner has to choose which one stays (or both).
 - Full spec: `CLAUDE.md` §7.
 
-## DONE — Sanefa trencada (round 4 S1, round 7 Q13, format round 10) — `sanefa/`
+## DONE — Sanefa trencada (round 4 S1, round 7 Q13, format round 10, rebuilt after round 13) — `sanefa/`
 
-- One sheet = the seven frieze types (translation; vertical mirrors; glide reflection; half-turns; vertical mirrors + half-turns; horizontal mirror; vertical + horizontal mirrors) made with one figurative motif without symmetry (boot, flag, sailboat, duck), 12 copies each, exactly one wrong copy per frieze. Same motif within a sheet, different motifs on different sheets. No "creative version".
-- F2 = card with a motif-shaped hole and a corner notch; the corner where the notch ends up names the isometry. Separate answer key.
-- Rejected in round 10: splitting the seven friezes over two sheets with larger motifs (the owner found it too "baroque": too much information puts pupils off).
+- One portrait sheet = the seven frieze types (translation; vertical mirrors; glide reflection; half-turns; vertical mirrors + half-turns; horizontal mirror; vertical + horizontal mirrors) made with one motif without symmetry, 8 copies of 22 mm each, exactly one wrong copy per frieze. Same motif within a sheet, different motifs on different sheets. No "creative version".
+- Motifs: straight-cut shapes with the drawing inside (sail, cheese, shed, boot), so that the card can be cut by hand. The first figurative motifs (boot, flag, sailboat, duck) were dropped: their holes could only be cut by laser.
+- F2 = card with a clipped corner whose final position names the isometry; default model = the motif as a bite on the card edge (scissors), second model = hole inside (cutter or laser). Separate answer key.
+- Rejected in round 10: splitting the seven friezes over two sheets (too "baroque"). Rejected in round 13: square window + printed motif, transparent overlay, laser-only masks.
 - Full spec: `CLAUDE.md` §8.
 
 ## DONE — Pinta per sumes (round 2 A1; format round 11) — `pinta/`

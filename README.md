@@ -92,12 +92,14 @@ Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar 
 
 ## Sanefa trencada
 
-Cada full té les set classes de sanefa fetes amb un mateix motiu, amb 12 còpies cadascuna. A cada sanefa hi ha una sola còpia que trenca el ritme: cal trobar-la.
+Cada full (A4 vertical) té les set classes de sanefa fetes amb un mateix motiu, amb 8 còpies de 22 mm cadascuna. A cada sanefa hi ha una sola còpia que trenca el ritme: cal trobar-la.
 
-- **Motius:** bota, bandera, veler i ànec. Cap no té simetria (s'ha mesurat per ordinador), i per això qualsevol error es pot detectar.
-- **Plantilla:** una targeta de 54 mm amb un forat amb la forma del motiu i una osca en una cantonada. Per fer-la encaixar en una còpia cal deixar-la tal com és, girar-la de cara o fer-li mitja volta, i la cantonada on queda l'osca ho diu: ↖ tal com és, ↗ mirall vertical, ↙ mirall horitzontal, ↘ mitja volta. Anotant les osques de cada sanefa es veu el ritme i la còpia que el trenca.
-- **Fulls:** dos de fixos per motiu (`SAN-BOT1`, `SAN-BOT2`…) i «Full nou» amb un número. L'error no és mai a les dues primeres còpies i és l'única manera d'arreglar la sanefa canviant una sola còpia.
-- **Solucionari:** la casella errònia de cada sanefa i el ritme correcte d'osques.
+- **Motius:** vela, formatge, caseta i bota. Són figures de pocs talls rectes i llargs, amb el dibuix a dins, perquè la targeta es pugui retallar a mà. Cap no té simetria (s'ha mesurat per ordinador), i per això qualsevol error es pot detectar.
+- **Targeta (full 2):** té la cantonada de dalt a l'esquerra tallada. Per fer-la encaixar en una còpia cal deixar-la tal com és, girar-la de cara o fer-li mitja volta, i el lloc on queda la cantonada tallada ho diu: ↖ tal com és, ↗ mirall vertical, ↙ mirall horitzontal, ↘ mitja volta. Anotant-ho a cada còpia es veu el ritme i la còpia que el trenca.
+- **Dos models de targeta:** amb **mossegada a la vora** (per defecte), de 52 × 30 mm, que es talla amb tisores entrant per la vora (dos talls per a la vela i el formatge, tres per a la caseta) i es posa per sobre de la còpia; i amb el **forat a dins**, de 52 × 52 mm, per a cúter i regle o talladora làser. La bota només té el model de forat. El tall més curt fa 6 mm.
+- **Fulls:** dos de fixos per motiu (`SAN-VEL1`, `SAN-VEL2`…) i «Full nou» amb un número. L'error no és mai a les dues primeres còpies i és l'única manera d'arreglar la sanefa canviant una sola còpia.
+- **Solucionari:** la casella errònia de cada sanefa i el ritme correcte.
+- Als costats del full només queden 2 mm de paper quan la targeta és a la primera o a l'última còpia.
 
 ## Pinta per sumes
 
