@@ -31,8 +31,11 @@ function plantillaCos(ox,oy,laser,model){const nc=K.NIVELLS[st.niv].formes[0][2]
   for(const k of [0,1,2]){const t=MARC+k*CEL;o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+W-L}" y1="${oy+t}" x2="${ox+W}" y2="${oy+t}" ${g}/>`;}
   if(nc===2){const p=[];for(let i=0;i<10;i++){const an=-Math.PI/2+i*Math.PI/5,r=i%2?4.9*.42:4.9;p.push((ox+MARC/2+r*Math.cos(an)).toFixed(2)+','+(oy+MARC/2+r*Math.sin(an)).toFixed(2));}o+=`<polygon points="${p.join(' ')}" fill="#000"/>`;}   // la de 2×2 és la mateixa plantilla del WODB, amb l'estrella
   return o;}
-function plantillaSVG(model){const W=K.NIVELLS[st.niv].formes[0][2]*CEL+2*MARC,H=2*CEL+2*MARC,x=(210-W)/2,g=(297-2*H)/3;   // dues plantilles per A4 vertical
-  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+H,false,model)}</svg>`;}
+/* Dues plantilles per A4 vertical. Amb el model d'un sol forat van a l'esquerra i al costat hi ha com es fa la finestra plegant el paper (comu/plec.js):
+   en columna amb la plantilla de 2×2 i en una tira girada, al marge, amb la de 3×2 (no hi queda més lloc). */
+function plantillaSVG(model){const nc=K.NIVELLS[st.niv].formes[0][2],W=nc*CEL+2*MARC,H=2*CEL+2*MARC,un=model!=='barres',estret=nc>2,x=un?(estret?6:10):(210-W)/2,g=(297-2*H)/3,bx=x+W+(estret?4:8);
+  const ins=un?PLEC.instruccions({mode:estret?'tira':'columna',x:bx,y:estret?8:g,w:(estret?205:202)-bx,h:estret?281:297-2*g,g:{W,H,Wh:nc*CEL-2*MARGE,Hh:2*CEL-2*MARGE,estrella:nc===2?{x:MARC/2,y:MARC/2,r:4.9}:null,cols:nc,files:2}}):'';
+  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+H,false,model)}${ins}</svg>`;}
 function plantillaLaser(model){const W=K.NIVELLS[st.niv].formes[0][2]*CEL+2*MARC,H=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${W}mm" height="${H}mm" viewBox="0 0 ${W} ${H}">${plantillaCos(0,0,true,model)}</svg>`;}
 /* ---------- guió de partida ---------- */
 function guioHTML(id,k){const J=K.guio(full(id),id,k),NJ=K.jugades(full(id),K.nivellDe(id)).length,fila=(j,i)=>`<tr><td class="n">${i+1}</td><td class="pos">${esc(j.pos)}</td><td>${esc(j.text)}</td><td class="res"><b>${j.resposta}</b>${j.nombres.length?` <span>(${j.nombres.join(', ')})</span>`:''}</td></tr>`;

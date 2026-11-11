@@ -48,8 +48,12 @@ function plantillaCos(ox,oy,laser){const {cel,S}=mides(),m=st.marc,cut=laser?'st
   const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=Math.min(6,m/2.5);
   for(const k of [0,1,2]){const t=m+k*cel;o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/><line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
   if(st.estrella)o+=`<polygon points="${estrella(ox+m/2,oy+m/2,m*.2)}" fill="#000"/>`;return o;}
-function plantillaSVG(){const S=mides().S,n=Math.max(1,Math.floor(297/(S+8))),x=(210-S)/2,g=(297-n*S)/(n+1);let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
-  for(let i=0;i<n;i++)o+=plantillaCos(x,g+i*(S+g),false);return o+'</svg>';}
+/* Amb el model d'un sol forat les plantilles van a l'esquerra i a la dreta hi ha com es fa la finestra plegant el paper (comu/plec.js). */
+function plantillaSVG(){const {cel,S}=mides(),un=st.model!=='barres',n=Math.max(1,Math.floor(297/(S+8))),x=un?10:(210-S)/2,g=(297-n*S)/(n+1),bx=x+S+8,f=2*cel-2*MARGE;
+  let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
+  for(let i=0;i<n;i++)o+=plantillaCos(x,g+i*(S+g),false);
+  if(un)o+=PLEC.instruccions({x:bx,y:g,w:202-bx,h:297-2*g,g:{W:S,H:S,Wh:f,Hh:f,estrella:st.estrella?{x:st.marc/2,y:st.marc/2,r:st.marc*.2}:null,cols:2,files:2}});
+  return o+'</svg>';}
 function plantillaLaser(){const S=mides().S;return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true)}</svg>`;}
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];
