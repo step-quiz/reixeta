@@ -111,3 +111,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - One verification command: `node tools/check.js`.
 - Documentation tidied (`TODO.md` rewritten).
 - Note: the published site showed an old `PIN-C.pdf` after PR 6 was merged; `main` had the new file, so it was a cache/deploy delay on the owner's side (the cloud session cannot reach the published site).
+
+## 2026-11-11 — the Sanefa mask cannot be cut by hand
+- The owner printed the boot mask: "com podrà un ésser humà retallar el forat que marca aquesta bota?" Claude had flagged the problem (TODO) but shipped the design anyway. Lesson: **every mask must be checked for hand-cutting before it is proposed** — count the cuts, the shortest cut and the inward corners at real size; a hole with cuts under about 5 mm or with inward corners is a laser-only part.
+- Round 13 published with the measurements and six alternatives (see `TODO.md`). No decision yet.
