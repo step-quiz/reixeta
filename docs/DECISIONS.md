@@ -132,3 +132,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - **P1 yes** straight-cut motifs with the drawing inside (sail, cheese, shed, simple boot). **P2 yes** edge-bite card cut with scissors as the default model, hole card as the second model. **P3 yes** portrait sheet, 8 copies, 22 mm motif, card frame 15 mm (2 mm of paper left at the sides).
 - **No**: P4 square window with the motif printed beside it, P5 transparent overlay, P6 laser only. **N1 yes**: four rejected ways stay rejected.
 - Built the same day (`CLAUDE.md` §8). The old motifs (boot, flag, sailboat, duck) and sheet codes `SAN-BAN*`, `SAN-ANE*` are gone (beta mode).
+
+## 2026-11-12 — round 14 opened
+- The owner asked for "l'autèntica Reixeta de Cardano" and brought 23 proposals written by another AI ("algunes no m'agraden gens, altres sí; en parlem"). Round 14 artifact published with 8 grille proposals and Claude's opinion on the 23; answers pending (`TODO.md`).
+- He reported the old Sanefa on the site; `main` was correct (cache). Lesson: static assets need cache-busting; proposed as T1.

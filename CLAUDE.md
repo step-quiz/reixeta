@@ -41,7 +41,8 @@ docs/DECISIONS.md             Every decision taken with the owner, chronological
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
-                              ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (both answered on 2026-11-11, see DECISIONS)
+                              ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (both answered on 2026-11-11, see DECISIONS);
+                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answers pending, see TODO)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
