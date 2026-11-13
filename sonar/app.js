@@ -50,10 +50,20 @@ function soluSVG(){const F=actual(),u=22,x0=30,y0=44;let o=`<svg class="full" vi
     ['','Els fulls només fan servir amagatalls que les 12'],['','respostes determinen del tot (dos de cada tres).']];
   o+=L.map(([b,t],i)=>t?`<text x="${tx}" y="${y0+4+i*6.6}" font-size="4.3"${b?' font-weight="700"':''} ${AR}>${esc(t)}</text>`:'').join('');   // les línies buides només fan d'espai
   return o+'</svg>';}
+/* ---------- plantilla: la del WODB (un sol forat de 77 mm), amb els passos per fer la finestra plegant (comu/plec.js) ---------- */
+const MARC=24,MARGE=1.5,ESTRELLA=4.9;
+function estrella(cx,cy,Rr){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?Rr*.42:Rr;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
+function plantillaCos(ox,oy){const Sp=2*CEL+2*MARC,f=2*CEL-2*MARGE;let o=`<path d="M${ox},${oy} h${Sp} v${Sp} h${-Sp} Z M${ox+MARC+MARGE},${oy+MARC+MARGE} h${f} v${f} h${-f} Z" fill="#d4d4d4" fill-rule="evenodd" stroke="#000" stroke-width=".3"/>`;
+  for(const k of [0,1,2]){const t=MARC+k*CEL,L=6,g='stroke="#000" stroke-width=".5"';o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+Sp-L}" x2="${ox+t}" y2="${oy+Sp}" ${g}/><line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+Sp-L}" y1="${oy+t}" x2="${ox+Sp}" y2="${oy+t}" ${g}/>`;}
+  return o+`<polygon points="${estrella(ox+MARC/2,oy+MARC/2,ESTRELLA)}" fill="#000"/>`;}
+function plantillaSVG(){const Sp=2*CEL+2*MARC,x=10,gy=(297-2*Sp)/3,bx=x+Sp+8,f=2*CEL-2*MARGE;
+  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,gy)}${plantillaCos(x,2*gy+Sp)}`
+    +PLEC.instruccions({x:bx,y:gy,w:202-bx,h:297-2*gy,g:{W:Sp,H:Sp,Wh:f,Hh:f,estrella:{x:MARC/2,y:MARC/2,r:ESTRELLA},cols:2,files:2}})+'</svg>';}
 /* ---------- pintar ---------- */
 function pinta(){const P=$('#pagines'),F=actual();
-  P.innerHTML=!F?'<p class="buit">No he pogut generar el full.</p>':`<div class="pagina h">${st.vista==='registre'?registreSVG():st.vista==='solu'?soluSVG():fullSVG()}</div>`;escala();marca();}
-function escala(){const pw=document.querySelector('.pagina');if(!pw)return;const px=297*96/25.4,z=Math.min(1,(document.documentElement.clientWidth-28)/px);document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',z));}
+  $('#mida-pagina').textContent=st.vista==='plantilla'?'@page{size:A4 portrait;margin:0}':'@page{size:A4 landscape;margin:0}';
+  P.innerHTML=st.vista==='plantilla'?`<div class="pagina v">${plantillaSVG()}</div>`:!F?'<p class="buit">No he pogut generar el full.</p>':`<div class="pagina h">${st.vista==='registre'?registreSVG():st.vista==='solu'?soluSVG():fullSVG()}</div>`;escala();marca();}
+function escala(){const pw=document.querySelector('.pagina');if(!pw)return;const px=(pw.classList.contains('v')?210:297)*96/25.4,z=Math.min(1,(document.documentElement.clientWidth-28)/px);document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',z));}
 function estat(t){$('#estat').textContent=t||'';}
 function marca(){document.querySelectorAll('[data-vista]').forEach(b=>b.classList.toggle('on',b.dataset.vista===st.vista));$('#nivell').value=st.niv;
   $('#vers').innerHTML=K.FIXOS.map(v=>`<button data-ver="${v}" class="${st.ver===v?'on':''}">${v}</button>`).join('');
@@ -68,7 +78,7 @@ $('#btnPrint').onclick=()=>window.print();
 window.addEventListener('resize',escala);
 window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1)));
 window.addEventListener('afterprint',escala);
-function aplicaHash(){const m=/^#(SO\d)-([A-D]|\d{4})(?:\/(full|registre|solu))?$/.exec(location.hash);
+function aplicaHash(){const m=/^#(SO\d)-([A-D]|\d{4})(?:\/(full|plantilla|registre|solu))?$/.exec(location.hash);
   if(m&&K.NIVELLS[m[1]]){st.niv=m[1];st.ver=m[2];st.vista=m[3]||'full';if(/\d/.test(m[2]))$('#num').value=m[2];}pinta();}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
 window.__reixeta={fullSVG,registreSVG,soluSVG,actual,st,pinta,mides:{CEL,TRESOR}};

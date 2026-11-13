@@ -50,6 +50,13 @@ function soluSVG(A){const u=7,w=N*u,gap=(210-4*w)/5,y=48;let o=`<svg class="full
   if(A.F)o+=`<text x="${gap}" y="${yy}" font-size="4.2" ${AR}>A cada posició, vuit nombres són de la família i un no és de cap família del full (en negre).</text><text x="${gap}" y="${yy+7}" font-size="4.2" font-weight="700" ${AR}>Suma dels quatre intrusos: ${A.F.intrusos.join(' + ')} = ${A.F.intrusos.reduce((a,b)=>a+b,0)}</text>`;
   else{const m=K.normalitza(st.text);o+=`<text x="${gap}" y="${yy}" font-size="4.2" ${AR}>Missatge (${m.length} caràcters${m.length<N*N?'; la resta són lletres de farciment':''}):</text><text x="${gap}" y="${yy+8}" font-size="5" font-weight="700" font-family="Courier New,monospace">${esc(m)}</text>`;}
   return o+'</svg>';}
+/* Com es fa un forat amb tisores: es plega el full pel mig de la casella i es talla mig quadrat des del plec. */
+const FORAT_TISORES=(()=>{const t=(x,y,z)=>`<text x="${x}" y="${y}" font-size="6.5" font-weight="700" ${AR}>${z}</text>`;
+  let o=`<svg class="tisores" viewBox="0 0 76 30" xmlns="http://www.w3.org/2000/svg">`+t(0,9,'1');
+  o+=`<rect x="7" y="2" width="30" height="24" fill="#d4d4d4" stroke="#000" stroke-width=".25"/><rect x="15" y="7" width="14" height="14" fill="#fff" stroke="#000" stroke-width=".25" stroke-dasharray="1.2 .9"/><line x1="22" y1="0" x2="22" y2="28" stroke="#000" stroke-width=".35" stroke-dasharray="1.6 1.1"/>`+t(44,9,'2');
+  o+=`<rect x="51" y="2" width="15" height="24" fill="#d4d4d4" stroke="#000" stroke-width=".25"/><rect x="59" y="7" width="7" height="14" fill="#fff" stroke="none"/><line x1="66" y1="2" x2="66" y2="26" stroke="#000" stroke-width=".9" stroke-linecap="round"/><polyline points="66,7 59,7 59,21 66,21" fill="none" stroke="#000" stroke-width=".7" stroke-dasharray="2.2 1.2"/>`
+    +`<g transform="translate(69,7) rotate(180)" fill="none" stroke="#000" stroke-width=".3" stroke-linecap="round"><circle cx="-6.7" cy="-1.6" r="1.2"/><circle cx="-6.7" cy="1.6" r="1.2"/><path d="M-5.7,-1 L-1.5,.75 M-5.7,1 L-1.5,-.75"/></g>`;
+  return o+'</svg>';})();
 /* ---------- dissenya la teva reixeta: plantilla numerada per grups, graella buida i passos ---------- */
 function dissenyaHTML(n){const c=n===4?26:18,m=12,Sd=n*c+2*m,G=K.grups(n),num=Array.from({length:n},()=>new Array(n).fill(0));G.forEach((g,i)=>g.forEach(([r,q])=>num[r][q]=i+1));
   const ox=12,oy=24,bx=ox+Sd+12,by=oy+m;let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
@@ -66,7 +73,7 @@ function dissenyaHTML(n){const c=n===4?26:18,m=12,Sd=n*c+2*m,G=K.grups(n),num=Ar
    <li>Gira-la un quart de volta cap a la dreta i continua escrivint. Després de quatre posicions, la graella és plena.</li>
    <li>Passa la graella a algú altre: només la podrà llegir amb una reixeta igual que la teva.</li></ol></div>
    <div><h3>Per pensar</h3><ul><li>Quantes reixetes diferents es poden fer amb aquesta plantilla?</li><li>Per què no pot quedar cap casella sense lletra, ni cap amb dues?</li><li>Amb un full de 5 × 5 caselles no funciona. Per què?</li></ul>
-   <p>Per fer un forat amb tisores, plega el paper pel mig de la casella i talla mig quadrat des del plec.</p></div></div></div>`;}
+   <div class="tis"><p>Per fer un forat amb tisores: plega el full pel mig de la casella (1) i talla mig quadrat des del plec (2).</p>${FORAT_TISORES}</div></div></div></div>`;}
 /* ---------- pintar ---------- */
 function pinta(){const P=$('#pagines');let h='';
   $('#mida-pagina').textContent=st.mode==='dissenya'?'@page{size:A4 landscape;margin:0}':'@page{size:A4 portrait;margin:0}';
