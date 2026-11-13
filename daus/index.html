@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Daus i successos</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../wodb/wodb.css?v=0f878dd0">
+<link rel="stylesheet" href="daus.css?v=cd113a29">
+<style id="mida-pagina">@page{size:A4 portrait;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>Daus i successos</h1>
+  </div>
+  <div id="tria" class="fila"></div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="full" class="on">Full 1</button>
+      <button data-vista="fitxes">Fitxes</button>
+      <button data-vista="preguntes">Full de preguntes</button>
+      <button data-vista="solu">Solucionari</button>
+    </span>
+    <span id="laser" class="grup"></span>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <details class="historia"><summary>Com es fa servir</summary>
+    <p>El full 1 té les 36 tirades de dos daus: el dau blanc és el primer i el gris, el segon. Cada fitxa és un succés i té forat a les tirades on passa. Comptar forats és comptar casos favorables.</p>
+    <p>Posar una fitxa sobre una altra és fer la <b>intersecció</b>: només es veuen les tirades on passen totes dues coses. La <b>probabilitat condicionada</b> P(Y | X) és el que es veu a través de totes dues dividit pels forats de X. Si no es veu res, els successos són <b>incompatibles</b>.</p>
+  </details>
+</header>
+<main id="pagines"></main>
+<script src="motor.js?v=74149e8f"></script>
+<script src="app.js?v=9a4d0d1e"></script>
+</body>
+</html>

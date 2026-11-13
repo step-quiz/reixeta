@@ -111,6 +111,15 @@ Una reixeta de nou forats sobre un full de 6 × 6 caselles. Es posa amb l'estrel
 - **La reixeta:** 196 mm de costat, caselles de 26 mm, forats de 20 mm separats per barres de 6 mm. Es talla amb cúter i regle (36 talls rectes de 20 mm) o amb talladora làser; amb tisores no es pot.
 - **Una mica d'història:** la reixeta que va descriure Cardano el 1550 era fixa i es posava sobre una carta d'aspecte innocent. La que gira la va publicar Fleissner el 1881, i Jules Verne la fa servir a *Mathias Sandorf*.
 
+## Daus i successos
+
+Material per a probabilitat. El full té les 36 tirades de dos daus (el dau blanc és el primer; el gris, el segon) i cada fitxa és un succés, amb forat a les tirades on passa.
+
+- **Comptar forats** és comptar casos favorables. **Posar una fitxa sobre una altra** és fer la intersecció, i la probabilitat condicionada P(Y | X) és el que es veu a través de totes dues dividit pels forats de X. Si no es veu res, els successos són incompatibles.
+- **Nou fitxes:** el primer dau és parell, el segon és un 5 o un 6, la suma és 7, surt un doble, la suma és 10 o més, surt algun 6, el primer dau és un 1 o un 2, la suma és parella, el primer dau és més gran que el segon. «Primer dau parell» i «suma 7» són independents; «suma 7» i «doble» són incompatibles.
+- **Full de preguntes i solucionari** amb totes les parelles de les fitxes que triïs, i un repte: dissenyar una fitxa de 12 forats independent d'una altra.
+- **Les fitxes** fan 196 mm i es tallen amb cúter i regle o amb la talladora làser. Les caselles veïnes s'ajunten en un sol forat: n'hi ha de 4 talls rectes i n'hi ha de 24. La de «la suma és parella» en té 72 i, a la pràctica, només es pot fer amb làser.
+
 ## Pinta per sumes
 
 Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i una plantilla de 2 × 2. A cada una de les 81 posicions se sumen els quatre nombres que es veuen i es pinta la casella corresponent d'una graella de 9 × 9 si la suma compleix la regla. El mateix full amaga fins a tres dibuixos, un per regla: la suma és parella, és múltiple de 3 o és múltiple de 5.

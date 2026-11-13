@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Five games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9) and the **Cardano grille** (§11). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9), the **Cardano grille** (§11), **dice and events** (§12) and **the sonar** (§13). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -47,16 +47,18 @@ pinta/                        Pinta per sumes: index.html (teacher editor), moto
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
 cardano/                      The Cardano grille: index.html, motor.js (grille, messages, families generator), app.js, cardano.css (§11)
+daus/                         Dice and events: index.html, motor.js (events, hole outlines, probabilities), app.js, daus.css (§12)
+sonar/                        The sonar: index.html, motor.js, app.js, sonar.css (§13)
 comu/plec.js                  Shared by every mask page: fold-and-one-cut instructions (drawings + the simulation that proves them), §10
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§4.6)
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/, pdf/cardano/   GENERATED PDFs + laser SVGs + index.html
+pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/, pdf/cardano/, pdf/daus/, pdf/sonar/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
-tools/cardano/                check.js, make_pdfs.py, README.md
+tools/cardano/, tools/daus/, tools/sonar/   check.js, make_pdfs.py, README.md
 tools/plec/                   check.js (maths of the fold-and-cut recipe) and prova.js (browser test of the mask pages)
 tools/versio.js               Cache-busting stamps (?v=hash) on every script, stylesheet, PDF and SVG link; --check is part of tools/check.js
 tools/check.js                Runs every verification of the repo in one go
@@ -227,3 +229,16 @@ Historical note (kept on the page as an anecdote, owner's wish for R8): Cardano'
   3. **Design your own grille** (R5): two landscape worksheets (4 × 4 with 26 mm cells, 6 × 6 with 18 mm cells): a template whose cells are numbered by orbit ("cut one cell of each number"), a blank message grid, the steps and three questions (4⁴ = 256 and 4⁹ = 262 144 grilles; why 5 × 5 fails).
 - Not built (owner said no): R4 magic grille, R6 order of the permutation, R7 crib cryptanalysis. R8 (errors = holes) only as the historical note.
 - Tests: `tools/cardano/check.js` (see its header) and the page checks of `make_pdfs.py`. **Not tested on paper yet.**
+
+## 12. Dice and events — `daus/` (round 14 C3, another AI's proposal approved by the owner; built 2026-11-13)
+
+Probability material rather than a puzzle: the sheet is the sample space and **each mask is an event**.
+
+- F1 (code `DAUS`, a single sheet): A4 portrait, 6 × 6 cells of 26 mm at x0 = 27, y0 = 52, the 36 outcomes of two dice; row = first die (white die, left), column = second die (grey die, right); dice 8.5 mm, so both fit in the 20 mm hole. Only the grid and the code.
+- F2: one **196 mm mask per event** (same size as the Cardano grille: cell 26, inset 3, frame 20, ★ top-left, the event letter and text on the top frame). Holes at the outcomes where the event happens; **neighbouring cells merge into one hole** (no bar), so "the first die is even" is three slots. `forats(M, cel, inset)` builds the outline on an 11 × 11 grid of pieces (even index = cell, odd index = the bar between two cells) and returns `{vores, talls, curt, illes}`; `illes` must be 0 (the card stays in one piece).
+- Catalogue (`SUCCESSOS`, `ORDRE` A–I; default set `PER_DEFECTE` = A–F): A first die even (18 outcomes, 12 straight cuts) · B second die 5 or 6 (12; 4) · C sum 7 (6; 24) · D doubles (6; 24) · E sum ≥ 10 (6; 8) · F some 6 (11; 6) · G first die 1 or 2 (12; 4) · H sum even (18; **72 cuts, laser only in practice**) · I first > second (15; 12). Independent pairs: AB AC AD AG AH BC BD BG BH CG DG GH; incompatible: CD CE CH DI EG.
+- Use: counting holes = favourable cases; **stacking two masks = intersection**; P(Y | X) = what is seen through both ÷ holes of X. `parella(x, y)` gives the counts and the exact fractions; the page prints a question sheet (table of single events + table of every pair of the chosen events, 15 pairs for six events) and its key, plus the challenge "design a 12-hole mask independent of A" (answer: 6 holes on the even rows).
+- Page: checkboxes choose the events (`#s=ABCDEF`), views `/fitxes`, `/preguntes`, `/solu`; one laser SVG per event.
+- Making the masks: interior holes → cutter and ruler or laser; fold-and-cut does not apply. Mask F (an L-shaped hole along the last row and column) leaves two frame strips held only at their ends: floppy in paper, fine in 3 mm material.
+- Not built: the deck-of-cards variant mentioned in the proposal.
+- Tests: `tools/daus/check.js`, page checks in `make_pdfs.py`. **Not tested on paper.**
