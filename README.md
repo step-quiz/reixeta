@@ -120,6 +120,16 @@ Material per a probabilitat. El full té les 36 tirades de dos daus (el dau blan
 - **Full de preguntes i solucionari** amb totes les parelles de les fitxes que triïs, i un repte: dissenyar una fitxa de 12 forats independent d'una altra.
 - **Les fitxes** fan 196 mm i es tallen amb cúter i regle o amb la talladora làser. Les caselles veïnes s'ajunten en un sol forat: n'hi ha de 4 talls rectes i n'hi ha de 24. La de «la suma és parella» en té 72 i, a la pràctica, només es pot fer amb làser.
 
+## El sonar
+
+Un joc per a dues persones amb la plantilla del WODB. Qui amaga té un full de 5 × 4 caselles amb cinc tresors i no l'ensenya. Qui busca diu una posició (per exemple, B3); qui amaga hi posa la plantilla i respon quants tresors veu. Amb les respostes cal deduir on són els cinc tresors fent tan poques preguntes com es pugui; després es canvien els papers.
+
+- **Cada resposta és una equació:** «a les quatre caselles de B3 hi ha dos tresors». Hi ha 15.504 maneres d'amagar els tresors i cada resposta només pot ser 0, 1, 2, 3 o 4; com que 5⁵ = 3.125, cinc preguntes no poden bastar sempre.
+- **Tres nivells**, segons amb quantes preguntes es pot arribar a trobar l'amagatall si es trien bé: `SO1` (5 o menys), `SO2` (6, 7 o 8) i `SO3` (9 o més). Quatre fulls fixos per nivell i «Full nou» amb un número.
+- **Garantia:** els fulls només fan servir amagatalls que les 12 respostes determinen del tot (10.260 dels 15.504), de manera que qui busca sempre pot acabar.
+- **Per imprimir:** el full de l'amagatall, un full de registre per a qui busca (amb les regles i sis partides) i el solucionari, amb les respostes de cada posició i el mínim de preguntes.
+- A la pràctica la majoria de partides gasten 9, 10 o 11 de les 12 preguntes possibles: el joc és més de deduir que de preguntar poc.
+
 ## Pinta per sumes
 
 Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i una plantilla de 2 × 2. A cada una de les 81 posicions se sumen els quatre nombres que es veuen i es pinta la casella corresponent d'una graella de 9 × 9 si la suma compleix la regla. El mateix full amaga fins a tres dibuixos, un per regla: la suma és parella, és múltiple de 3 o és múltiple de 5.

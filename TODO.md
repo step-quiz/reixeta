@@ -13,9 +13,19 @@ What is known about each piece, so that nobody takes "built" for "validated":
 | Counting game (CO 3×2 and CS 2×2) | yes | no |
 | Sanefa trencada (rebuilt after round 13: straight-cut motifs, edge-bite cards, portrait sheet, 22 mm motif) | yes | no (the first version's masks could not be cut by hand) |
 | Pinta per sumes | yes | no (he reviewed the example drawings on screen) |
+| Pinta themes (integers, fractions, perfect squares) and mazes | yes | no |
+| Cardano grille (messages, families, design worksheets) | yes | no |
+| Dice and events | yes | no |
+| The sonar | yes (whole game recounted) | no |
 
 ## P0 — Waiting for the owner
 
+1. **Rounds 12 and 13 are closed** (answered 2026-11-11, see `docs/DECISIONS.md`). Postponed by the owner («Més endavant»), do not build until he asks: round 12 **A1** (which laser / printer / materials the school really has — he never told; laser files assume a CO₂ laser ≥ 300 × 200 mm and 3 mm MDF or acrylic) and **L3** (an "A" engraved on the front face of the Sanefa cards in the laser SVGs).
+0. **Round 14 is closed** (answered and built on 2026-11-13; artifact https://claude.ai/artifact/161sYgsFy1KTRcSnqdJjcZ, offline copy `docs/history/ronda14.html`, decisions in `docs/DECISIONS.md`). Built: T1 cache stamps (`tools/versio.js`), the Cardano grille (`CLAUDE.md` §11), Pinta themes + mazes (§9), dice and events (§12), the sonar (§13). Postponed by the owner: **B2 "Mosaic trencat"** (wallpaper groups, the continuation of Sanefa; wait until the new Sanefa has been tested on paper). **Nothing of round 14 has been seen on paper by the owner**: when he comes back, ask what he thinks of each piece. Points Claude flagged to him:
+   - the grille is 196 mm (not the 208 mm of the proposal: unprintable on A4), cells 26 mm; no alignment mark on F1;
+   - the sonar usually needs 9–11 of the 12 possible questions;
+   - dice mask H (sum even) has 72 cuts: laser only; mask F is floppy in paper;
+   - Pinta theme Q expects pupils to factor, not to multiply (products up to 150⁴).
 1. **Rounds 12 and 13 are closed** (answered 2026-11-11, see `docs/DECISIONS.md`). Postponed by the owner («Més endavant»), do not build until he asks: round 12 **A1** (which laser / printer / materials the school really has — he never told; laser files assume a CO₂ laser ≥ 300 × 200 mm and 3 mm MDF or acrylic) and **L3** (an "A" engraved on the front face of the Sanefa cards in the laser SVGs).
 0. **Round 14 was answered on 2026-11-13 — BUILD IN PROGRESS.** Approved: T1, R1, R2, R3, R5 (+ R8 as an anecdote), A1, A2, B1 (= the grille), C3, F2. Later: B2. Everything else: no. **Built and pushed (PR 13): T1 (`tools/versio.js`) and the Cardano grille (`cardano/`, `CLAUDE.md` §11).** Still to build, in this order: **A1** Pinta with new rules (sign of a product of integers first; then fraction sums that are whole numbers and products that are perfect squares), **A2** the invisible maze as a new view of Pinta per sumes, **C3** dice and events (36 outcomes of two dice, one mask per event, stacking = intersection), **F2** the sonar (two players, 5 treasures on a 5×4 sheet, the WODB mask as the query tool). Replies already written in the artifact for every point except A1, A2, C3, F2 (collection `claude`). The original text of the round follows.
    **Round 14 — the Cardano grille + another AI's 23 proposals** (2026-11-12, artifact https://claude.ai/artifact/161sYgsFy1KTRcSnqdJjcZ, offline copy `docs/history/ronda14.html`; generators of figures and numbers were scratch files, not in the repo). On «Revisa artifact»: read collection `respostes` (doc ids T1, R1–R8, A1–A6, B1–B3, C1–C4, D1–D5, E1–E3, F1–F2), reply in collection `claude` (doc id = point id, field `text`), build what he approved. Nothing is built.

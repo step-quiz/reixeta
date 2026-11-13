@@ -136,3 +136,10 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 ## 2026-11-12 — round 14 opened
 - The owner asked for "l'autèntica Reixeta de Cardano" and brought 23 proposals written by another AI ("algunes no m'agraden gens, altres sí; en parlem"). Round 14 artifact published with 8 grille proposals and Claude's opinion on the 23; answers pending (`TODO.md`).
 - He reported the old Sanefa on the site; `main` was correct (cache). Lesson: static assets need cache-busting; proposed as T1.
+
+## Round 14 — answers (2026-11-13) and what was built
+- **Yes**: T1 (cache stamps), R1 single 6×6 grille, R2 message tool, R3 four turns / four families, R5 design worksheet, and from the other AI's list A1 (Pinta with new rules), A2 (invisible maze), B1 (= the grille), C3 (dice and events), F2 (the sonar). His comment on those: "La fem: endavant".
+- **R8** (the 1550 fixed grille, errors = holes): "la deixem estar. l'expliquem com a anècdota" → only a historical note on the page and in the README.
+- **No**: R4 magic grille, R6 order of the permutation, R7 crib cryptanalysis; A3 window hunt, A4 make 24, A5 shape hunt, A6 WODB banks for older pupils, B3 lock and key, C1 binary cards, C2 Hamming bit, C4 sieve, D1 hidden law, D2 area crosses, D3 window kakuro, D4 Creek, D5 mask sudoku, E1 matrices, E2 invariants, E3 sampling, F1 loot window. **Later**: B2 wallpaper mosaic.
+- Reading: he rejected every "existing pencil puzzle" and every pure worksheet, and also two that Claude would have built (D1, E1); he accepted the two games where the mask does something new (walking step by step, querying a hidden sheet), the probability material and the cheap extension of a verified engine. No new WODB banks for now.
+- Built the same day (PR 13). Deviation told to him: the grille is 196 mm, not 208 mm (a 208 mm outline cannot be printed on A4).

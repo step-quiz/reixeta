@@ -37,12 +37,12 @@ index.html                    Home page (links to games)
 README.md                     Human README (Catalan)
 CLAUDE.md                     This file
 TODO.md                       Prioritised next work, with exact specs
-docs/DECISIONS.md             Every decision taken with the owner, chronological (rounds 1–13, physical tests, corrections)
+docs/DECISIONS.md             Every decision taken with the owner, chronological (rounds 1–14, physical tests, corrections)
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
                               ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (both answered on 2026-11-11, see DECISIONS);
-                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answers pending, see TODO)
+                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answered and built on 2026-11-13, see DECISIONS)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
@@ -242,3 +242,16 @@ Probability material rather than a puzzle: the sheet is the sample space and **e
 - Making the masks: interior holes → cutter and ruler or laser; fold-and-cut does not apply. Mask F (an L-shaped hole along the last row and column) leaves two frame strips held only at their ends: floppy in paper, fine in 3 mm material.
 - Not built: the deck-of-cards variant mentioned in the proposal.
 - Tests: `tools/daus/check.js`, page checks in `make_pdfs.py`. **Not tested on paper.**
+
+## 13. The sonar — `sonar/` (round 14 F2, another AI's proposal approved by the owner; built 2026-11-13)
+
+A game for two, the only one so far where the mask is a **query tool** between players.
+
+- The hider has a hidden F1: A4 landscape, 5 × 4 cells of 40 mm laid out exactly like a WODB sheet (row letters A–D, column numbers 1–5, code `SO1-A` top-right) with **5 treasures** (a cut gem, 24 mm) and 15 empty cells. The seeker names a position of the **WODB 2×2 mask** (A1…C4 = the top-left visible cell, 12 positions); the hider lays the mask there and answers how many treasures are visible (0–4). The seeker deduces the five cells with as few questions as possible; then they swap roles. The mask is the WODB one — no new mask.
+- A hideout is a 20-bit number (bit row·5 + column). `TOTS` = the C(20,5) = **15 504** hideouts, `RESP` their 12 answers. Only **10 260** are determined by the 12 answers (4 760 come in pairs and 484 in groups of four with identical answers): sheets use determined hideouts only (`determinat`), so the seeker can always finish.
+- `minim(m)` = the smallest set of positions whose answers separate m from **every** other hideout (a minimum hitting set over the "difference masks", found by trying the 4 095 subsets by size) → `{k, pos}`. **Levels by k:** `SO1` k ≤ 5 (1 678 hideouts), `SO2` k = 6–8 (6 950), `SO3` k ≥ 9 (1 632). `genera(level, id)` is deterministic: fixed sheets A–D, "Full nou" 1000–9999.
+- Printed material: the hideout sheet; a **record sheet** for the seeker (A4 landscape, the rules in four lines and six small boards with a circle at each of the 12 positions — the circle of B3 is the one with cell B3 at its top-left); the key (treasures, the 12 answers, the smallest set of questions, and a note for the teacher).
+- Maths for the teacher: every answer is a linear equation in 0/1 unknowns; 5⁵ = 3 125 < 15 504, so five questions cannot always be enough; a seeker that always asks the position leaving the smallest largest group needs 3–12 questions, **9.32 on average** — in practice most games use 9–11 of the 12 positions, so the game is about deducing rather than about asking very few questions (told to the owner).
+- Related, and rejected by the owner in the same round: D4 "Pinta al revés" (the same counts given all at once as a solitaire puzzle). Do not turn the sonar into that.
+- Paper: same as WODB (the mask leaves 1 mm above/below at rows A and C).
+- Tests: `tools/sonar/check.js` recounts the whole game with an independent model (about 20 s). **Not tested on paper or with pupils.**
