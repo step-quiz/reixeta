@@ -54,3 +54,28 @@ The mask's holes form a cube net; F1 is full of digits 1–6. Fold mentally what
 - Round 4 (graphs, solids, friezes, kaleidoscopes): G1, G2, S2.
 - Round 5: WODB game variants J1–J5 (they were online or game-show mechanics; the owner wants printed material).
 - Round 6 WODB sheets: cube nets (hexominoes) and tessellations.
+
+## DONE — The Cardano grille (round 14 R1, R2, R3, R5) — `cardano/`
+
+- One turning grille for every sheet (6 × 6, 9 holes, four positions show each cell once). Three uses: secret messages (teacher tool), "four turns, four families" (8 numbers of a family + 1 intruder at each position; two levels) and a worksheet to design one's own grille. Full spec: `CLAUDE.md` §11.
+- Rejected in round 14: magic grille (find the holes with equal sums), order of the encryption permutation, crib cryptanalysis. The fixed grille of 1550 stays as an anecdote.
+
+## DONE — Pinta per sumes: themes and mazes (round 14 A1, A2) — `pinta/`
+
+- Themes: two-digit sums; integers (product positive); fractions (sum is a whole number); factors 2, 3, 5 (product is a perfect square). Mazes: the hidden picture is a maze walked one cell at a time. Full spec: `CLAUDE.md` §9.
+
+## DONE — Dice and events (round 14 C3) — `daus/`
+
+- The 36 outcomes of two dice and one mask per event; stacking masks = intersection; question sheet and key. Full spec: `CLAUDE.md` §12. Not built: the deck-of-cards variant.
+
+## DONE — The sonar (round 14 F2) — `sonar/`
+
+- Two players, 5 treasures hidden on a 5 × 4 sheet, the WODB mask as the query tool, three levels. Full spec: `CLAUDE.md` §13.
+
+## PARKED — Mosaic trencat (round 14 B2)
+
+- Wallpaper groups as the continuation of Sanefa trencada (11 of the 17 groups are possible with one asymmetric motif per square cell, per the other AI's classifier — not re-verified by Claude). Owner: later. Do not start before the new Sanefa has been tested on paper.
+
+## REJECTED in round 14
+
+- A3 window hunt, A4 make 24, A5 shape hunt, A6 WODB banks for 3r–Batx, B3 lock and key, C1 binary cards, C2 Hamming bit, C4 sieve, D1 hidden law, D2 area crosses, D3 window kakuro, D4 Creek, D5 mask sudoku, E1 matrices in the window, E2 window invariants, E3 sampling, F1 loot window.

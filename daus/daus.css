@@ -1,0 +1,18 @@
+/* Daus i successos */
+#tria label{font-size:.85rem;border:1px solid #d1d5db;border-radius:6px;padding:2px 6px;background:#f9fafb}
+.historia{font-size:.9rem;color:#374151;max-width:900px}
+.historia summary{cursor:pointer}
+.historia p{margin:6px 0}
+.buit{background:#fff;padding:16px;border-radius:8px}
+/* full de preguntes i solucionari */
+.dtaules{position:absolute;inset:14mm 14mm 12mm;font-family:Arial,Helvetica,sans-serif;color:#000;font-size:3.6mm;line-height:4.8mm;overflow:hidden}
+.dtaules .cap{display:flex;justify-content:space-between;align-items:baseline;gap:6mm;margin-bottom:4mm}
+.dtaules .codi{font:700 5.5mm/1 "Courier New",monospace;white-space:nowrap}
+.dtaules .nota{font-size:3.2mm;color:#222;text-align:right}
+.dtaules table{width:100%;border-collapse:collapse;margin-bottom:4mm}
+.dtaules th,.dtaules td{border:.2mm solid #000;padding:1.3mm 1.5mm;text-align:center;vertical-align:middle}
+.dtaules th{font-size:3.2mm;line-height:4mm;background:#e5e5e5}
+.dtaules td{height:8.4mm}
+.dtaules td.t{text-align:left}
+.dtaules td.id{font-weight:700;white-space:nowrap}
+.dtaules .ajuda{margin:0 0 3mm;font-size:3.4mm;line-height:4.6mm}

@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Four games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8) and **Pinta per sumes** (§9). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9), the **Cardano grille** (§11), **dice and events** (§12) and **the sonar** (§13). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -37,25 +37,30 @@ index.html                    Home page (links to games)
 README.md                     Human README (Catalan)
 CLAUDE.md                     This file
 TODO.md                       Prioritised next work, with exact specs
-docs/DECISIONS.md             Every decision taken with the owner, chronological (rounds 1–13, physical tests, corrections)
+docs/DECISIONS.md             Every decision taken with the owner, chronological (rounds 1–14, physical tests, corrections)
 docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
                               ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (both answered on 2026-11-11, see DECISIONS);
-                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answers pending, see TODO)
+                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answered and built on 2026-11-13, see DECISIONS)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
+cardano/                      The Cardano grille: index.html, motor.js (grille, messages, families generator), app.js, cardano.css (§11)
+daus/                         Dice and events: index.html, motor.js (events, hole outlines, probabilities), app.js, daus.css (§12)
+sonar/                        The sonar: index.html, motor.js, app.js, sonar.css (§13)
 comu/plec.js                  Shared by every mask page: fold-and-one-cut instructions (drawings + the simulation that proves them), §10
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§4.6)
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/   GENERATED PDFs + laser SVGs + index.html
+pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/, pdf/cardano/, pdf/daus/, pdf/sonar/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
+tools/cardano/, tools/daus/, tools/sonar/   check.js, make_pdfs.py, README.md
 tools/plec/                   check.js (maths of the fold-and-cut recipe) and prova.js (browser test of the mask pages)
+tools/versio.js               Cache-busting stamps (?v=hash) on every script, stylesheet, PDF and SVG link; --check is part of tools/check.js
 tools/check.js                Runs every verification of the repo in one go
 ```
 
@@ -150,7 +155,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 6. Checklist before delivering
 
-1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the four game checks, the fold-and-cut check, and the two browser tests: builder and mask pages; `--rapid` for small samples).
+1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the game checks, the fold-and-cut check, the cache stamps and the two browser tests: builder and mask pages; `--rapid` for small samples). After editing any `.js`, `.css` or generated file run `node tools/versio.js` (the `make_pdfs.py` scripts do it themselves), otherwise the stamp check fails.
 2. If you changed a single game you may run only its own `tools/<game>/check.js` (must print `ALL OK`).
 3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
@@ -182,13 +187,21 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 - Laser SVGs: `plantilla-XXX-tall-laser.svg` (hole) for the four motifs and `plantilla-XXX-vora-tall-laser.svg` for the three bite motifs. Round 12 L1: laser files are meant for 3 mm rigid material (MDF / opaque acrylic). Round 12 L3 (an "A" engraved on the front face) is postponed by the owner.
 - The fold-and-cut recipe (§10) does not apply here. **Not tested on paper yet.**
 
-## 9. Pinta per sumes — `pinta/` (round 2 A1; format approved in round 11)
+## 9. Pinta per sumes — `pinta/` (round 2 A1; format round 11; themes and mazes added after round 14, 2026-11-13)
 
-- F1: N×N two-digit numbers, A4 **portrait**; N = 10 with 18 mm cells (default, pictures 9×9, 81 positions) or N = 8 with 22 mm cells (pictures 7×7). F2: a small 2×2 mask (frame 14, ★ centred in the corner; default one single hole, optional four holes with 6 mm bars; 64 mm outer for N = 10). Paper check N = 10: 180 + 28 = 208 ≤ 210 (1 mm left at the sides).
-- Play: at each position (named by the top-left cell, A1…I9) add the four visible numbers and paint the matching cell of an answer grid if the sum satisfies the rule. One sheet hides up to **three pictures, one per rule, with the same mask** (the owner approved dropping "one orientation per picture"): `REGLES` = sum even / multiple of 3 / multiple of 5. Existential rules ("there is a multiple of 7") were **rejected** by the owner after seeing that only thick drawings are possible.
-- Maths: for modulus m the residues of the first row and first column are free and every other cell follows from the window whose bottom-right corner it is (target 0 for a black pixel, any non-zero residue for a white one), so **any bitmap is solvable**; the three moduli are coprime, so each cell needs a residue mod 30 = three candidates among 10–99. Numbers repeat on the sheet (accepted) but never inside one mask position (`resol` retries with new random free residues, up to 200 attempts; `comprova` re-derives the pictures).
-- A drawing with no black pixel is unused (its rule is not printed). State = `N.hex1.hex2.hex3.seed` in the URL hash (`#p=…`); printed code = `PIN-` + 4 base-36 characters of a hash of the state; examples `PIN-A`, `PIN-B`, `PIN-C` (`EX` in `motor.js`). Views: editor (screen only), Full 1, mask, answer sheet (empty grids + rule above each), key.
-- This page is a teacher tool (click-to-paint editor); nothing is meant for pupils on screen.
+- F1: N×N values, A4 **portrait**; N = 10 with 18 mm cells (default, pictures 9×9, 81 positions) or N = 8 with 22 mm cells (pictures 7×7). F2: a small 2×2 mask (frame 14, ★ centred in the corner; default one single hole, optional four holes with 6 mm bars; 64 mm outer for N = 10). Paper check N = 10: 180 + 28 = 208 ≤ 210 (1 mm left at the sides).
+- Play: at each position (named by the top-left cell, A1…I9) look at the four visible values and paint the matching cell of an answer grid if the rule holds. One sheet hides up to three pictures, one per rule, with the same mask. Existential rules ("there is a multiple of 7") were **rejected** by the owner (only thick drawings are possible).
+- **Maths:** every rule "adds" in a finite abelian group: each printed value has a class per rule (`valor.c[k]`) and the rule holds at a position iff the four classes add up to the identity. The classes of the first row and first column are free and every other cell follows from the window whose bottom-right corner it is (identity for a black pixel, any other element for a white one), so **any bitmap is solvable**. Rules of one theme use independent components, so the pictures do not interfere.
+- **Themes** (`TEMES`, round 14 A1; state letter in brackets):
+  - `S` two-digit numbers 10–99: sum even / multiple of 3 / multiple of 5 (Z2 × Z3 × Z5; 3 candidates per class).
+  - `E` integers −45…45 without 0: **the product of the four is positive** (parity of the number of negatives) / sum multiple of 3 / sum multiple of 5.
+  - `F` fractions k/6 in lowest terms, k = 1…18 (1/6 … 3, integers included): **the sum is a whole number** (Z6). One picture.
+  - `Q` numbers 2…150 of the form 2^a·3^b·5^c: **the product is a perfect square** (three parities at once, Z2³). One picture. Pupils are expected to factor, not to multiply.
+- Values repeat on the sheet (accepted) but never inside one mask position (`resol` retries with new random free classes, up to 300 attempts; `comprova` re-derives the pictures). `T` is a matrix of value objects `{s}` or `{f:[num,den]}`.
+- **Mazes** (round 14 A2): `laberint(N, seed)` = random perfect maze on the (N−1)×(N−1) positions (rooms on the odd rows/columns, 49 black cells for N = 10); black = allowed. `cami(D)` returns the unique path from A1 to the last position if the black cells of a drawing form a tree containing both, else null — **a drawing is a maze iff `cami` says so; there is no flag in the state**. The editor has a "Laberint" button per drawing; when some drawing is a maze the view "Full de laberints" (`/laberint`) appears: empty grids with E and S, the pupil moves the mask one cell at a time through positions that satisfy the rule. The key draws the path in white.
+- A drawing with no black pixel is unused (its rule is not printed). State = `[theme.]N.hex1.hex2.hex3.seed` in the URL hash (`#p=…`; the theme letter is omitted for `S`); printed code = `PIN-` + 4 base-36 characters of a hash of the state. Examples (`EX`, `ORDRE_EX`): `PIN-A`, `PIN-B`, `PIN-C` (sums), `PIN-L` (three mazes), `PIN-E` (integers: +, × and ÷ signs), `PIN-F` (fractions: the digit 1), `PIN-Q` (squares inside squares). Views: editor (screen only), Full 1, mask, answer sheet, maze sheet, key.
+- `tools/pinta/check.js` repaints every sheet with independent arithmetic on the printed values (real products, exact fraction sums, BigInt square test) and counts the paths of every maze by exhaustive search.
+- This page is a teacher tool (click-to-paint editor); nothing is meant for pupils on screen. The new themes and the mazes are **not tested on paper**.
 
 ## 10. Fold and one cut — `comu/plec.js` (owner's idea, 2026-11-11)
 
@@ -202,3 +215,43 @@ Cutting a window out of the middle of a sheet by hand is hard (the scissors must
 - **Mask pages:** with the single-hole model the masks are no longer centred: they sit at the left (WODB, CS and builder at x = 10; counting game 3×2 at x = 6; Pinta at x = 8 with a 7 mm gap) and the instructions fill the free strip at the right (column 56–86 mm wide; for the 3×2 mask a 27 mm rotated strip, the only room left). With `barres` the page is as before (centred, no instructions). The laser SVGs are unchanged.
 - **Tests:** `tools/plec/check.js` (212 mask sizes — every one in the repo plus 200 random — checked with `comprova` and with an independent model; negative controls for non-uniform frames) and `tools/plec/prova.js` (browser: on 12 mask pages the instruction sizes equal the mask really drawn, nothing leaves its box or touches a mask, ≥ 4 mm to the paper edge, no text over a drawing, none with the bars model). Both run from `tools/check.js`.
 - **Limits told to the owner:** 8 paper layers (fine with 80 g paper, card untested); fold and cut **before laminating**; the creases stay (two medians, four corner diagonals). **Not tested on paper yet.**
+
+## 11. The Cardano grille — `cardano/` (round 14 R1, R2, R3, R5, R8; built 2026-11-13)
+
+Historical note (kept on the page as an anecdote, owner's wish for R8): Cardano's grille of 1550 is fixed (windows over an innocent-looking letter); the **turning** grille is Fleissner's (1881; Verne uses it in *Mathias Sandorf*). The game uses the turning one.
+
+- **One grille for the whole game** (like the WODB mask): 6 × 6 cells, 9 holes `FORATS = [[0,3],[1,0],[1,5],[2,2],[2,4],[3,0],[4,2],[4,4],[5,0]]` (row, column; ★ at the top-left corner). The quarter turn `(r,c) → (c, 5−r)` splits the 36 cells into 9 orbits of 4; the grille has exactly one hole per orbit, so the four positions (start + three quarter turns **to the right**) show every cell exactly once. No two holes share a side. `POSICIONS[k]` = the nine holes of position k in reading order (row-major **on the sheet**).
+- **Sizes** (`cardano/app.js`): cell 26, hole 20 (inset 3 → 6 mm bars), frame 20, card **196 mm**. The round-14 proposal said 28 / 22 / 208 mm, but a 208 mm outline cannot be printed on A4 (unprintable margins), so it was reduced; the owner was told. The grille never translates, so paper fit is trivial (7 mm left at the sides when it lies on the sheet). F1: A4 portrait, grid at x0 = 27, y0 = 52, **only the grid and the code** (no row/column labels: positions are not named in this game). There is no alignment mark on F1 (clean-sheet rule); the pupil centres the letters in the holes.
+- **Making the grille:** 9 interior holes = 36 straight cuts of 20 mm with cutter and ruler, or laser (`reixeta-tall-laser.svg`: red cut, black ★ and arrow head, blue arrow arc). Fold-and-cut (§10) and scissors do not apply.
+- **Three modes** on the page (`#CAR-A`, `#m=<text>`, `#CF1-A`, `#CF2-4821`, `#dissenya`; views `/reixeta`, `/solu`):
+  1. **Messages** (R2, teacher tool): `xifra(text)` normalises (upper case, accents removed, Ç kept, letters and digits only, 1–36 characters), writes the text through the holes position after position and fills the rest with seeded random letters. Printed code `CAR-` + 4 base-36 characters of a hash; examples `CAR-A/B/C` (`EX`).
+  2. **Four turns, four families** (R3): 36 different numbers; at every position 8 numbers belong to one family and 1 is an intruder. `genera(level, id)` is deterministic (fixed sheets A–D, "Full nou" 1000–9999). A sheet is good (`bo`) iff the intruder belongs to **no** family of the level's catalogue, every other number belongs to exactly one of the sheet's four families, and at every position only one family of the whole catalogue holds ≥ 8 of the 9 numbers. Levels: `CF1` numbers 2–150, catalogue primes / multiples of 4, 6, 7, 9, 10 (6 feasible sets of four); `CF2` numbers 2–200, plus perfect squares and multiples of 11 (45 sets). Catalogue families must not be nested. The answer key gives the family and the intruder of each position and the **sum of the four intruders** (a one-number check for the teacher).
+  3. **Design your own grille** (R5): two landscape worksheets (4 × 4 with 26 mm cells, 6 × 6 with 18 mm cells): a template whose cells are numbered by orbit ("cut one cell of each number"), a blank message grid, the steps and three questions (4⁴ = 256 and 4⁹ = 262 144 grilles; why 5 × 5 fails).
+- Not built (owner said no): R4 magic grille, R6 order of the permutation, R7 crib cryptanalysis. R8 (errors = holes) only as the historical note.
+- Tests: `tools/cardano/check.js` (see its header) and the page checks of `make_pdfs.py`. **Not tested on paper yet.**
+
+## 12. Dice and events — `daus/` (round 14 C3, another AI's proposal approved by the owner; built 2026-11-13)
+
+Probability material rather than a puzzle: the sheet is the sample space and **each mask is an event**.
+
+- F1 (code `DAUS`, a single sheet): A4 portrait, 6 × 6 cells of 26 mm at x0 = 27, y0 = 52, the 36 outcomes of two dice; row = first die (white die, left), column = second die (grey die, right); dice 8.5 mm, so both fit in the 20 mm hole. Only the grid and the code.
+- F2: one **196 mm mask per event** (same size as the Cardano grille: cell 26, inset 3, frame 20, ★ top-left, the event letter and text on the top frame). Holes at the outcomes where the event happens; **neighbouring cells merge into one hole** (no bar), so "the first die is even" is three slots. `forats(M, cel, inset)` builds the outline on an 11 × 11 grid of pieces (even index = cell, odd index = the bar between two cells) and returns `{vores, talls, curt, illes}`; `illes` must be 0 (the card stays in one piece).
+- Catalogue (`SUCCESSOS`, `ORDRE` A–I; default set `PER_DEFECTE` = A–F): A first die even (18 outcomes, 12 straight cuts) · B second die 5 or 6 (12; 4) · C sum 7 (6; 24) · D doubles (6; 24) · E sum ≥ 10 (6; 8) · F some 6 (11; 6) · G first die 1 or 2 (12; 4) · H sum even (18; **72 cuts, laser only in practice**) · I first > second (15; 12). Independent pairs: AB AC AD AG AH BC BD BG BH CG DG GH; incompatible: CD CE CH DI EG.
+- Use: counting holes = favourable cases; **stacking two masks = intersection**; P(Y | X) = what is seen through both ÷ holes of X. `parella(x, y)` gives the counts and the exact fractions; the page prints a question sheet (table of single events + table of every pair of the chosen events, 15 pairs for six events) and its key, plus the challenge "design a 12-hole mask independent of A" (answer: 6 holes on the even rows).
+- Page: checkboxes choose the events (`#s=ABCDEF`), views `/fitxes`, `/preguntes`, `/solu`; one laser SVG per event.
+- Making the masks: interior holes → cutter and ruler or laser; fold-and-cut does not apply. Mask F (an L-shaped hole along the last row and column) leaves two frame strips held only at their ends: floppy in paper, fine in 3 mm material.
+- Not built: the deck-of-cards variant mentioned in the proposal.
+- Tests: `tools/daus/check.js`, page checks in `make_pdfs.py`. **Not tested on paper.**
+
+## 13. The sonar — `sonar/` (round 14 F2, another AI's proposal approved by the owner; built 2026-11-13)
+
+A game for two, the only one so far where the mask is a **query tool** between players.
+
+- The hider has a hidden F1: A4 landscape, 5 × 4 cells of 40 mm laid out exactly like a WODB sheet (row letters A–D, column numbers 1–5, code `SO1-A` top-right) with **5 treasures** (a cut gem, 24 mm) and 15 empty cells. The seeker names a position of the **WODB 2×2 mask** (A1…C4 = the top-left visible cell, 12 positions); the hider lays the mask there and answers how many treasures are visible (0–4). The seeker deduces the five cells with as few questions as possible; then they swap roles. The mask is the WODB one — no new mask.
+- A hideout is a 20-bit number (bit row·5 + column). `TOTS` = the C(20,5) = **15 504** hideouts, `RESP` their 12 answers. Only **10 260** are determined by the 12 answers (4 760 come in pairs and 484 in groups of four with identical answers): sheets use determined hideouts only (`determinat`), so the seeker can always finish.
+- `minim(m)` = the smallest set of positions whose answers separate m from **every** other hideout (a minimum hitting set over the "difference masks", found by trying the 4 095 subsets by size) → `{k, pos}`. **Levels by k:** `SO1` k ≤ 5 (1 678 hideouts), `SO2` k = 6–8 (6 950), `SO3` k ≥ 9 (1 632). `genera(level, id)` is deterministic: fixed sheets A–D, "Full nou" 1000–9999.
+- Printed material: the hideout sheet; a **record sheet** for the seeker (A4 landscape, the rules in four lines and six small boards with a circle at each of the 12 positions — the circle of B3 is the one with cell B3 at its top-left); the key (treasures, the 12 answers, the smallest set of questions, and a note for the teacher).
+- Maths for the teacher: every answer is a linear equation in 0/1 unknowns; 5⁵ = 3 125 < 15 504, so five questions cannot always be enough; a seeker that always asks the position leaving the smallest largest group needs 3–12 questions, **9.32 on average** — in practice most games use 9–11 of the 12 positions, so the game is about deducing rather than about asking very few questions (told to the owner).
+- Related, and rejected by the owner in the same round: D4 "Pinta al revés" (the same counts given all at once as a solitaire puzzle). Do not turn the sonar into that.
+- Paper: same as WODB (the mask leaves 1 mm above/below at rows A and C).
+- Tests: `tools/sonar/check.js` recounts the whole game with an independent model (about 20 s). **Not tested on paper or with pupils.**

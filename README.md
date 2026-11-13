@@ -101,6 +101,35 @@ Cada full (A4 vertical) té les set classes de sanefa fetes amb un mateix motiu,
 - **Solucionari:** la casella errònia de cada sanefa i el ritme correcte.
 - Als costats del full només queden 2 mm de paper quan la targeta és a la primera o a l'última còpia.
 
+## La reixeta de Cardano
+
+Una reixeta de nou forats sobre un full de 6 × 6 caselles. Es posa amb l'estrella a dalt a l'esquerra, es llegeix el que es veu pels forats i es gira un quart de volta cap a la dreta, tres vegades: en les quatre posicions es veuen les 36 caselles, cadascuna una sola vegada. La reixeta és la mateixa per a tots els fulls.
+
+- **Missatges:** escrius un text de fins a 36 lletres o xifres i la pàgina et dona el full. El que sobra s'omple amb lletres de farciment.
+- **Quatre girs, quatre famílies:** un full de 36 nombres diferents. A cada posició de la reixeta es veuen vuit nombres d'una mateixa família (primers, quadrats perfectes, múltiples de 4, 6, 7, 9, 10 o 11) i un intrús que no és de cap. Cal dir la família i l'intrús; el solucionari dona també la suma dels quatre intrusos. Dos nivells (`CF1`, nombres de 2 a 150; `CF2`, de 2 a 200), quatre fulls fixos per nivell i «Full nou» amb un número.
+- **Dissenya la teva reixeta:** dos fulls de treball (4 × 4 i 6 × 6) amb les caselles numerades per grups: retallant-ne una de cada número, la reixeta sempre funciona.
+- **La reixeta:** 196 mm de costat, caselles de 26 mm, forats de 20 mm separats per barres de 6 mm. Es talla amb cúter i regle (36 talls rectes de 20 mm) o amb talladora làser; amb tisores no es pot.
+- **Una mica d'història:** la reixeta que va descriure Cardano el 1550 era fixa i es posava sobre una carta d'aspecte innocent. La que gira la va publicar Fleissner el 1881, i Jules Verne la fa servir a *Mathias Sandorf*.
+
+## Daus i successos
+
+Material per a probabilitat. El full té les 36 tirades de dos daus (el dau blanc és el primer; el gris, el segon) i cada fitxa és un succés, amb forat a les tirades on passa.
+
+- **Comptar forats** és comptar casos favorables. **Posar una fitxa sobre una altra** és fer la intersecció, i la probabilitat condicionada P(Y | X) és el que es veu a través de totes dues dividit pels forats de X. Si no es veu res, els successos són incompatibles.
+- **Nou fitxes:** el primer dau és parell, el segon és un 5 o un 6, la suma és 7, surt un doble, la suma és 10 o més, surt algun 6, el primer dau és un 1 o un 2, la suma és parella, el primer dau és més gran que el segon. «Primer dau parell» i «suma 7» són independents; «suma 7» i «doble» són incompatibles.
+- **Full de preguntes i solucionari** amb totes les parelles de les fitxes que triïs, i un repte: dissenyar una fitxa de 12 forats independent d'una altra.
+- **Les fitxes** fan 196 mm i es tallen amb cúter i regle o amb la talladora làser. Les caselles veïnes s'ajunten en un sol forat: n'hi ha de 4 talls rectes i n'hi ha de 24. La de «la suma és parella» en té 72 i, a la pràctica, només es pot fer amb làser.
+
+## El sonar
+
+Un joc per a dues persones amb la plantilla del WODB. Qui amaga té un full de 5 × 4 caselles amb cinc tresors i no l'ensenya. Qui busca diu una posició (per exemple, B3); qui amaga hi posa la plantilla i respon quants tresors veu. Amb les respostes cal deduir on són els cinc tresors fent tan poques preguntes com es pugui; després es canvien els papers.
+
+- **Cada resposta és una equació:** «a les quatre caselles de B3 hi ha dos tresors». Hi ha 15.504 maneres d'amagar els tresors i cada resposta només pot ser 0, 1, 2, 3 o 4; com que 5⁵ = 3.125, cinc preguntes no poden bastar sempre.
+- **Tres nivells**, segons amb quantes preguntes es pot arribar a trobar l'amagatall si es trien bé: `SO1` (5 o menys), `SO2` (6, 7 o 8) i `SO3` (9 o més). Quatre fulls fixos per nivell i «Full nou» amb un número.
+- **Garantia:** els fulls només fan servir amagatalls que les 12 respostes determinen del tot (10.260 dels 15.504), de manera que qui busca sempre pot acabar.
+- **Per imprimir:** el full de l'amagatall, un full de registre per a qui busca (amb les regles i sis partides) i el solucionari, amb les respostes de cada posició i el mínim de preguntes.
+- A la pràctica la majoria de partides gasten 9, 10 o 11 de les 12 preguntes possibles: el joc és més de deduir que de preguntar poc.
+
 ## Pinta per sumes
 
 Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i una plantilla de 2 × 2. A cada una de les 81 posicions se sumen els quatre nombres que es veuen i es pinta la casella corresponent d'una graella de 9 × 9 si la suma compleix la regla. El mateix full amaga fins a tres dibuixos, un per regla: la suma és parella, és múltiple de 3 o és múltiple de 5.
@@ -109,6 +138,9 @@ Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i un
 - **Fulls d'exemple:** `PIN-A`, `PIN-B` i `PIN-C`, amb tres dibuixos cadascun.
 - **Garanties:** els dibuixos es recuperen exactament dels nombres i cap nombre es repeteix dins d'una mateixa posició de la plantilla (al full sí que se'n repeteixen).
 - **Per imprimir:** full de nombres, plantilla (un sol forat o quatre forats amb barres de 6 mm), full de respostes amb les graelles buides i solucionari. També hi ha la mida de 8 × 8 nombres, amb dibuixos de 7 × 7.
+- **Altres temes:** a més de les sumes de nombres de dues xifres, el full pot ser d'**enters** (es pinta si el producte dels quatre és positiu; també hi caben dos dibuixos més, amb la suma múltiple de 3 i de 5), de **fraccions** amb denominadors 2, 3 i 6 (es pinta si la suma és un nombre enter) o de nombres fets amb els factors 2, 3 i 5 (es pinta si el producte és un **quadrat perfecte**; convé descompondre, no multiplicar). En tots val el mateix: qualsevol dibuix és possible.
+- **Laberints:** el dibuix amagat pot ser un laberint. L'alumnat comença amb la plantilla a A1 i l'ha de portar fins a l'última posició movent-la d'una casella en una, passant només per on es compleix la regla. A cada pas surten dos nombres i n'entren dos: no cal tornar a sumar-ho tot. El botó «Laberint» de l'editor en posa un a l'atzar, i el solucionari en dibuixa el camí.
+- **Exemples:** `PIN-A`, `PIN-B` i `PIN-C` (sumes), `PIN-L` (tres laberints), `PIN-E` (enters), `PIN-F` (fraccions) i `PIN-Q` (quadrats perfectes).
 
 ## Publicar amb Cloudflare Pages
 

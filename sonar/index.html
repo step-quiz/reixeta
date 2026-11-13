@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · El sonar</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../wodb/wodb.css?v=0f878dd0">
+<link rel="stylesheet" href="sonar.css?v=6c6c2501">
+<style id="mida-pagina">@page{size:A4 landscape;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>El sonar</h1>
+  </div>
+  <div class="fila">
+    <label>Nivell <select id="nivell"></select></label>
+    <span class="grup">
+      <span>Full fix</span>
+      <span id="vers" class="grup"></span>
+      <span class="sep">o bé</span>
+      <label class="num">Full nou núm. <input id="num" type="number" min="1000" max="9999" step="1" inputmode="numeric"></label>
+      <button id="btnGen">Genera</button>
+      <button id="btnAtzar" title="Tria un número a l'atzar">A l'atzar</button>
+    </span>
+  </div>
+  <div class="fila">
+    <span class="grup vistes">
+      <button data-vista="full" class="on">Full 1 (amagatall)</button>
+      <button data-vista="registre">Full de registre</button>
+      <button data-vista="solu">Solucionari</button>
+    </span>
+    <a class="enllac" href="../wodb/#NUM-A/plantilla">La plantilla és la del WODB</a>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <p id="estat" class="estat" role="status"></p>
+  <details class="historia"><summary>Com es juga</summary>
+    <p>Per a dues persones. Qui amaga té un full amb 5 tresors i no l'ensenya. Qui busca diu una posició de la plantilla (per exemple, B3); qui amaga hi posa la plantilla i respon quants tresors veu. Amb les respostes, qui busca ha de deduir on són els cinc tresors fent tan poques preguntes com pugui. Després es canvien els papers.</p>
+    <p>Cada resposta és una equació: «a les quatre caselles de B3 hi ha dos tresors». El nivell del full diu amb quantes preguntes es pot arribar a trobar l'amagatall, si es trien bé.</p>
+  </details>
+</header>
+<main id="pagines"></main>
+<script src="motor.js?v=33b5f91d"></script>
+<script src="app.js?v=974da9d6"></script>
+</body>
+</html>
