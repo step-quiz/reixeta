@@ -47,3 +47,4 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <h2>Solucionaris</h2><ul><li><a href="solucionaris.pdf">Solucionaris de tots els fulls</a> (una cara per tema)</li></ul>
 </body></html>''')
 print('errors',errs)
+import subprocess; subprocess.run(['node',ROOT+'/tools/versio.js'],check=True)   # stamp the links of the pages just written (cache busting)

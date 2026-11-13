@@ -35,3 +35,4 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <h2>Plantilla (caselles de 18 mm)</h2><ul><li><a href="plantilla-2x2-petita.pdf">Plantilla d'un sol forat (6 per full A4, amb els passos per fer la finestra amb 3 plecs i 1 tall)</a> · <a href="plantilla-2x2-petita-tall-laser.svg">SVG per a talladora làser</a></li><li><a href="plantilla-2x2-petita-barres.pdf">Plantilla de 4 forats separats per barres de 6 mm</a> · <a href="plantilla-2x2-petita-barres-tall-laser.svg">SVG per a talladora làser</a></li></ul>
 </body></html>''')
 print('errors',errs)
+import subprocess; subprocess.run(['node',ROOT+'/tools/versio.js'],check=True)   # stamp the links of the pages just written (cache busting)
