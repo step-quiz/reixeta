@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Four games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8) and **Pinta per sumes** (§9). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Five games are built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9) and the **Cardano grille** (§11). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -46,16 +46,19 @@ docs/history/rondaN.html      The review artifacts (proposals + demos) as offlin
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
+cardano/                      The Cardano grille: index.html, motor.js (grille, messages, families generator), app.js, cardano.css (§11)
 comu/plec.js                  Shared by every mask page: fold-and-one-cut instructions (drawings + the simulation that proves them), §10
 wodb/index.html               Teacher print page: F1, mask, answer keys, "Full nou"
 wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§4.6)
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/   GENERATED PDFs + laser SVGs + index.html
+pdf/wodb/, pdf/comptar/, pdf/sanefa/, pdf/pinta/, pdf/cardano/   GENERATED PDFs + laser SVGs + index.html
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/sanefa/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
+tools/cardano/                check.js, make_pdfs.py, README.md
 tools/plec/                   check.js (maths of the fold-and-cut recipe) and prova.js (browser test of the mask pages)
+tools/versio.js               Cache-busting stamps (?v=hash) on every script, stylesheet, PDF and SVG link; --check is part of tools/check.js
 tools/check.js                Runs every verification of the repo in one go
 ```
 
@@ -150,7 +153,7 @@ Round-9 properties (and the two POL properties added on 2026-11-10) live in `too
 
 ## 6. Checklist before delivering
 
-1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the four game checks, the fold-and-cut check, and the two browser tests: builder and mask pages; `--rapid` for small samples).
+1. `node tools/check.js` prints `EVERYTHING OK` (syntax of every `.js`, the game checks, the fold-and-cut check, the cache stamps and the two browser tests: builder and mask pages; `--rapid` for small samples). After editing any `.js`, `.css` or generated file run `node tools/versio.js` (the `make_pdfs.py` scripts do it themselves), otherwise the stamp check fails.
 2. If you changed a single game you may run only its own `tools/<game>/check.js` (must print `ALL OK`).
 3. The game's `make_pdfs.py` (run from its own `tools/<game>/` directory) prints empty overflow lists and `errors []`.
 4. Rasterise a few PDFs (`pdftoppm -r 50`) and look at them.
@@ -202,3 +205,17 @@ Cutting a window out of the middle of a sheet by hand is hard (the scissors must
 - **Mask pages:** with the single-hole model the masks are no longer centred: they sit at the left (WODB, CS and builder at x = 10; counting game 3×2 at x = 6; Pinta at x = 8 with a 7 mm gap) and the instructions fill the free strip at the right (column 56–86 mm wide; for the 3×2 mask a 27 mm rotated strip, the only room left). With `barres` the page is as before (centred, no instructions). The laser SVGs are unchanged.
 - **Tests:** `tools/plec/check.js` (212 mask sizes — every one in the repo plus 200 random — checked with `comprova` and with an independent model; negative controls for non-uniform frames) and `tools/plec/prova.js` (browser: on 12 mask pages the instruction sizes equal the mask really drawn, nothing leaves its box or touches a mask, ≥ 4 mm to the paper edge, no text over a drawing, none with the bars model). Both run from `tools/check.js`.
 - **Limits told to the owner:** 8 paper layers (fine with 80 g paper, card untested); fold and cut **before laminating**; the creases stay (two medians, four corner diagonals). **Not tested on paper yet.**
+
+## 11. The Cardano grille — `cardano/` (round 14 R1, R2, R3, R5, R8; built 2026-11-13)
+
+Historical note (kept on the page as an anecdote, owner's wish for R8): Cardano's grille of 1550 is fixed (windows over an innocent-looking letter); the **turning** grille is Fleissner's (1881; Verne uses it in *Mathias Sandorf*). The game uses the turning one.
+
+- **One grille for the whole game** (like the WODB mask): 6 × 6 cells, 9 holes `FORATS = [[0,3],[1,0],[1,5],[2,2],[2,4],[3,0],[4,2],[4,4],[5,0]]` (row, column; ★ at the top-left corner). The quarter turn `(r,c) → (c, 5−r)` splits the 36 cells into 9 orbits of 4; the grille has exactly one hole per orbit, so the four positions (start + three quarter turns **to the right**) show every cell exactly once. No two holes share a side. `POSICIONS[k]` = the nine holes of position k in reading order (row-major **on the sheet**).
+- **Sizes** (`cardano/app.js`): cell 26, hole 20 (inset 3 → 6 mm bars), frame 20, card **196 mm**. The round-14 proposal said 28 / 22 / 208 mm, but a 208 mm outline cannot be printed on A4 (unprintable margins), so it was reduced; the owner was told. The grille never translates, so paper fit is trivial (7 mm left at the sides when it lies on the sheet). F1: A4 portrait, grid at x0 = 27, y0 = 52, **only the grid and the code** (no row/column labels: positions are not named in this game). There is no alignment mark on F1 (clean-sheet rule); the pupil centres the letters in the holes.
+- **Making the grille:** 9 interior holes = 36 straight cuts of 20 mm with cutter and ruler, or laser (`reixeta-tall-laser.svg`: red cut, black ★ and arrow head, blue arrow arc). Fold-and-cut (§10) and scissors do not apply.
+- **Three modes** on the page (`#CAR-A`, `#m=<text>`, `#CF1-A`, `#CF2-4821`, `#dissenya`; views `/reixeta`, `/solu`):
+  1. **Messages** (R2, teacher tool): `xifra(text)` normalises (upper case, accents removed, Ç kept, letters and digits only, 1–36 characters), writes the text through the holes position after position and fills the rest with seeded random letters. Printed code `CAR-` + 4 base-36 characters of a hash; examples `CAR-A/B/C` (`EX`).
+  2. **Four turns, four families** (R3): 36 different numbers; at every position 8 numbers belong to one family and 1 is an intruder. `genera(level, id)` is deterministic (fixed sheets A–D, "Full nou" 1000–9999). A sheet is good (`bo`) iff the intruder belongs to **no** family of the level's catalogue, every other number belongs to exactly one of the sheet's four families, and at every position only one family of the whole catalogue holds ≥ 8 of the 9 numbers. Levels: `CF1` numbers 2–150, catalogue primes / multiples of 4, 6, 7, 9, 10 (6 feasible sets of four); `CF2` numbers 2–200, plus perfect squares and multiples of 11 (45 sets). Catalogue families must not be nested. The answer key gives the family and the intruder of each position and the **sum of the four intruders** (a one-number check for the teacher).
+  3. **Design your own grille** (R5): two landscape worksheets (4 × 4 with 26 mm cells, 6 × 6 with 18 mm cells): a template whose cells are numbered by orbit ("cut one cell of each number"), a blank message grid, the steps and three questions (4⁴ = 256 and 4⁹ = 262 144 grilles; why 5 × 5 fails).
+- Not built (owner said no): R4 magic grille, R6 order of the permutation, R7 crib cryptanalysis. R8 (errors = holes) only as the historical note.
+- Tests: `tools/cardano/check.js` (see its header) and the page checks of `make_pdfs.py`. **Not tested on paper yet.**

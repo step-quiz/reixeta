@@ -101,6 +101,16 @@ Cada full (A4 vertical) té les set classes de sanefa fetes amb un mateix motiu,
 - **Solucionari:** la casella errònia de cada sanefa i el ritme correcte.
 - Als costats del full només queden 2 mm de paper quan la targeta és a la primera o a l'última còpia.
 
+## La reixeta de Cardano
+
+Una reixeta de nou forats sobre un full de 6 × 6 caselles. Es posa amb l'estrella a dalt a l'esquerra, es llegeix el que es veu pels forats i es gira un quart de volta cap a la dreta, tres vegades: en les quatre posicions es veuen les 36 caselles, cadascuna una sola vegada. La reixeta és la mateixa per a tots els fulls.
+
+- **Missatges:** escrius un text de fins a 36 lletres o xifres i la pàgina et dona el full. El que sobra s'omple amb lletres de farciment.
+- **Quatre girs, quatre famílies:** un full de 36 nombres diferents. A cada posició de la reixeta es veuen vuit nombres d'una mateixa família (primers, quadrats perfectes, múltiples de 4, 6, 7, 9, 10 o 11) i un intrús que no és de cap. Cal dir la família i l'intrús; el solucionari dona també la suma dels quatre intrusos. Dos nivells (`CF1`, nombres de 2 a 150; `CF2`, de 2 a 200), quatre fulls fixos per nivell i «Full nou» amb un número.
+- **Dissenya la teva reixeta:** dos fulls de treball (4 × 4 i 6 × 6) amb les caselles numerades per grups: retallant-ne una de cada número, la reixeta sempre funciona.
+- **La reixeta:** 196 mm de costat, caselles de 26 mm, forats de 20 mm separats per barres de 6 mm. Es talla amb cúter i regle (36 talls rectes de 20 mm) o amb talladora làser; amb tisores no es pot.
+- **Una mica d'història:** la reixeta que va descriure Cardano el 1550 era fixa i es posava sobre una carta d'aspecte innocent. La que gira la va publicar Fleissner el 1881, i Jules Verne la fa servir a *Mathias Sandorf*.
+
 ## Pinta per sumes
 
 Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i una plantilla de 2 × 2. A cada una de les 81 posicions se sumen els quatre nombres que es veuen i es pinta la casella corresponent d'una graella de 9 × 9 si la suma compleix la regla. El mateix full amaga fins a tres dibuixos, un per regla: la suma és parella, és múltiple de 3 o és múltiple de 5.

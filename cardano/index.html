@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · La reixeta de Cardano</title>
+<link rel="icon" href="data:,">
+<link rel="stylesheet" href="../wodb/wodb.css?v=0f878dd0">
+<link rel="stylesheet" href="cardano.css?v=de84a13b">
+<style id="mida-pagina">@page{size:A4 portrait;margin:0}</style>
+</head>
+<body>
+<header class="controls">
+  <div class="fila">
+    <a class="inici" href="../">Reixeta</a>
+    <h1>La reixeta de Cardano</h1>
+    <span class="grup">
+      <button data-mode="missatge" class="on">Missatges</button>
+      <button data-mode="families">Quatre girs, quatre famílies</button>
+      <button data-mode="dissenya">Dissenya la teva reixeta</button>
+    </span>
+  </div>
+  <div id="filaMissatge" class="fila">
+    <label class="llarg">Missatge <input id="text" type="text" maxlength="80" autocomplete="off" spellcheck="false"></label>
+    <span id="compta" class="compta"></span>
+    <span class="grup"><span>Exemples</span><button data-ex="A">A</button><button data-ex="B">B</button><button data-ex="C">C</button></span>
+  </div>
+  <div id="filaFamilies" class="fila amagat">
+    <label>Nivell <select id="nivell"></select></label>
+    <span class="grup">
+      <span>Full fix</span>
+      <span id="vers" class="grup"></span>
+      <span class="sep">o bé</span>
+      <label class="num">Full nou núm. <input id="num" type="number" min="1000" max="9999" step="1" inputmode="numeric"></label>
+      <button id="btnGen">Genera</button>
+      <button id="btnAtzar" title="Tria un número a l'atzar">A l'atzar</button>
+    </span>
+  </div>
+  <div class="fila">
+    <span id="filaVistes" class="grup vistes">
+      <button data-vista="full" class="on">Full 1</button>
+      <button data-vista="reixeta">Reixeta</button>
+      <button data-vista="solu">Solucionari</button>
+    </span>
+    <button id="btnLaser" class="amagat">Baixa l'SVG per al làser</button>
+    <button id="btnPrint" class="primari">Imprimeix o desa en PDF</button>
+  </div>
+  <p id="estat" class="estat" role="status"></p>
+  <details class="historia"><summary>Com es juga i una mica d'història</summary>
+    <p><b>Com es juga.</b> La reixeta es posa sobre el full amb l'estrella a dalt a l'esquerra i es llegeix el que es veu pels nou forats, fila per fila. Després es gira un quart de volta cap a la dreta, tres vegades. En les quatre posicions es veuen les 36 caselles, cadascuna una sola vegada. Amb els fulls de missatges surt un text; amb els de famílies, a cada posició es veuen vuit nombres d'una mateixa família i un intrús.</p>
+    <p><b>Història.</b> Girolamo Cardano va descriure el 1550 una reixeta fixa: una targeta amb finestres que, posada sobre una carta d'aspecte innocent, deixava veure només les paraules del missatge. La reixeta que gira és posterior: la va publicar Eduard Fleissner el 1881, i Jules Verne la fa servir a la novel·la <i>Mathias Sandorf</i> (1885). Tot i això, sovint també se'n diu reixeta de Cardano.</p>
+  </details>
+</header>
+<main id="pagines"></main>
+<script src="motor.js?v=e4cd187a"></script>
+<script src="app.js?v=44933998"></script>
+</body>
+</html>
