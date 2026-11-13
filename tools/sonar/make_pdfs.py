@@ -1,6 +1,6 @@
 """Prints "El sonar" (sonar/) to ../../pdf/sonar/ with headless Chrome. Run from tools/sonar/.
 Output: SO1.pdf, SO2.pdf, SO3.pdf (hideout sheets A–D of each level), registre.pdf (record sheet for the seeker),
-solucionaris.pdf (the twelve fixed sheets), index.html. The mask is the WODB one (pdf/wodb/plantilla-2x2.pdf).
+solucionaris.pdf (the twelve fixed sheets), plantilla.pdf (the WODB mask with the fold-and-cut steps), index.html.
 Checks on the real pages that no text leaves a page."""
 from playwright.sync_api import sync_playwright
 from pypdf import PdfWriter
@@ -31,6 +31,7 @@ with sync_playwright() as p:
         w.write(f'{OUT}/{niv}.pdf')
     solu.write(f'{OUT}/solucionaris.pdf')
     go('SO1-A/registre'); pdf(f'{OUT}/registre.pdf')
+    go('SO1-A/plantilla'); pdf(f'{OUT}/plantilla.pdf')
     os.remove(TMP); b.close()
 srv.shutdown()
 print('text out of the page:',fora); assert not fora
@@ -41,7 +42,7 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Fulls d'amagatall</h2><p>Un full per a qui amaga; no l'ha de veure qui busca.</p><ul>{li}</ul>
 <h2>Per a qui busca</h2><ul><li><a href="registre.pdf">Full de registre</a> (sis partides, amb les regles)</li></ul>
-<h2>Plantilla</h2><ul><li>És la del WODB: <a href="../wodb/plantilla-2x2.pdf">plantilla d'un sol forat</a></li></ul>
+<h2>Plantilla</h2><ul><li><a href="plantilla.pdf">Plantilla d'un sol forat</a> (2 per full A4, amb els passos per fer la finestra amb 3 plecs i 1 tall). És la mateixa del WODB.</li></ul>
 <h2>Solucionaris</h2><ul><li><a href="solucionaris.pdf">Solucionaris dels dotze fulls</a>: les respostes de cada posició i amb quantes preguntes n'hi ha prou</li></ul>
 </body></html>''')
 print('errors',errs)

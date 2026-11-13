@@ -21,15 +21,19 @@ function fullSVG(){const w=N*CEL;let o=`<svg class="full" viewBox="0 0 210 297" 
 /* ---------- fitxes: una per succés ---------- */
 function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
 const forma=id=>K.forats(K.caselles(id),CEL,INSET);
+/* Si la fitxa té un sol forat rectangular es pot fer plegant i amb un sol tall (comu/plec.js): torna la geometria, o null. */
+function plegable(id){const F=forma(id);if(F.vores.length!==1||F.vores[0].length!==4)return null;const xs=F.vores[0].map(p=>p[0]),ys=F.vores[0].map(p=>p[1]),x=Math.min(...xs),y=Math.min(...ys),w=Math.max(...xs)-x,h=Math.max(...ys)-y;
+  return {W:S,H:S,Wh:w,Hh:h,fx:MARC+x,fy:MARC+y,salt:15,estrella:{x:MARC/2,y:MARC/2,r:ESTRELLA},cols:Math.round((w+2*INSET)/CEL),files:Math.round((h+2*INSET)/CEL)};}
 function fitxaCos(id,ox,oy,laser){const F=forma(id);let d=`M${ox},${oy} h${S} v${S} h${-S} Z`;
   for(const pol of F.vores)d+=' M'+pol.map(p=>(ox+MARC+p[0])+','+(oy+MARC+p[1])).join(' L')+' Z';
   return `<path class="fitxa" data-id="${id}" d="${d}" ${laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'fill="#d4d4d4" fill-rule="evenodd" stroke="#000" stroke-width=".3"'}/><polygon points="${estrella(ox+MARC/2,oy+MARC/2,ESTRELLA)}" fill="#000"/>`
     +`<text x="${ox+MARC+2}" y="${oy+MARC/2+2.2}" font-size="6" font-weight="700" ${AR}>${id} · ${esc(K.SUCCESSOS[id].text)}</text>`;}
-function fitxaSVG(id){const x=(210-S)/2,y=24,F=forma(id);
+function fitxaSVG(id){const g=plegable(id),x=(210-S)/2,y=g?10:24,F=forma(id),yn=y+S+9+2*5.6+2;
   return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${fitxaCos(id,x,y,false)}`
     +[`Fitxa del succés ${id}: té forat a les ${K.quantes(K.caselles(id))} tirades on passa. Es posa sobre el full amb l'estrella a dalt a l'esquerra.`,
-      `Retalla el contorn i ${F.vores.length===1?'el forat':'els '+F.vores.length+' forats'} amb cúter i regle (${F.talls} talls rectes) o amb la talladora làser. Fes-ho abans de plastificar.`]
-      .map((t,i)=>`<text x="${x}" y="${y+S+9+i*5.6}" font-size="3.8" ${AR}>${t}</text>`).join('')+'</svg>';}
+      `Retalla el contorn i ${F.vores.length===1?'el forat':'els '+F.vores.length+' forats'} amb cúter i regle (${F.talls} talls rectes)${g?', amb la talladora làser o plegant-la com es veu a sota.':' o amb la talladora làser. Fes-ho abans de plastificar.'}`]
+      .map((t,i)=>`<text x="${x}" y="${y+S+9+i*5.6}" font-size="3.8" ${AR}>${t}</text>`).join('')
+    +(g?PLEC.marques(g,x,y)+PLEC.instruccions({mode:'fila',x,y:yn,w:S,h:291-yn,g}):'')+'</svg>';}
 function fitxaLaser(id){return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${fitxaCos(id,0,0,true)}</svg>`;}
 /* ---------- full de preguntes i solucionari ---------- */
 const fr=f=>f?(f[1]===1?String(f[0]):f[0]+'/'+f[1]):'';
@@ -67,5 +71,5 @@ window.addEventListener('afterprint',escala);
 function aplicaHash(){const m=/^#(?:s=([A-I]*))?(?:\/(full|fitxes|preguntes|solu))?$/.exec(location.hash);
   if(m){if(m[1]!==undefined)st.tria=K.ORDRE.filter(id=>m[1].includes(id));st.vista=m[2]||'full';}pinta();}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
-window.__reixeta={fullSVG,fitxaSVG,fitxaLaser,forma,st,pinta,mides:{CEL,INSET,MARC,S,X0,Y0,DAU,SEP}};
+window.__reixeta={fullSVG,fitxaSVG,fitxaLaser,forma,plegable,st,pinta,mides:{CEL,INSET,MARC,S,X0,Y0,DAU,SEP}};
 })();

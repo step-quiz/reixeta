@@ -143,3 +143,8 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - **No**: R4 magic grille, R6 order of the permutation, R7 crib cryptanalysis; A3 window hunt, A4 make 24, A5 shape hunt, A6 WODB banks for older pupils, B3 lock and key, C1 binary cards, C2 Hamming bit, C4 sieve, D1 hidden law, D2 area crosses, D3 window kakuro, D4 Creek, D5 mask sudoku, E1 matrices, E2 invariants, E3 sampling, F1 loot window. **Later**: B2 wallpaper mosaic.
 - Reading: he rejected every "existing pencil puzzle" and every pure worksheet, and also two that Claude would have built (D1, E1); he accepted the two games where the mask does something new (walking step by step, querying a hidden sheet), the probability material and the cheap extension of a verified engine. No new WODB banks for now.
 - Built the same day (PR 13). Deviation told to him: the grille is 196 mm, not 208 mm (a 208 mm outline cannot be printed on A4).
+
+## 2026-11-14 — fold-and-cut help extended
+- After merging PR 13 the owner praised the help ("aquesta ajuda tan magnífica") and asked whether other places should have it. Answer in an option dialog; he ticked the three offers and wrote "a tot arreu on sigui útil!".
+- Done: the sonar got its own mask view with the help; the recipe was generalised to a rectangular window that is not centred (folds on the window's axes, printed fold lines) and applied to dice masks B and G; the design worksheet of the grille shows the "fold through the cell and cut half a square" trick as a drawing.
+- Not possible, and told to him: masks with several holes (Cardano grille, most dice masks, bars models) and the Sanefa cards.

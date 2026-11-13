@@ -39,4 +39,16 @@ for(const mode of ['columna','tira']){const h=PLEC.instruccions({mode,x:150,y:10
   if(!/class="plec"/.test(h)||(h.match(/<text/g)||[]).length<7||/NaN|undefined/.test(h))err('instruccions('+mode+') is wrong');}
 if(PLEC.instruccions({x:0,y:0,w:50,h:270,g:{W:128,H:128,Wh:77,Hh:60}})!=='')err('instruccions() must return nothing when the recipe does not apply');
 console.log('drawings: both layouts produced');
+/* window that is not centred: folds along the two axes of the window, third fold on the diagonal through a window corner */
+function indepLliure(W,H,Wh,Hh,fx,fy,pas){const hx=fx+Wh/2,hy=fy+Hh/2;let mal=0;   // origin at the window corner nearest to the point; the window is the quadrant a < 0, b < 0... written with explicit reflections
+  for(let x=pas/2;x<W;x+=pas)for(let y=pas/2;y<H;y+=pas){let a=(x>hx?2*hx-x:x)-fx,b=(y>hy?2*hy-y:y)-fy;   // after folds 1 and 2, measured from the top-left window corner: inside the window iff a > 0 and b > 0
+    if(a>b){const t=a;a=b;b=t;}                                                                           // fold 3: mirror in the diagonal a = b through that corner
+    const cau=a>0,dins=x>fx&&x<fx+Wh&&y>fy&&y<fy+Hh;if(cau!==dins)mal++;}
+  return mal;}
+{let s2=777;const r2=()=>(s2=(s2*1103515245+12345)%2147483648)/2147483648,casos=[[196,196,46,150,127,23],[196,196,150,46,23,23]];
+  for(let i=0;i<200;i++){const W=60+Math.floor(r2()*200),H=60+Math.floor(r2()*200),Wh=10+Math.floor(r2()*(W-30)),Hh=10+Math.floor(r2()*(H-30));casos.push([W,H,Wh,Hh,5+Math.floor(r2()*(W-Wh-10)),5+Math.floor(r2()*(H-Hh-10))]);}
+  for(const c of casos){if(!PLEC.serveixLliure(...c)||PLEC.comprovaLliure(...c,.5).mal||indepLliure(...c,.5))err('off-centre window '+c.join(' '));}
+  const h=PLEC.instruccions({mode:'fila',x:7,y:229,w:196,h:62,g:{W:196,H:196,Wh:150,Hh:46,fx:23,fy:23}});
+  if(!/class="plec"/.test(h)||/NaN|undefined/.test(h)||(PLEC.marques({W:196,H:196,Wh:150,Hh:46,fx:23,fy:23},0,0).match(/<line/g)||[]).length!==8)err('drawings for an off-centre window');
+  console.log(`${casos.length} masks with the window off centre (dice masks B and G + 200 random): the cut removes exactly the window`);}
 console.log(bad?bad+' ERROR(S)':'ALL OK');process.exit(bad?1:0);

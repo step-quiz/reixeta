@@ -10,6 +10,7 @@ What is known about each piece, so that nobody takes "built" for "validated":
 | WODB new masks (single hole / 6 mm bars, frame 24) | geometry only | no |
 | WODB builder | yes (browser test) | not reviewed at all |
 | Fold-and-one-cut instructions on the mask pages (`comu/plec.js`) | yes (`tools/plec/check.js`, `prova.js`) | no — 8 layers; card stock untested |
+| Fold-and-cut for an off-centre window (dice masks B, G: printed fold lines) | yes (202 masks, independent model) | no — the third fold is made by eye along a short printed mark |
 | Counting game (CO 3×2 and CS 2×2) | yes | no |
 | Sanefa trencada (rebuilt after round 13: straight-cut motifs, edge-bite cards, portrait sheet, 22 mm motif) | yes | no (the first version's masks could not be cut by hand) |
 | Pinta per sumes | yes | no (he reviewed the example drawings on screen) |
