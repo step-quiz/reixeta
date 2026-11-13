@@ -1,5 +1,6 @@
 """Prints the example sheets of Pinta per sumes (pinta/) to ../../pdf/pinta/ with headless Chrome. Run from tools/pinta/.
-Output: PIN-A/B/C.pdf (sheet, answer sheet, key), plantilla-2x2-petita.pdf (+ -barres), laser SVGs, index.html."""
+Output: PIN-X.pdf for every example (sheet, answer sheet, maze sheet if the drawings are mazes, key), plantilla-2x2-petita.pdf (+ -barres),
+laser SVGs, index.html."""
 from playwright.sync_api import sync_playwright
 from pypdf import PdfWriter
 import http.server, threading, functools, os, glob
@@ -15,10 +16,12 @@ with sync_playwright() as p:
     pg=b.new_page(); pg.on('pageerror',lambda e: errs.append(str(e))); pg.emulate_media(media='print')
     def go(h): pg.goto('http://127.0.0.1:8769/pinta/#'+h); pg.reload(); pg.wait_for_timeout(300)
     def pdf(path): pg.pdf(path=path,prefer_css_page_size=True,print_background=True)
-    go('PIN-A'); EX=pg.evaluate("Object.keys(window.PINTA.EX)"); NOM=pg.evaluate("window.PINTA.EXNOM")
+    go('PIN-A'); EX=pg.evaluate("window.PINTA.ORDRE_EX"); NOM=pg.evaluate("Object.fromEntries(window.PINTA.ORDRE_EX.map(k=>[k,window.PINTA.EX[k].nom]))"); LAB=[]
     for k in EX:
         w=PdfWriter()
-        for v in ('full','respostes','solu'): go(f'PIN-{k}/{v}'); pdf(TMP); w.append(TMP)
+        go(f'PIN-{k}/full'); lab=pg.evaluate("window.__reixeta.laberints().length>0")
+        if lab: LAB.append(k)
+        for v in ('full',)+(('laberint',) if lab else ())+('respostes','solu'): go(f'PIN-{k}/{v}'); pdf(TMP); w.append(TMP)
         w.write(f'{OUT}/PIN-{k}.pdf')
     os.remove(TMP)
     for suf in ('','-barres'):
@@ -26,7 +29,7 @@ with sync_playwright() as p:
         open(f'{OUT}/plantilla-2x2-petita{suf}-tall-laser.svg','w').write('<?xml version="1.0" encoding="UTF-8"?>\n'+pg.evaluate("window.__reixeta.plantillaLaser()"))
     b.close()
 srv.shutdown()
-li=''.join(f'<li><a href="PIN-{k}.pdf">PIN-{k}</a> · {NOM[k]} (full de nombres, full de respostes i solucionari)</li>' for k in EX)
+li=''.join(f'<li><a href="PIN-{k}.pdf">PIN-{k}</a> · {NOM[k]} (full de nombres, '+('full de laberints, ' if k in LAB else '')+'full de respostes i solucionari)</li>' for k in EX)
 open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html lang="ca"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" href="data:,"><title>Reixeta · PDF Pinta per sumes</title>
 <style>body{{font:16px/1.5 system-ui,sans-serif;max-width:720px;margin:0 auto;padding:24px 18px;color:#111}}a{{color:#0f766e}}li{{margin:4px 0}}</style></head><body>
 <p><a href="../../">Reixeta</a> · <a href="../../pinta/">Pinta per sumes</a></p><h1>PDF · Pinta per sumes</h1>

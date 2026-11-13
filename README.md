@@ -119,6 +119,9 @@ Un full de 10 × 10 nombres de dues xifres (caselles de 18 mm, A4 vertical) i un
 - **Fulls d'exemple:** `PIN-A`, `PIN-B` i `PIN-C`, amb tres dibuixos cadascun.
 - **Garanties:** els dibuixos es recuperen exactament dels nombres i cap nombre es repeteix dins d'una mateixa posició de la plantilla (al full sí que se'n repeteixen).
 - **Per imprimir:** full de nombres, plantilla (un sol forat o quatre forats amb barres de 6 mm), full de respostes amb les graelles buides i solucionari. També hi ha la mida de 8 × 8 nombres, amb dibuixos de 7 × 7.
+- **Altres temes:** a més de les sumes de nombres de dues xifres, el full pot ser d'**enters** (es pinta si el producte dels quatre és positiu; també hi caben dos dibuixos més, amb la suma múltiple de 3 i de 5), de **fraccions** amb denominadors 2, 3 i 6 (es pinta si la suma és un nombre enter) o de nombres fets amb els factors 2, 3 i 5 (es pinta si el producte és un **quadrat perfecte**; convé descompondre, no multiplicar). En tots val el mateix: qualsevol dibuix és possible.
+- **Laberints:** el dibuix amagat pot ser un laberint. L'alumnat comença amb la plantilla a A1 i l'ha de portar fins a l'última posició movent-la d'una casella en una, passant només per on es compleix la regla. A cada pas surten dos nombres i n'entren dos: no cal tornar a sumar-ho tot. El botó «Laberint» de l'editor en posa un a l'atzar, i el solucionari en dibuixa el camí.
+- **Exemples:** `PIN-A`, `PIN-B` i `PIN-C` (sumes), `PIN-L` (tres laberints), `PIN-E` (enters), `PIN-F` (fraccions) i `PIN-Q` (quadrats perfectes).
 
 ## Publicar amb Cloudflare Pages
 
