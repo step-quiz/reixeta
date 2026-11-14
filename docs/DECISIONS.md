@@ -148,3 +148,13 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - After merging PR 13 the owner praised the help ("aquesta ajuda tan magnífica") and asked whether other places should have it. Answer in an option dialog; he ticked the three offers and wrote "a tot arreu on sigui útil!".
 - Done: the sonar got its own mask view with the help; the recipe was generalised to a rectangular window that is not centred (folds on the window's axes, printed fold lines) and applied to dice masks B and G; the design worksheet of the grille shows the "fold through the cell and cut half a square" trick as a drawing.
 - Not possible, and told to him: masks with several holes (Cardano grille, most dice masks, bars models) and the Sanefa cards.
+
+## Round 15 — WODB topics revision (answered 2026-11-14, artifact `docs/history/ronda15.html`)
+- The owner's starting points: drop «més gran que 50» (NUM), «més de 4 costats» (FIG), «< 1/2» and «entre 1/2 i 1» (FRA), «gran / petit» (BLB); replace the letters by line figures (LLE); equal rays (ANG); TR without «punt de la trama a dins» and «més de 3 quadrets»; POL and COS mostly rejected. QUA unchanged.
+- Every proposal was first tested with `cercaFull` (feasibility at cap 5); the figures are on the artifact.
+- **Yes**: N1 NUM gets «nombre triangular» and «suma de les xifres parella» (16/16 searches); F1 FIG drops «més de 4 costats» («l'única que no és un quadrilàter» already exists); B1–B3 blocks (BLO too) carry a dimension 1 or 2, big = exactly twice small, reasons «de mida 1 / 2»; A1 both rays 48; L1/L2/L5 new bank **LIN · Línies**; L6 LIN gets «angle recte» + «segments paral·lels» (9/12); P1, C1, T2: POL, COS, TR5 and TR4 removed.
+- **No**: R1 (FRA: remove the two properties and add nothing; 4/12 searches were enough); L4 («d'un sol traç»: "menys matemàtica"); T1 (triangle substitutes too far-fetched: "la idea de WODB és que no calgui explicacions prèvies").
+- L3: the owner rejected «punt d'on surten exactament tres línies» (and «tres o més» even more): he wants synthetic geometry, not graph theory.
+- Deviation told to him: L2 was approved as random unit pieces; those looked like scribbles, so a LIN figure is 1–3 clean strokes on the same grid.
+- Result: 8 topics (NUM, FIG, FRA, BLO, BLB, LIN, ANG, QUA); all but ANG at 5/12; `tools/check.js` EVERYTHING OK.
+

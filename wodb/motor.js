@@ -133,16 +133,28 @@ function dibuixa(B,id){const it=B.items[id],d=it.d;
     return o;}
     const w=Math.max(String(d[0]).length,String(d[1]).length)*16+8;return `<g font-family="Arial,Helvetica,sans-serif" font-weight="700" font-size="30" text-anchor="middle"><text x="50" y="42">${d[0]}</text><text x="50" y="82">${d[1]}</text></g><line x1="${50-w/2}" y1="52" x2="${50+w/2}" y2="52" stroke="#000" stroke-width="4"/>`;}
   case 'poly':return `<polygon points="${d.map(p=>f1(8+p[0]*84)+','+f1(8+p[1]*84)).join(' ')}" fill="#d9d9d9" stroke="#000" stroke-width="3" stroke-linejoin="round"/>`;
-  case 'blo':{const [s,col,g,fl]=d,bn=B.bn,k=g?.84:.5,c=BCOL[col];let sh;
-    if(s==='cercle')sh=`<circle cx="50" cy="50" r="${k*50}"/>`;else if(s==='quadrat')sh=`<rect x="${50-k*50}" y="${50-k*50}" width="${k*100}" height="${k*100}"/>`;
-    else if(s==='triangle')sh=`<polygon points="50,${50-k*50} ${50+k*50},${50+k*40} ${50-k*50},${50+k*40}"/>`;else sh=`<rect x="${50-k*50}" y="${50-k*28}" width="${k*100}" height="${f1(k*56)}"/>`;
-    if(bn)return `<g fill="${TRAMA[col]}" stroke="#000" stroke-width="${fl?6:1.6}" stroke-linejoin="round">${sh}</g>`;
-    return `<g fill="${fl?c:'#fff'}" stroke="${c}" stroke-width="5" stroke-linejoin="round">${sh}</g>`;}
+  case 'blo':{   /* Round 15: the big block is exactly twice the small one (U = side of the small square = diameter of the small circle)
+                     and every block carries one technical-drawing dimension under it: 1 or 2 (square and triangle: side;
+                     circle: diameter; rectangle: long side, equal to the square's side as in real logic blocks). */
+    const [s,col,g,fl]=d,bn=B.bn,U=34,L=g?2*U:U,c=BCOL[col],cy=40,x0=50-L/2,x1=50+L/2;let sh,yb;
+    if(s==='cercle'){sh=`<circle cx="50" cy="${cy}" r="${L/2}"/>`;yb=cy+L/2;}
+    else if(s==='quadrat'){sh=`<rect x="${x0}" y="${cy-L/2}" width="${L}" height="${L}"/>`;yb=cy+L/2;}
+    else if(s==='triangle'){const h=L*Math.sqrt(3)/2;sh=`<polygon points="50,${f1(cy-h/2)} ${x1},${f1(cy+h/2)} ${x0},${f1(cy+h/2)}"/>`;yb=cy+h/2;}
+    else{sh=`<rect x="${x0}" y="${cy-L/4}" width="${L}" height="${L/2}"/>`;yb=cy+L/4;}
+    const sw=bn?(fl?6:1.6):5,yd=f1(yb+sw/2+10),num=g?2:1;
+    const cota=`<g stroke="#000" stroke-width="1"><line x1="${x0}" y1="${f1(yb+sw/2+2)}" x2="${x0}" y2="${f1(+yd+4)}"/><line x1="${x1}" y1="${f1(yb+sw/2+2)}" x2="${x1}" y2="${f1(+yd+4)}"/>`+
+      `<line x1="${x0}" y1="${yd}" x2="${f1(50-6)}" y2="${yd}"/><line x1="${f1(50+6)}" y1="${yd}" x2="${x1}" y2="${yd}"/></g>`+
+      `<path d="M${x0} ${yd}l5 -2.2v4.4z M${x1} ${yd}l-5 -2.2v4.4z" fill="#000"/>`+
+      `<text x="50" y="${f1(+yd+4.6)}" font-size="13" text-anchor="middle" font-family="Arial,Helvetica,sans-serif" font-weight="700">${num}</text>`;
+    if(bn)return `<g fill="${TRAMA[col]}" stroke="#000" stroke-width="${sw}" stroke-linejoin="round">${sh}</g>`+cota;
+    return `<g fill="${fl?c:'#fff'}" stroke="${c}" stroke-width="5" stroke-linejoin="round">${sh}</g>`+cota;}
+  case 'lin':return `<path transform="translate(${d[0]} ${d[1]})" d="${d[2]}" fill="none" stroke="#000" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>`;   // LIN: line figures, already centred (d = [dx, dy, path])
   case 'let':return `<path d="${d}" fill="none" stroke="#000" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>`;
-  case 'ang':{   /* Mateixa escala a totes les caselles: un costat llarg (LL) i un de curt (LC), sector de radi RA, quadradet de costat RQ.
-                     El dibuix només es desplaça per centrar-lo; no canvia mai de mida. Sense punt al vèrtex. */
-    const [th,phi,l2]=d,a1=phi*Math.PI/180,a2=(phi+th)*Math.PI/180,LL=56,LC=40,RA=24,RQ=16,curt2=l2<1;
-    const P1=[(curt2?LL:LC)*Math.cos(a1),(curt2?LL:LC)*Math.sin(a1)],P2=[(curt2?LC:LL)*Math.cos(a2),(curt2?LC:LL)*Math.sin(a2)],ap=[];
+  case 'ang':{   /* Mateixa escala a totes les caselles: els dos costats iguals (LR, ronda 15: l'atenció ha d'anar a l'angle, no als costats),
+                     sector de radi RA, quadradet de costat RQ. El dibuix només es desplaça per centrar-lo; no canvia mai de mida. Sense punt al vèrtex.
+                     LR = 48: l'angle pla fa 2·48 = 96 d'ample dins la caixa de 100. */
+    const [th,phi]=d,a1=phi*Math.PI/180,a2=(phi+th)*Math.PI/180,LR=48,RA=24,RQ=16;
+    const P1=[LR*Math.cos(a1),LR*Math.sin(a1)],P2=[LR*Math.cos(a2),LR*Math.sin(a2)],ap=[];
     if(th===90)ap.push([RQ*Math.cos(a1),RQ*Math.sin(a1)],[RQ*(Math.cos(a1)+Math.cos(a2)),RQ*(Math.sin(a1)+Math.sin(a2))],[RQ*Math.cos(a2),RQ*Math.sin(a2)]);
     else for(let i=0;i<=60;i++){const a=a1+(a2-a1)*i/60;ap.push([RA*Math.cos(a),RA*Math.sin(a)]);}
     const pts=[[0,0],P1,P2,...ap],xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;

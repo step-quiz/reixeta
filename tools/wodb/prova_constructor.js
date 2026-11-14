@@ -8,7 +8,7 @@ const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]
   fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'Content-Type':f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':'text/html'});r.end(d);});}).listen(8781,async()=>{
   const b=await chromium.launch(),errs=[];let bad=0,n=0;const pg=await b.newPage({viewport:{width:1100,height:800}});pg.on('pageerror',e=>errs.push(String(e)));
   await pg.goto('http://127.0.0.1:8781/wodb/constructor.html');
-  for(const [banc,C,R,marc,model] of [['NUM',5,4,24,'un'],['FRA',7,5,15,'barres'],['LLE',6,4,20,'un'],['COS',3,3,24,'barres'],['ANG',2,2,24,'un'],['QUA',7,3,24,'un'],['BLB',4,5,15,'un']]){n++;
+  for(const [banc,C,R,marc,model] of [['NUM',5,4,24,'un'],['FRA',7,5,15,'barres'],['LIN',6,4,20,'un'],['BLB',3,3,24,'barres'],['ANG',2,2,24,'un'],['QUA',7,3,24,'un'],['BLB',4,5,15,'un']]){n++;
     const r=await pg.evaluate(([banc,C,R,marc,model])=>{const K=window.__constructor,s=K.st;Object.assign(s,{banc,C,R,marc,model,T:new Array(R*C).fill(-1),sel:0,pos:-1,vista:'editor'});
       const ok=K.omple();K.canvi();const B=Object.assign({},window.BANCS[banc],{rows:R,cols:C}),M=K.mides();
       const valides=ok?window.WODB.valid(B,s.T):-1,res=K.resum();

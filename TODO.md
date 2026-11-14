@@ -22,6 +22,7 @@ What is known about each piece, so that nobody takes "built" for "validated":
 ## P0 — Waiting for the owner
 
 1. **Rounds 12 and 13 are closed** (answered 2026-11-11, see `docs/DECISIONS.md`). Postponed by the owner («Més endavant»), do not build until he asks: round 12 **A1** (which laser / printer / materials the school really has — he never told; laser files assume a CO₂ laser ≥ 300 × 200 mm and 3 mm MDF or acrylic) and **L3** (an "A" engraved on the front face of the Sanefa cards in the laser SVGs).
+0. **Round 15 is closed** (2026-11-14; artifact https://claude.ai/artifact/62miWirBD9fBm3CvJcGkUU, offline copy `docs/history/ronda15.html`): WODB topics revised and rebuilt, see `docs/DECISIONS.md`. Pending: the owner's look at the new LIN sheets and at the block dimensions on paper.
 0. **Round 14 is closed** (answered and built on 2026-11-13; artifact https://claude.ai/artifact/161sYgsFy1KTRcSnqdJjcZ, offline copy `docs/history/ronda14.html`, decisions in `docs/DECISIONS.md`). Built: T1 cache stamps (`tools/versio.js`), the Cardano grille (`CLAUDE.md` §11), Pinta themes + mazes (§9), dice and events (§12), the sonar (§13). Postponed by the owner: **B2 "Mosaic trencat"** (wallpaper groups, the continuation of Sanefa; wait until the new Sanefa has been tested on paper). **Nothing of round 14 has been seen on paper by the owner**: when he comes back, ask what he thinks of each piece. Points Claude flagged to him:
    - the grille is 196 mm (not the 208 mm of the proposal: unprintable on A4), cells 26 mm; no alignment mark on F1;
    - the sonar usually needs 9–11 of the 12 possible questions;
@@ -40,7 +41,7 @@ What is known about each piece, so that nobody takes "built" for "validated":
    - Masks with the 24 mm frame leave only 1 mm of paper above/below at the extreme rows (WODB, counting game) and 1 mm at the sides on the 10×10 Pinta sheet; the Sanefa card leaves 2 mm at the sides of the portrait sheet. He was told; he may want to frame the sheets some day. Remedy: smaller cell (`CEL` 38) or thinner frame.
    - Sanefa: the shed is the least asymmetric motif (0.23 vs threshold 0.20) and has the shortest cut (6.0 mm); the boot has no scissors model.
    - WODB letters: the Q is excluded from "punt d'on surten tres línies o més" by his decision although its tail crosses the oval; redraw the Q in `tools/wodb/letters.py` if pupils argue.
-   - WODB balance: COS 6/12 and ANG 10/12 are above the 5/12 rule (accepted).
+   - WODB balance: ANG 10/12 is above the 5/12 rule (accepted). Since round 15 there are 8 topics (LLE, TR5, TR4, POL, COS removed; LIN added).
 5. **Builder review.** It was built without a proposals round. Not implemented: a builder for the other games (they have their own generators); custom item banks (not wanted since round 7).
 
 ## P1 — Ideas not requested (do not start without asking)

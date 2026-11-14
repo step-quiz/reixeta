@@ -14,7 +14,7 @@ const fs=require('fs'),path=require('path');
 globalThis.window=globalThis;
 require(path.join(__dirname,'../../wodb/motor.js'));require(path.join(__dirname,'../../wodb/bancs.js'));
 const W=globalThis.WODB,BANCS=globalThis.BANCS,NAMES='ABCD',SEEDS=+(process.env.SEEDS||24),USEW=8,HSEEDS=+(process.env.HSEEDS||150);
-const HARD=(process.env.HARD||'POL,COS').split(','),MINCAP={COS:6};
+const HARD=(process.env.HARD||'').split(',').filter(Boolean),MINCAP={};
 const HEAVY=[{w1:25,balw:20},{w1:40,balw:40},{w1:80,balw:60}].map(q=>Object.assign({iters:300000,decay:0.99997},q));
 const FB=fs.existsSync(path.join(__dirname,'fulls_bal.json'))?JSON.parse(fs.readFileSync(path.join(__dirname,'fulls_bal.json'))):{};
 const FIN=fs.existsSync(path.join(__dirname,'bal_final.json'))?JSON.parse(fs.readFileSync(path.join(__dirname,'bal_final.json'))):{};

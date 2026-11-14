@@ -11,7 +11,7 @@ index.html                 Portada
 wodb/                      WODB · Quin no hi encaixa?
   index.html               Pàgina d'impressió (full 1, plantilla, solucionaris, full nou)
   motor.js                 Motius, dibuix dels elements i generador de fulls nous
-  bancs.js                 Elements, propietats i fulls fixos (A–D) dels 12 temes
+  bancs.js                 Elements, propietats i fulls fixos (A–D) dels 8 temes
   app.js, wodb.css         Interfície i estils d'impressió
 pinta/                     Pinta per sumes (editor de dibuixos i pàgina d'impressió)
 comptar/                   Joc de comptar (pàgina d'impressió, motor i fulls fixos)
@@ -19,7 +19,7 @@ sanefa/                    Sanefa trencada (pàgina d'impressió i motor)
 comu/plec.js               Els passos dibuixats de «plegar i un sol tall», per a totes les pàgines de plantilla
 pdf/comptar/, pdf/sanefa/, pdf/pinta/  PDF ja preparats d'aquests jocs
 pdf/wodb/                  PDF ja preparats
-  NUM.pdf … COS.pdf        Un PDF per tema, amb els fulls A, B, C i D (un per pàgina)
+  NUM.pdf … QUA.pdf        Un PDF per tema, amb els fulls A, B, C i D (un per pàgina)
   tots-els-fulls.pdf       Els 48 fulls en un sol PDF
   plantilla-2x2.pdf        Plantilla d'un sol forat (2 per A4), amb els passos per fer la finestra plegant el paper
   plantilla-2x2-tall-laser.svg   Plantilla per a talladora làser
@@ -39,15 +39,11 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 | FRA | Fraccions | 5 de 12 ✓ |
 | BLO | Blocs lògics (color) | 5 de 12 ✓ |
 | BLB | Blocs lògics (blanc i negre: trames i gruix del contorn) | 5 de 12 ✓ |
-| LLE | Lletres | 5 de 12 ✓ |
+| LIN | Línies (figures de traç sobre una trama 3×3 invisible) | 5 de 12 ✓ |
 | ANG | Angles | 10 de 12 |
-| TR5 | Triangles (trama 5×5) | 5 de 12 ✓ |
-| TR4 | Triangles (trama 4×4) | 5 de 12 ✓ |
 | QUA | Quadrilàters | 5 de 12 ✓ |
-| POL | Poliòmins | 5 de 12 ✓ |
-| COS | Cossos geomètrics | 6 de 12 |
 
-**Regla d'equilibri.** Cap motiu no hauria de sortir en més de 5/12 de les posicions (5 de 12). Ho compleixen 10 dels 12 temes (✓); als altres s'ha reduït tant com permeten les seves propietats.
+**Regla d'equilibri.** Cap motiu no hauria de sortir en més de 5/12 de les posicions (5 de 12). Ho compleixen 7 dels 8 temes (✓); a ANG s'ha reduït tant com permeten les seves propietats.
 
 **Regla dels veïns.** Quan la plantilla es mou una casella (amunt, avall, a l'esquerra o a la dreta), s'ha buscat que es repeteixin tan pocs motius com es pugui: l'enigma del costat demana arguments diferents.
 
@@ -57,7 +53,7 @@ Cada tema té **4 fulls fixos (A, B, C i D)**, i se'n poden generar més.
 
 ## Constructor de WODB
 
-A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 12 temes.
+A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 8 temes.
 
 - **Graella pròpia:** de 2 a 7 columnes i de 2 a 5 files. La casella es fa tan gran com permet el paper amb la plantilla a les posicions de les vores.
 - **Full a mà o automàtic:** es clica una casella i després un element de la llista. Cada posició de la plantilla té un cercle verd si és un WODB vàlid i vermell si no; clicant-lo es veuen els motius de cada element. «Omple sol» busca un full amb totes les posicions vàlides; si ja hi has posat elements, els respecta i només omple les caselles buides, i si no és possible et diu quina posició ho impedeix.

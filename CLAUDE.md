@@ -11,7 +11,7 @@ Read this file first, then `TODO.md`, then `docs/DECISIONS.md` and `docs/GAMES.m
 
 The owner is a maths teacher (degree in Mathematics, expert in algorithm design, programs in C). He designed the device and reviews every proposal himself.
 
-Built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9), the **Cardano grille** (§11), **dice and events** (§12) and **the sonar** (§13). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 12 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
+Built: **WODB** (§4), the **counting game** (§7), **Sanefa trencada** (§8), **Pinta per sumes** (§9), the **Cardano grille** (§11), **dice and events** (§12) and **the sonar** (§13). Every rectangular mask is made by folding and one scissor cut (§10). The first finished deliverable is **WODB** ("Which One Doesn't Belong?", *Quin no hi encaixa?*): a 2×2-hole mask; **every** mask position on F1 (12 per sheet) must be a valid WODB (each of the 4 visible items has at least one property in which it differs from the other three). Each of the 8 topics has 4 fixed sheets (A–D) plus a generator of new sheets. The repo also holds the backlog of the other approved games (see `docs/GAMES.md`) — Reixeta is **not** only WODB.
 
 ## 2. Owner preferences (hard rules)
 
@@ -42,7 +42,8 @@ docs/GAMES.md                 Specs of approved / parked / rejected games
 docs/history/rondaN.html      The review artifacts (proposals + demos) as offline HTML (rounds 1–9 show the old 10×5 layout);
                               revisio-v4.html = review of WODB v4; ronda10 = counting game + Sanefa; ronda11 = Pinta per sumes;
                               ronda12 = laser cutter + 3D printer ideas; ronda13 = how to make the Sanefa mask (both answered on 2026-11-11, see DECISIONS);
-                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answered and built on 2026-11-13, see DECISIONS)
+                              ronda14 = Cardano grille proposals + review of another AI's 23 proposals (answered and built on 2026-11-13, see DECISIONS);
+                              ronda15 = WODB topics revision (answered and built on 2026-11-14)
 pinta/                        Pinta per sumes: index.html (teacher editor), motor.js (rules, solver, URL codec, example drawings), app.js, pinta.css
 comptar/                      Counting game: index.html, motor.js (engine), fulls.js (GENERATED fixed sheets), app.js, comptar.css
 sanefa/                       Sanefa trencada: index.html, motor.js (engine, sheets are generated on the fly), app.js, sanefa.css
@@ -81,7 +82,7 @@ tools/check.js                Runs every verification of the repo in one go
   gen:{maxrep, cons:[{tag,min|max}], gmax, w1?, balw?, iters?, t0?, decay?, tries?} }
 ```
 
-`BANCS_ORDRE = [NUM, FIG, FRA, BLO, BLB, LLE, ANG, TR5, TR4, QUA, POL, COS]`. BLB has the same items and boards as BLO.
+`BANCS_ORDRE = [NUM, FIG, FRA, BLO, BLB, LIN, ANG, QUA]` (round 15, 2026-11-14: LLE, TR5, TR4, POL and COS were removed, LIN added). BLB has the same items and boards as BLO.
 
 ### 4.2 Core definitions (`wodb/motor.js`)
 
@@ -89,7 +90,7 @@ tools/check.js                Runs every verification of the repo in one go
 - Reason type = property + direction (e.g. "the only even one" and "the only odd one" are two types). Item k of a window has reason j iff bit j of `p[k]` differs from bit j of each of the other three. `uniqMask = AND_i (p_k XOR p_i)`. A property can give a reason to at most one item of a window, so every valid window shows at least 4 reason types.
 - A window is **valid** iff the 4 keys are distinct and every item has ≥ 1 reason. A sheet is valid iff every window is valid.
 - A sheet is **good** (`WODB.bo`) iff it is valid, no item appears twice in it, and no reason type appears in more positions than the bank's cap.
-- **Balance rule** (owner decision): no reason type in more than **5/12** of the positions = 5 of 12. `maxMotiu(B, board)` measures it. Met by 10 banks; COS 6 (cap 5 was never reached in 600 heavy searches), ANG 10 (structural: 7 properties; the owner said to leave it). The cap used by "Full nou" = `objectiu(B)` = max(5, worst fixed sheet + `gen.marge`); `marge` is 1 for POL and COS, whose fixed sheets needed the heavy search of `fulls.js`, so a generated POL/COS sheet may have one reason type in one more position than the fixed ones. Figures in `tools/wodb/bal_final.json`.
+- **Balance rule** (owner decision): no reason type in more than **5/12** of the positions = 5 of 12. `maxMotiu(B, board)` measures it. Met by 7 of the 8 banks; ANG 10 (structural: 7 properties; the owner said to leave it). The cap used by "Full nou" = `objectiu(B)` = max(5, worst fixed sheet + `gen.marge`); no bank uses `marge` since round 15 (it was for POL and COS). Figures in `tools/wodb/bal_final.json`.
 - **Neighbour rule** (owner idea, 2026-11-09): when the mask moves one cell (up, down, left, right), as few reason types as possible should repeat. `repVeins(B, board)` = Σ over the 17 pairs of neighbouring positions of the number of shared reason types. It is a soft objective (minimised, never guaranteed to be 0); reducing it also reduces the number of spare reasons per position.
 - Answer key (solucionari): one reason per item, the **shortest** phrase, `"És "` stripped.
 
@@ -120,10 +121,11 @@ The mask must never exceed the paper: 5·40 + 2·24 = 248 ≤ 297 and 4·40 + 2�
 
 ### 4.5 Drawing rules
 
-- Dot-grid shapes (TR5, TR4, QUA): thin shapes are excluded (`tools/wodb/thin.py`): triangles min angle ≥ 25° and isoperimetric ratio 4πA/P² ≥ 0.40; quadrilaterals ≥ 22° and ≥ 0.35. The owner rejected slivers.
+- Dot-grid shapes (QUA; the triangle banks TR5/TR4 were removed in round 15): thin shapes are excluded (`tools/wodb/thin.py`): triangles min angle ≥ 25° and isoperimetric ratio 4πA/P² ≥ 0.40; quadrilaterals ≥ 22° and ≥ 0.35. The owner rejected slivers.
 - Angles (ANG): **every cell is drawn at the same scale** (owner, twice): in a 31 mm drawing box (`caixa: 31` in the bank; 3 mm left to the hole edge) every angle has one long ray (56 units of the 100-unit box = 17.4 mm) and one short ray (40 = 12.4 mm), sector radius 24 (7.4 mm), right-angle square of side 16; the figure is only translated to centre it, never scaled (the flat angle, 96 units wide, sets the limit). No dot at the vertex (owner: it adds noise). Smaller sectors or per-cell scaling were rejected as hard to see / inconsistent.
-- Letters (LLE): custom stroke font (`letters.py`, SVG paths) so that symmetries are exact; properties are geometric only.
-- Solids (COS): 3D convex hull projected orthographically; hidden edges dashed.
+- Line figures (LIN, round 15): `tools/wodb/linies.py`. Invisible 3×3 grid of nodes; a figure = 1 to 3 clean strokes (segments of 1 or 2 units, h/v/diagonal; semicircles of radius ½ or 1; quarter circles of radius 1; circles of radius ½ or 1; unit squares, the 2×2 square, 1×2 rectangles), decomposed into unit pieces that meet only at nodes (no interior crossings, no tangencies, no angle under 40° between pieces at a node). Properties computed exactly in doubled integer coordinates: vertical / horizontal axis, half turn, holes = E − V + 1, right angle between two segments, two parallel segments (maximal segments, collinear ones excluded), some curve, some segment. Pool: all 1- and 2-stroke figures + 3-stroke figures with a V/H axis or half-turn symmetry (1134 items); dedupe key = congruence class (234). The owner rejected graph-theory properties (degree-3 points, drawable in one stroke): keep it to synthetic geometry.
+- Logic blocks (BLO, BLB, round 15): the big block is exactly twice the small one; each block has a technical-drawing dimension under it with one number, 1 or 2 (square and triangle: side; circle: diameter; rectangle: long side). Reasons «de mida 1 / de mida 2» replace «gran / petit».
+- Angles (ANG, round 15): both rays 48 units (the flat angle is 96 wide); the old long/short variant is gone (196 items).
 
 ### 4.6 Builder — `wodb/constructor.html` + `constructor.js` + `constructor.css` (round 5 J6, asked for on 2026-11-10)
 
@@ -145,13 +147,13 @@ node check.js              # validity, balance, neighbour rule, "Full nou" (must
 python3 make_pdfs.py       # serves the repo locally, prints every sheet/mask/key to ../../pdf/wodb/
 ```
 
-Board search (only when properties, pools or `motor.js` scoring change; about 10 minutes, plus about 25 for the heavy mode of POL and COS):
+Board search (only when properties, pools or `motor.js` scoring change; about 10 minutes, about 4 minutes in all since round 15):
 
 ```bash
 python3 export_bancs.py && node fulls.js && python3 export_bancs.py   # fulls.js [CODE ...] writes fulls_bal.json + bal_final.json
 ```
 
-Round-9 properties (and the two POL properties added on 2026-11-10) live in `tools/wodb/props9.py` (computed from each item's data and appended as new bits). One explicit owner exception there: the letter Q does not count as a "junction" letter (`NO_JUNCTION`). See `tools/wodb/README.md` for every script.
+Round-9 properties of FIG and QUA live in `tools/wodb/props9.py` (computed from each item's data and appended as new bits). One explicit owner exception there: the letter Q does not count as a "junction" letter (`NO_JUNCTION`). See `tools/wodb/README.md` for every script.
 
 ## 6. Checklist before delivering
 

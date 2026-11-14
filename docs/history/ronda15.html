@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Revisió WODB ronda 15</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: capçalera amb comptador i filtres, i després una columna de targetes agrupades per tema (codi del banc a l'esquerra). */
+:root{
+  --paper:#f6f7f9; --card:#ffffff; --ink:#1b2430; --muted:#5d6878; --line:#d9dee6;
+  --accent:#1f5fbf; --accent-soft:#e3ecfa;
+  --ok:#1e7d4f; --no:#b42318; --later:#9a6700; --talk:#6941c6;
+  --display:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body)}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 80px;display:flex;flex-direction:column;gap:20px}
+h1{font:800 30px/1.15 var(--display);margin:0;text-wrap:balance}
+h2{font:600 21px/1.2 var(--display);margin:0;display:flex;gap:10px;align-items:baseline}
+h2 .code{font:500 14px var(--mono);background:var(--ink);color:var(--paper);padding:2px 8px;border-radius:4px}
+.lead{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.count{font:600 15px var(--body);font-variant-numeric:tabular-nums}
+.prog{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.filt button,.dec button{font:600 14px var(--body);border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+.filt button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:13px;color:var(--muted)}
+.warn{border:1px solid var(--later);background:color-mix(in srgb,var(--later) 12%,var(--card));padding:10px 14px;border-radius:8px;display:none}
+section.cat{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.card[data-d="si"]{border-left-color:var(--ok)}.card[data-d="no"]{border-left-color:var(--no)}
+.card[data-d="mes"]{border-left-color:var(--later)}.card[data-d="parlem"]{border-left-color:var(--talk)}
+.card h3{margin:0;font:700 17px/1.3 var(--body);display:flex;gap:10px;align-items:baseline}
+.card h3 .id{font:500 13px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 7px;border-radius:4px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:4px 14px}
+.row b{color:var(--muted);font-weight:600;font-size:14px}
+.row p{margin:0;max-width:72ch}
+.q{background:var(--accent-soft);border-radius:6px;padding:8px 12px;font-weight:600}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+td,th{border-bottom:1px solid var(--line);padding:4px 10px;text-align:left}
+th{color:var(--muted);font-weight:600}
+.tw{overflow-x:auto}
+.dec{display:flex;gap:8px;flex-wrap:wrap}
+.dec button[data-v="si"][aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.dec button[data-v="no"][aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
+.dec button[data-v="mes"][aria-pressed="true"]{background:var(--later);border-color:var(--later);color:#fff}
+.dec button[data-v="parlem"][aria-pressed="true"]{background:var(--talk);border-color:var(--talk);color:#fff}
+textarea{width:100%;min-height:54px;font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px}
+.reply{border-top:1px dashed var(--line);padding-top:8px;font-size:15px}
+.reply b{color:var(--accent)}
+.gal{display:flex;flex-wrap:wrap;gap:10px}
+.fig{width:112px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);text-align:center}
+.fig svg{width:96px;height:96px;background:#fff;border:1px solid #999;border-radius:2px}
+.fig svg *{vector-effect:non-scaling-stroke}
+.chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.chips span{font:500 10px var(--mono);border:1px solid var(--line);border-radius:3px;padding:0 3px;color:var(--ink)}
+.win{display:grid;grid-template-columns:repeat(2,96px);gap:4px;padding:6px;border:3px solid var(--ink);width:max-content;background:#fff}
+.win svg{width:96px;height:96px}
+.legend{font-size:13px;color:var(--muted)}
+.hidden{display:none}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Revisió del WODB · ronda 15</h1>
+  <p class="lead">Els teus 10 comentaris sobre els temes del WODB, convertits en 16 punts per decidir, més 2 de nous (L6 i T2) després de la primera revisió. Cada xifra de les proves surt d'executar el cercador del repo (<code>cercaFull</code>) amb les propietats canviades: «4/12» vol dir que 4 de 12 cerques han trobat un full vàlid a totes les posicions i amb cap motiu en més de 5 de les 12 posicions. QUA queda com està.</p>
+</header>
+<div class="warn" id="warn"></div>
+<div class="bar">
+  <span class="count" id="count">0 de 16 contestats</span>
+  <span class="prog"><i id="progi"></i></span>
+  <span class="filt"><button id="f-tots" aria-pressed="true">Tots</button> <button id="f-sense" aria-pressed="false">Sense resposta</button></span>
+  <span class="status" id="status">Connectant…</span>
+</div>
+<main id="main"></main>
+</div>
+<script>
+'use strict';
+/* ---------- dibuixos ---------- */
+const S=(inner,vb='0 0 100 100')=>`<svg viewBox="${vb}" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+const ST='fill="none" stroke="#000" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"';
+/* Banc nou de línies: [nom, dibuix, V, H, forat, mitja volta, grau 3, corba, segment] */
+const LIN=[
+ ['Quadrat','<path d="M20 20H80V80H20Z"/>',1,1,1,1,0,0,1],
+ ['Quadrat i diagonal','<path d="M20 20H80V80H20Z M20 20L80 80"/>',0,0,1,1,1,0,1],
+ ['Cercle','<circle cx="50" cy="50" r="30"/>',1,1,1,1,0,1,0],
+ ['T','<path d="M20 25H80 M50 25V80"/>',1,0,0,0,1,0,1],
+ ['Mig cercle tancat','<path d="M20 68A30 30 0 0 1 80 68Z"/>',1,0,1,0,0,1,1],
+ ['Essa','<path d="M50 20A15 15 0 0 0 50 50A15 15 0 0 1 50 80"/>',0,0,0,1,0,1,0],
+ ['Triangle i mitjana','<path d="M50 20L80 80H20Z M50 20V80"/>',1,0,1,0,1,0,1],
+ ['Ziga-zaga','<path d="M20 25H80L20 75H80"/>',0,0,0,1,0,0,1],
+ ['Cercle i diàmetre','<circle cx="50" cy="50" r="30"/><path d="M20 50H80"/>',1,1,1,1,1,1,1],
+ ['Angle','<path d="M25 20V80H80"/>',0,0,0,0,0,0,1],
+ ['Arc','<path d="M20 72A30 30 0 0 1 80 72"/>',1,0,0,0,0,1,0],
+ ['Creu','<path d="M50 20V80 M20 50H80"/>',1,1,0,1,0,0,1],
+ ['I grega','<path d="M50 52L24 22 M50 52L76 22 M50 52V82"/>',1,0,0,0,1,0,1],
+ ['Ull','<path d="M20 50A40 40 0 0 1 80 50A40 40 0 0 1 20 50Z"/>',1,1,1,1,0,1,0]];
+const LAB=['V','H','forat','½ volta','grau 3','corba','segment'];
+const linSvg=f=>S(`<g ${ST}>${f[1]}</g>`);
+function linGallery(){return '<div class="gal">'+LIN.map((f,i)=>`<div class="fig">${linSvg(f)}<span>${i+1}. ${f[0]}</span><span class="chips">${LAB.filter((_,j)=>f[2+j]).map(t=>`<span>${t}</span>`).join('')}</span></div>`).join('')+'</div>';}
+function linWindow(){const w=[0,1,3,4];return `<div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center"><div class="win">${w.map(i=>linSvg(LIN[i])).join('')}</div><div class="legend" style="max-width:46ch">Una finestra feta amb aquestes figures. Quadrat: l'única amb un eix horitzontal. Quadrat i diagonal: l'única sense eix vertical. T: l'única sense forats. Mig cercle: l'única amb una línia corba.</div></div>`;}
+/* Angles amb els dos costats iguals (radi R), sector de radi 24, quadradet 16, mateixa escala a totes les caselles */
+function angle(th,phi,R){const a1=phi*Math.PI/180,a2=(phi+th)*Math.PI/180,RA=24,RQ=16;
+  const P1=[R*Math.cos(a1),R*Math.sin(a1)],P2=[R*Math.cos(a2),R*Math.sin(a2)],ap=[];
+  if(th===90)ap.push([RQ*Math.cos(a1),RQ*Math.sin(a1)],[RQ*(Math.cos(a1)+Math.cos(a2)),RQ*(Math.sin(a1)+Math.sin(a2))],[RQ*Math.cos(a2),RQ*Math.sin(a2)]);
+  else for(let i=0;i<=60;i++){const a=a1+(a2-a1)*i/60;ap.push([RA*Math.cos(a),RA*Math.sin(a)]);}
+  const pts=[[0,0],P1,P2,...ap],xs=pts.map(p=>p[0]),ys=pts.map(p=>p[1]),cx=(Math.max(...xs)+Math.min(...xs))/2,cy=(Math.max(...ys)+Math.min(...ys))/2;
+  const T=p=>(50+p[0]-cx).toFixed(1)+','+(50-(p[1]-cy)).toFixed(1),O=T([0,0]),arc=ap.map(T).join(' ');
+  return S(`<polygon points="${O} ${arc}" fill="#d0d0d0"/><polyline points="${arc}" fill="none" stroke="#000" stroke-width="1.2"/><polyline points="${T(P1)} ${O} ${T(P2)}" fill="none" stroke="#000" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>`);}
+function angGallery(){const L=[[35,10,'35°'],[90,200,'90°'],[135,60,'135°'],[180,0,'180°'],[230,300,'230°'],[300,120,'300°']];
+  return '<div class="gal">'+L.map(([t,p,n])=>`<div class="fig">${angle(t,p,48)}<span>${n}</span></div>`).join('')+'</div><p class="legend">Mostra amb els dos costats de 48 unitats (14,9 mm a la casella). L\'angle pla fa 96 d\'ample i és el que fixa el màxim.</p>';}
+/* Blocs lògics amb cota: unitat u = costat del quadrat petit = diàmetre del cercle petit */
+function bloc(s,g){const u=g?64:32,cx=50,cy=42;let sh='',x0,x1,yb;
+  const pat='fill="url(#rr)" stroke="#000" stroke-width="'+(g?1.4:1.4)+'"';
+  if(s==='q'){sh=`<rect x="${cx-u/2}" y="${cy-u/2}" width="${u}" height="${u}" ${pat}/>`;x0=cx-u/2;x1=cx+u/2;yb=cy+u/2;}
+  if(s==='c'){sh=`<circle cx="${cx}" cy="${cy}" r="${u/2}" ${pat}/>`;x0=cx-u/2;x1=cx+u/2;yb=cy+u/2;}
+  if(s==='t'){const h=u*Math.sqrt(3)/2;sh=`<polygon points="${cx},${cy-h/2} ${cx+u/2},${cy+h/2} ${cx-u/2},${cy+h/2}" ${pat}/>`;x0=cx-u/2;x1=cx+u/2;yb=cy+h/2;}
+  if(s==='r'){sh=`<rect x="${cx-u/2}" y="${cy-u/4}" width="${u}" height="${u/2}" ${pat}/>`;x0=cx-u/2;x1=cx+u/2;yb=cy+u/4;}
+  const y=yb+8,ext=`<path d="M${x0} ${yb+2}V${y+3} M${x1} ${yb+2}V${y+3}" stroke="#000" stroke-width=".8"/>`;
+  const dim=`<path d="M${x0} ${y}H${x1}" stroke="#000" stroke-width=".9"/><path d="M${x0} ${y}l4 -2v4z M${x1} ${y}l-4 -2v4z" fill="#000"/>`;
+  const num=`<text x="${cx}" y="${y+11}" font-family="Arial" font-weight="700" font-size="11" text-anchor="middle">${g?2:1}</text>`;
+  return S(`<defs><pattern id="rr" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><path d="M0 0V5" stroke="#000" stroke-width="1"/></pattern></defs>${sh}${ext}${dim}${num}`);}
+function bloGallery(){const N={q:'quadrat',c:'cercle',t:'triangle',r:'rectangle'};let o='<div class="gal">';
+  for(const s of ['q','c','t','r'])for(const g of [0,1])o+=`<div class="fig">${bloc(s,g)}<span>${N[s]} ${g?'gran':'petit'}</span></div>`;
+  return o+'</div><p class="legend">Cota de dibuix tècnic sota la figura, amb un sol número (1 o 2). Rectangle: la cota va al costat llarg, que és igual que el costat del quadrat. Els grans fan exactament el doble. A la casella real, el gran ocuparia uns 24 mm i el petit uns 12 mm, amb la cota a sota.</p>';}
+/* ---------- punts ---------- */
+const CATS=[
+ {code:'GEN',nom:'General',pts:[
+  {id:'G1',t:'Refer els fulls fixos i els PDFs després dels canvis',
+   passa:'Quan canvien les propietats d\'un tema, els motius de cada casella canvien i els fulls A–D s\'han de tornar a buscar. No s\'assigna cap motiu a mà: el cercador col·loca els elements perquè cada un tingui el seu motiu amb les propietats noves.',
+   proposta:'Quan hagis contestat tots els punts, ho faig en una sola PR: bancs nous, fulls A–D de cada tema tocat, comprovació per ordinador (validesa, equilibri 5/12, regla dels veïns), PDFs, solucionaris, constructor i documentació. Els números de «Full nou» canviaran (estem en mode beta).',
+   q:'Ho faig tot junt en una PR quan hagis contestat?'}]},
+ {code:'NUM',nom:'Nombres',pts:[
+  {id:'N1',t:'Treure «més gran que 50» i posar-hi dues propietats noves',
+   passa:'«Més gran que 50» parteix 1–99 per la meitat (49 nombres) i dona molts motius. Si la trec sense posar-hi res, cap de 8 cerques troba un full bo. Amb una sola propietat nova costa; amb dues va molt bé.',
+   extra:`<div class="tw"><table><tr><th>Propietats noves (en lloc de «&gt; 50»)</th><th>Cerques amb full bo</th></tr>
+   <tr><td>cap</td><td>0/8</td></tr><tr><td>triangular</td><td>4/16</td></tr><tr><td>suma de les xifres parella</td><td>5/16</td></tr><tr><td>múltiple de 4</td><td>1/16</td></tr>
+   <tr><td><b>triangular + suma de les xifres parella</b></td><td><b>16/16</b></td></tr><tr><td>triangular + múltiple de 7</td><td>15/16</td></tr><tr><td>triangular + múltiple de 9</td><td>8/16</td></tr>
+   <tr><td>múltiple de 4 + múltiple de 9</td><td>8/16</td></tr><tr><td>múltiple de 4 + potència de 2</td><td>3/16</td></tr><tr><td>tema actual (per comparar)</td><td>2/8</td></tr></table></div>
+   <p class="legend">Nombres triangulars fins a 99: 1, 3, 6, 10, 15, 21, 28, 36, 45, 55, 66, 78, 91. Es mantenen els límits actuals: com a molt 3 nombres d'una xifra i 2 de xifres iguals per full.</p>`,
+   proposta:'Afegir «És l\'únic nombre triangular / És l\'únic que no és triangular» i «És l\'únic amb la suma de les xifres parella / senar».',
+   q:'Hi poso triangular + suma de les xifres parella? Si vols una altra parella de la taula, digues-la al comentari.'}]},
+ {code:'FIG',nom:'Figures geomètriques',pts:[
+  {id:'F1',t:'Eliminar la propietat «més de 4 costats»',
+   passa:'«Té més de 4 costats» és una propietat diferent de «és un quadrilàter». La frase «l\'única que no és un quadrilàter» ja existeix: és el sentit «no» de la propietat quadrilàter. Per tant n\'hi ha prou d\'eliminar «més de 4 costats / 4 costats o menys».',
+   proposta:'Eliminar-la. Prova: 3/12 cerques troben full bo (el tema actual, 5/12): és suficient. A les finestres on un pentàgon només es distingia per aquesta propietat, el cercador hi posarà una altra combinació.',
+   q:'L\'elimino?'}]},
+ {code:'FRA',nom:'Fraccions',pts:[
+  {id:'R1',t:'Substituir «més petita que 1/2» i «entre 1/2 i 1»',
+   passa:'Sense aquestes dues, 4/12 cerques troben full bo (el tema actual, 9/12). És possible però just. «Més gran que 1» es manté.',
+   extra:`<div class="tw"><table><tr><th>Propietats noves</th><th>Cerques amb full bo</th></tr><tr><td>cap</td><td>4/12</td></tr>
+   <tr><td>numerador i denominador consecutius (2/3, 5/4, 9/10)</td><td>10/12</td></tr><tr><td>equival a un percentatge enter (3/4 = 75 %; 1/8 = 12,5 % no)</td><td>6/12</td></tr>
+   <tr><td><b>les dues</b></td><td><b>11/12</b></td></tr></table></div>`,
+   proposta:'Afegir «És l\'única amb numerador i denominador consecutius» i «És l\'única que equival a un percentatge enter» (amb els seus sentits «no»).',
+   q:'Hi poso les dues?'}]},
+ {code:'BLB',nom:'Blocs lògics (blanc i negre)',pts:[
+  {id:'B1',t:'Canviar «gran / petit» per una cota amb la mida',
+   passa:'«Gran» i «petit» són relatius: dins la finestra no sempre es veu quin és quin. Però la mida no es pot treure: sense ella, cap de 12 cerques troba full (0/12).',
+   proposta:'Cada bloc porta una cota amb un sol número, 1 o 2. Quadrat i triangle: el costat. Cercle: el diàmetre. Rectangle: el costat llarg (igual que el costat del quadrat, com als blocs reals). Unitat = costat del quadrat petit = diàmetre del cercle petit. Els grans es dibuixen exactament al doble (ara fan 1,68 vegades). Motius: «És l\'únic de mida 2» / «És l\'únic de mida 1».',
+   extra:()=>bloGallery(),
+   q:'Ho faig així (una sola cota per bloc, motiu «de mida 1 / de mida 2»)?'},
+  {id:'B2',t:'Com es dibuixa la cota',
+   passa:'La trama (ratllat, quadriculat, puntejat) omple la figura i un número a dins es llegiria malament.',
+   proposta:'Cota de dibuix tècnic fora de la figura: línia amb fletxes, dues línies auxiliars i el número a sota, com a la mostra de B1. Tot cap dins la caixa de 28 mm.',
+   q:'La cota fora de la figura, com a la mostra? (Si la vols d\'una altra manera, explica-ho al comentari.)'},
+  {id:'B3',t:'Fer el mateix a BLO (en color)',
+   passa:'BLO i BLB comparteixen elements i fulls; només canvia com es pinten. A BLO hi ha el mateix «l\'únic gran / l\'únic petit».',
+   proposta:'Posar la mateixa cota i el mateix motiu a BLO, perquè els dos temes continuïn sent el mateix joc.',
+   q:'També a BLO?'}]},
+ {code:'LLE → LIN',nom:'Un tema nou de línies en lloc de les lletres',pts:[
+  {id:'L1',t:'Substituir les lletres per figures de traç',
+   passa:'Les lletres desapareixen. Els conceptes que vols treballar són els eixos vertical i horitzontal, els forats, la mitja volta, els punts d\'on surten tres línies (grau 3) i corbes vs segments.',
+   proposta:'Un banc de figures de línia negra, sense farciment, com aquestes 14 de mostra (les etiquetes diuen quines propietats tenen):',
+   extra:()=>linGallery()+linWindow(),
+   q:'T\'agrada aquest tipus de figura per al tema nou?'},
+  {id:'L2',t:'Com es fabrica el banc',
+   passa:'Les figures s\'han de poder comprovar per ordinador, com tota la resta del repo.',
+   proposta:'Generar-les per ordinador sobre una trama invisible de 3×3 punts (cantonades, punts mitjans i centre). Peces: segments entre punts veïns (horitzontals, verticals, diagonals) i arcs de quart o de mig cercle. Només figures connexes i de poques peces (fins a 6). Una figura girada compta com un element diferent, perquè els eixos vertical i horitzontal depenen de la posició. Tot es calcula: simetries reflectint la figura, forats com a regions tancades, grau comptant les línies de cada punt (un encreuament és un punt, com a la creu).',
+   q:'D\'acord amb la trama invisible 3×3 i aquestes peces?'},
+  {id:'L3',t:'Les 7 propietats del tema',
+   passa:'Cal decidir els detalls de cada concepte.',
+   proposta:'1) amb un eix de simetria vertical / sense; 2) amb un eix de simetria horitzontal / sense; 3) amb algun forat / sense forats; 4) queda igual si la gires mitja volta / canvia; 5) té algun punt d\'on surten exactament tres línies / cap; 6) té alguna línia corba / feta només de segments; 7) té algun segment / feta només de corbes. Amb 6 i 7 surten els tres casos: només segments, només corbes i barreja. A la propietat 5, la creu (+) no compta: del seu centre en surten quatre.',
+   q:'Aquestes 7, amb «exactament tres» al punt 5? (Si vols «tres o més», digues-ho.)'},
+  {id:'L4',t:'Una propietat extra: «es pot dibuixar d\'un sol traç»',
+   passa:'Va lligada amb el grau: una figura connexa es pot dibuixar d\'un sol traç (sense aixecar el llapis ni repetir cap línia) si té 0 o 2 punts d\'on surt un nombre senar de línies. El quadrat sí; el quadrat amb diagonal també (comences en una cantonada de grau 3); el cercle amb diàmetre també; la creu no.',
+   proposta:'Afegir-la com a propietat 8. Altres possibles, al comentari si en vols alguna: «queda igual amb un quart de volta», «té més d\'un forat», «té algun extrem lliure».',
+   q:'Afegeixo «es pot dibuixar d\'un sol traç»?'},
+  {id:'L5',t:'Nom i codi del tema',
+   passa:'El codi surt a la cantonada de cada full (p. ex. LLE-A).',
+   proposta:'LIN · Línies, al lloc on ara hi ha LLE.',
+   q:'Li dic LIN · Línies?'},
+  {id:'L6',t:'Substitut de la propietat 5 (geometria, no grafs)',
+   passa:'A L3 vols treure «punt d\'on surten exactament tres línies». He construït el generador del banc i he provat cada opció amb el cercador (1.134 figures, 12 cerques a l\'equilibri 5/12). Amb una sola propietat nova costa; amb dues va bé.',
+   extra:`<div class="tw"><table><tr><th>En lloc de la propietat 5</th><th>Cerques amb full bo</th></tr>
+   <tr><td>(a) té algun angle recte (entre dos segments)</td><td>2/12</td></tr><tr><td>(b) té dos segments paral·lels</td><td>4/12</td></tr><tr><td>(c) té algun eix de simetria inclinat</td><td>1/12</td></tr>
+   <tr><td><b>(a) + (b)</b></td><td><b>9/12</b></td></tr><tr><td>(a) + (c)</td><td>10/12</td></tr><tr><td>(b) + (c)</td><td>6/12</td></tr><tr><td>cap (només les altres 6)</td><td>0/12</td></tr></table></div>
+   <p class="legend">Canvi de mètode a L2: les figures fetes de peces petites a l\'atzar semblaven gargots. Ara cada figura és una combinació de fins a 3 traços nets sobre la trama 3×3 (segments d\'1 o 2 unitats, arcs, cercles, quadrats i rectangles), sense punxes estretes. Les propietats es continuen calculant per ordinador i he comprovat que surten bé en figures conegudes (quadrat, cercle, creu, T, Z, angle).</p>`,
+   proposta:'Posar-ne dues: (a) «És l\'única amb algun angle recte / sense cap angle recte» i (b) «És l\'única amb dos segments paral·lels / sense segments paral·lels». Són de geometria i no cal explicar-les. El tema quedaria amb 8 propietats.',
+   q:'Poso (a) angle recte + (b) segments paral·lels? (Si prefereixes (a) + (c), digues-ho al comentari.)'}]},
+ {code:'ANG',nom:'Angles',pts:[
+  {id:'A1',t:'Els dos costats de cada angle, iguals',
+   passa:'Ara cada angle té un costat de 56 unitats i un de 40. Vols que tots dos siguin iguals.',
+   proposta:'Tots dos de 48 unitats (14,9 mm), el màxim que hi cap: l\'angle pla fa 96 d\'ample dins la caixa de 100. Sector, quadradet i escala única es mantenen. El banc passa de 392 a 196 dibuixos (desapareix la variant llarg/curt); la prova dona fulls bons igual que ara (6/6 al límit actual d\'ANG).',
+   extra:()=>angGallery(),
+   q:'Ho faig amb 48 unitats?'}]},
+ {code:'TR5 · TR4',nom:'Triangles a la trama',pts:[
+  {id:'T1',t:'Treure «punt de la trama a dins» i «més de 3 (2) quadrets d\'àrea»',
+   passa:'Sense aquestes dues, cap de 12 cerques troba full, ni tan sols permetent un motiu en 6 de 12 posicions: calen substituts. Provades soles i insuficients (0/8): angle de 135°, costat a 45°, eix horitzontal o vertical, un costat horitzontal i un de vertical.',
+   extra:`<div class="tw"><table><tr><th>Substituts</th><th>TR5</th><th>TR4</th></tr><tr><td>cap</td><td>0/12</td><td>0/12</td></tr>
+   <tr><td><b>costat a 45° + un costat horitzontal i un de vertical</b></td><td><b>4/8</b></td><td><b>3/8</b></td></tr>
+   <tr><td>costat a 45° + eix horitzontal o vertical</td><td>4/8</td><td>3/8</td></tr><tr><td>tema actual (per comparar)</td><td>6/12</td><td>5/12</td></tr></table></div>`,
+   proposta:'Afegir «És l\'únic amb algun costat inclinat a 45° (paral·lel a la diagonal d\'un quadret)» i «És l\'únic amb un costat horitzontal i un de vertical». Compte: ja hi ha «amb un angle de 45°», i les dues frases s\'assemblen; potser cal explicar la diferència a l\'alumnat.',
+   q:'Hi poso aquestes dues?'},
+  {id:'T2',t:'Suprimir TR5 i TR4',
+   passa:'A T1 dius que els substituts són massa rebuscats i que un WODB no ha de necessitar explicacions. Sense substituts no surt cap full (0/12). Les altres idees senzilles que he provat (angle de 135°, eix horitzontal o vertical) tampoc no basten.',
+   proposta:'Suprimir els dos temes de triangles. QUA es queda (també fa servir la trama i no té cap problema). Quedarien 8 temes: NUM, FIG, FRA, BLO, BLB, LIN, ANG, QUA.',
+   q:'Suprimeixo TR5 i TR4?'}]},
+ {code:'POL',nom:'Poliòmins',pts:[
+  {id:'P1',t:'Suprimir POL',
+   passa:'He provat de treure les quatre propietats que no t\'agraden (quadrat de 3×3, quadrat de 2×2, dòmino, tres en línia). Amb les que queden hi ha fulls vàlids, però cap cerca no aconsegueix ni que el motiu més repetit surti en 7 de 12 posicions o menys. El tema ja era el més difícil (necessitava la cerca llarga i un marge).',
+   proposta:'Suprimir POL. Si algun dia trobem propietats noves que t\'agradin, es pot tornar a fer.',
+   q:'El suprimeixo?'}]},
+ {code:'COS',nom:'Cossos geomètrics',pts:[
+  {id:'C1',t:'Suprimir COS',
+   passa:'Treient les propietats que no t\'agraden, cap de 6 cerques troba full. Ja abans no arribava a la regla de 5/12.',
+   proposta:'Suprimir COS: del web, dels PDFs, del constructor i de la documentació. Amb P1 i C1 quedarien 10 temes: NUM, FIG, FRA, BLO, BLB, LIN, ANG, TR5, TR4, QUA.',
+   q:'El suprimeixo?'}]}];
+const ALL=CATS.flatMap(c=>c.pts),TOTAL=ALL.length;
+const DEC=[['si','Sí, fes-ho'],['no','No'],['mes','Més endavant'],['parlem','En parlem']];
+const state={},replies={};let filtre='tots',db=null,local=false;
+/* ---------- render ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){const M=document.getElementById('main');
+  M.innerHTML=CATS.map(c=>`<section class="cat" data-cat="${c.code}"><h2><span class="code">${c.code}</span>${c.nom}</h2>${c.pts.map(p=>`
+   <article class="card" id="c-${p.id}">
+    <h3><span class="id">${p.id}</span>${p.t}</h3>
+    <div class="row"><b>Què passa</b><p>${p.passa}</p><b>Proposta</b><p>${p.proposta}</p></div>
+    ${p.extra?(typeof p.extra==='function'?p.extra():p.extra):''}
+    <div class="q">${p.q}</div>
+    <div class="dec" role="group" aria-label="Decisió ${p.id}">${DEC.map(([v,l])=>`<button type="button" data-id="${p.id}" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div>
+    <label class="legend" for="t-${p.id}">Comentari</label><textarea id="t-${p.id}" data-id="${p.id}" placeholder="Opcional"></textarea>
+    <div class="reply hidden" id="r-${p.id}"></div>
+   </article>`).join('')}</section>`).join('');
+  M.addEventListener('click',e=>{const b=e.target.closest('.dec button');if(!b)return;const id=b.dataset.id,v=b.dataset.v;
+    const cur=state[id]||{};save(id,{decisio:cur.decisio===v?'':v,comentari:cur.comentari||''});});
+  const timers={};M.addEventListener('input',e=>{const t=e.target;if(t.tagName!=='TEXTAREA')return;const id=t.dataset.id;clearTimeout(timers[id]);
+    timers[id]=setTimeout(()=>{const cur=state[id]||{};save(id,{decisio:cur.decisio||'',comentari:t.value});},700);});}
+function paint(){let n=0;for(const p of ALL){const s=state[p.id]||{},card=document.getElementById('c-'+p.id);
+    card.dataset.d=s.decisio||'';if(s.decisio)n++;
+    card.querySelectorAll('.dec button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===s.decisio)));
+    const ta=document.getElementById('t-'+p.id);if(document.activeElement!==ta&&ta.value!==(s.comentari||''))ta.value=s.comentari||'';
+    const r=replies[p.id],rd=document.getElementById('r-'+p.id);
+    if(r&&r.text){rd.classList.remove('hidden');rd.innerHTML='<b>Claude:</b> '+esc(r.text);}else rd.classList.add('hidden');
+    card.classList.toggle('hidden',filtre==='sense'&&!!s.decisio);}
+  document.querySelectorAll('section.cat').forEach(sec=>sec.classList.toggle('hidden',![...sec.querySelectorAll('.card')].some(c=>!c.classList.contains('hidden'))));
+  document.getElementById('count').textContent=`${n} de ${TOTAL} contestats`;document.getElementById('progi').style.width=(100*n/TOTAL)+'%';}
+function setStatus(t){document.getElementById('status').textContent=t;}
+/* ---------- desat ---------- */
+async function save(id,val){state[id]=val;paint();
+  if(local){try{localStorage.setItem('wodb15',JSON.stringify(state));}catch(e){}setStatus('Desat només en aquest navegador');return;}
+  setStatus('Desant…');
+  try{await db.doc('respostes/'+id).set(Object.assign({},val,{t:Date.now()}));setStatus('Desat');}
+  catch(e){setStatus('No s\'ha pogut desar: torna-ho a provar');}}
+function fallback(msg){local=true;try{Object.assign(state,JSON.parse(localStorage.getItem('wodb15')||'{}'));}catch(e){}
+  const w=document.getElementById('warn');w.style.display='block';
+  w.innerHTML=msg+' Les respostes es desen només en aquest navegador i Claude no les pot llegir. Quan acabis, prem <button type="button" id="cp">Copia les respostes</button> i enganxa-les al xat.';
+  document.getElementById('cp').onclick=async()=>{const txt=ALL.map(p=>{const s=state[p.id]||{};return `${p.id}: ${s.decisio||'-'}${s.comentari?' — '+s.comentari:''}`;}).join('\n');
+    try{await navigator.clipboard.writeText(txt);setStatus('Copiat');}catch(e){setStatus('No s\'ha pogut copiar');}};
+  setStatus('Mode local');paint();}
+document.getElementById('f-tots').onclick=()=>{filtre='tots';document.getElementById('f-tots').setAttribute('aria-pressed','true');document.getElementById('f-sense').setAttribute('aria-pressed','false');paint();};
+document.getElementById('f-sense').onclick=()=>{filtre='sense';document.getElementById('f-sense').setAttribute('aria-pressed','true');document.getElementById('f-tots').setAttribute('aria-pressed','false');paint();};
+render();paint();
+(async()=>{let to=setTimeout(()=>{if(!db)fallback('No s\'ha pogut connectar amb el desat compartit.');},10000);
+  try{const c=window.claude&&window.claude.use?await window.claude.use('db'):null;
+    if(!c){clearTimeout(to);fallback('Aquesta vista no pot desar al núvol.');return;}
+    db=c;let got=0;const done=()=>{if(++got===1){clearTimeout(to);setStatus('Connectat: les respostes es desen soles');}};
+    db.collection('respostes').onSnapshot(snap=>{snap.docs.forEach(d=>{const v=d.data();if(v)state[d.id]={decisio:v.decisio||'',comentari:v.comentari||''};});done();paint();},()=>{clearTimeout(to);fallback('Error en llegir les respostes.');});
+    db.collection('replica').onSnapshot(snap=>{snap.docs.forEach(d=>{replies[d.id]=d.data();});paint();},()=>{});
+  }catch(e){clearTimeout(to);fallback('No s\'ha pogut connectar amb el desat compartit.');}})();
+</script>
+</body>
+</html>
