@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Revisió ronda 17</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: capçalera amb comptador i filtres, i després una columna de targetes agrupades per tema (codi del banc a l'esquerra). */
+:root{
+  --paper:#f6f7f9; --card:#ffffff; --ink:#1b2430; --muted:#5d6878; --line:#d9dee6;
+  --accent:#1f5fbf; --accent-soft:#e3ecfa;
+  --ok:#1e7d4f; --no:#b42318; --later:#9a6700; --talk:#6941c6;
+  --display:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body)}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 80px;display:flex;flex-direction:column;gap:20px}
+h1{font:800 30px/1.15 var(--display);margin:0;text-wrap:balance}
+h2{font:600 21px/1.2 var(--display);margin:0;display:flex;gap:10px;align-items:baseline}
+h2 .code{font:500 14px var(--mono);background:var(--ink);color:var(--paper);padding:2px 8px;border-radius:4px}
+.lead{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.count{font:600 15px var(--body);font-variant-numeric:tabular-nums}
+.prog{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.filt button,.dec button{font:600 14px var(--body);border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+.filt button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:13px;color:var(--muted)}
+.warn{border:1px solid var(--later);background:color-mix(in srgb,var(--later) 12%,var(--card));padding:10px 14px;border-radius:8px;display:none}
+section.cat{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.card[data-d="si"]{border-left-color:var(--ok)}.card[data-d="no"]{border-left-color:var(--no)}
+.card[data-d="mes"]{border-left-color:var(--later)}.card[data-d="parlem"]{border-left-color:var(--talk)}
+.card h3{margin:0;font:700 17px/1.3 var(--body);display:flex;gap:10px;align-items:baseline}
+.card h3 .id{font:500 13px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 7px;border-radius:4px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:4px 14px}
+.row b{color:var(--muted);font-weight:600;font-size:14px}
+.row p{margin:0;max-width:72ch}
+.q{background:var(--accent-soft);border-radius:6px;padding:8px 12px;font-weight:600}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+td,th{border-bottom:1px solid var(--line);padding:4px 10px;text-align:left}
+th{color:var(--muted);font-weight:600}
+.tw{overflow-x:auto}
+.dec{display:flex;gap:8px;flex-wrap:wrap}
+.dec button[data-v="si"][aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.dec button[data-v="no"][aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
+.dec button[data-v="mes"][aria-pressed="true"]{background:var(--later);border-color:var(--later);color:#fff}
+.dec button[data-v="parlem"][aria-pressed="true"]{background:var(--talk);border-color:var(--talk);color:#fff}
+textarea{width:100%;min-height:54px;font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px}
+.reply{border-top:1px dashed var(--line);padding-top:8px;font-size:15px}
+.reply b{color:var(--accent)}
+.gal{display:flex;flex-wrap:wrap;gap:10px}
+.fig{width:112px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);text-align:center}
+.fig svg{width:96px;height:96px;background:#fff;border:1px solid #999;border-radius:2px}
+.fig svg *{vector-effect:non-scaling-stroke}
+.chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.chips span{font:500 10px var(--mono);border:1px solid var(--line);border-radius:3px;padding:0 3px;color:var(--ink)}
+.win{display:grid;grid-template-columns:repeat(2,96px);gap:4px;padding:6px;border:3px solid var(--ink);width:max-content;background:#fff}
+.win svg{width:96px;height:96px}
+.legend{font-size:13px;color:var(--muted)}
+.hidden{display:none}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.conf{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:start}
+.conf .ctl{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.conf label{display:flex;flex-direction:column;gap:2px;font-weight:600}
+.conf output{font:500 13px var(--mono);color:var(--accent)}
+.conf select,.conf input[type=range]{width:100%}
+.stage{background:#e9ecef;border-radius:6px;padding:10px;overflow-x:auto}
+.stage svg{display:block;width:100%;height:auto;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.stats{font:13px/1.5 var(--body);font-variant-numeric:tabular-nums}
+.stats .bad{color:var(--no);font-weight:700}.stats .good{color:var(--ok);font-weight:700}
+.mock{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.mock svg{background:#fff;border:1px solid var(--line);border-radius:4px}
+@media (max-width:700px){.conf{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Pinta per sumes · ronda 17</h1>
+  <p class="lead">Els canvis de la plantilla ja estan fets. Aquí hi ha els dubtes de les regles noves de Pinta i les propostes de dibuixos: 8 grups de tres, tots sense cap fila ni columna buida. Cada xifra de les proves surt d'executar el generador de Pinta.</p>
+</header>
+<div class="warn" id="warn"></div>
+<div class="bar">
+  <span class="count" id="count">0 contestats</span>
+  <span class="prog"><i id="progi"></i></span>
+  <span class="filt"><button id="f-tots" aria-pressed="true">Tots</button> <button id="f-sense" aria-pressed="false">Sense resposta</button></span>
+  <span class="status" id="status">Connectant…</span>
+</div>
+<main id="main"></main>
+</div>
+<script>
+'use strict';
+/* ---------- dibuixos de Pinta ---------- */
+const DIB=[{"id": "emo", "nom": "Emoticones", "mida": "7 × 7", "d": [{"id": "E1", "t": "Cara contenta", "p": [".XXXXX.", "XXXXXXX", "XX.X.XX", "XXXXXXX", "X.XXX.X", "XX...XX", ".XXXXX."]}, {"id": "E2", "t": "Cara trista", "p": [".XXXXX.", "XXXXXXX", "XX.X.XX", "XXXXXXX", "XX...XX", "X.XXX.X", ".XXXXX."]}, {"id": "E3", "t": "Picant l'ullet", "p": [".XXXXX.", "XXXXXXX", "XX.XXXX", "XXXX..X", "X.XXX.X", "XX...XX", ".XXXXX."]}]}, {"id": "cel", "nom": "Sol, estrella i flor", "mida": "7 × 7", "d": [{"id": "C1", "t": "Sol", "p": ["X..X..X", ".X.X.X.", "..XXX..", "XXXXXXX", "..XXX..", ".X.X.X.", "X..X..X"]}, {"id": "C2", "t": "Estrella", "p": ["...X...", "..XXX..", "XXXXXXX", ".XXXXX.", "..XXX..", ".XX.XX.", ".X...X."]}, {"id": "C3", "t": "Flor", "p": [".X.X.X.", "..XXX..", "XXX.XXX", "..XXX..", ".X.X.X.", "X..X..X", ".XXXXX."]}]}, {"id": "joc", "nom": "Videojoc", "mida": "7 × 7", "d": [{"id": "V1", "t": "Marcià", "p": [".X...X.", "..X.X..", ".XXXXX.", "XX.X.XX", "XXXXXXX", "X.X.X.X", ".X...X."]}, {"id": "V2", "t": "Fantasma", "p": ["..XXX..", ".XXXXX.", "XX.X.XX", "XXXXXXX", "XXXXXXX", "XXXXXXX", "X.X.X.X"]}, {"id": "V3", "t": "Menjacocos (amb un coco)", "p": ["..XXX..", ".XXXXX.", "XXX...X", "XXX....", "XXXXX..", ".XXXXX.", "..XXX.."]}]}, {"id": "gat", "nom": "Gat, ninot i cor", "mida": "7 × 7", "d": [{"id": "G1", "t": "Gat", "p": ["X.....X", "XX...XX", "XXXXXXX", "X.XXX.X", "XXXXXXX", "XXX.XXX", ".XXXXX."]}, {"id": "G2", "t": "Ninot", "p": ["..XXX..", "..XXX..", "...X...", "XXXXXXX", "...X...", "..X.X..", ".X...X."]}, {"id": "G3", "t": "Cor", "p": [".XX.XX.", "XXXXXXX", "XXXXXXX", "XXXXXXX", ".XXXXX.", "..XXX..", "...X..."]}]}, {"id": "men", "nom": "Menjar", "mida": "5 × 7 (full de 6 × 8)", "d": [{"id": "M1", "t": "Gelat", "p": [".XXX.", "XXXXX", "XXXXX", "XXXXX", ".X.X.", ".XXX.", "..X.."]}, {"id": "M2", "t": "Poma", "p": ["..X..", "..XX.", "XX.XX", "XXXXX", "XXXXX", "XXXXX", ".X.X."]}, {"id": "M3", "t": "Piruleta", "p": [".XXX.", "X...X", "X.X.X", "X...X", ".XXX.", "..X..", "..X.."]}]}, {"id": "fes", "nom": "Festa", "mida": "5 × 7 (full de 6 × 8)", "d": [{"id": "F1", "t": "Copa", "p": ["XXXXX", "XXXXX", ".XXX.", "..X..", "..X..", ".XXX.", "XXXXX"]}, {"id": "F2", "t": "Globus", "p": [".XXX.", "XXXXX", "XXXXX", ".XXX.", "..X..", "...X.", "..X.."]}, {"id": "F3", "t": "Espelma", "p": ["..X..", ".XXX.", "..X..", ".XXX.", ".X.X.", ".XXX.", "XXXXX"]}]}, {"id": "reg", "nom": "Regal, careta i corona", "mida": "7 × 5 (full de 8 × 6)", "d": [{"id": "R1", "t": "Regal", "p": [".XX.XX.", "XXXXXXX", "X..X..X", "X..X..X", "XXXXXXX"]}, {"id": "R2", "t": "Careta de festa", "p": ["XXXXXXX", "X.XXX.X", "XXXXXXX", ".XX.XX.", "..XXX.."]}, {"id": "R3", "t": "Corona", "p": ["X..X..X", "XX.X.XX", "XXXXXXX", "X.X.X.X", "XXXXXXX"]}]}, {"id": "pet", "nom": "Petits (per començar)", "mida": "5 × 5 (full de 6 × 6)", "d": [{"id": "P1", "t": "Cor petit", "p": ["XX.XX", "XXXXX", "XXXXX", ".XXX.", "..X.."]}, {"id": "P2", "t": "Estrella petita", "p": ["..X..", "XXXXX", ".XXX.", ".X.X.", "X...X"]}, {"id": "P3", "t": "Casa", "p": ["..X..", ".XXX.", "XXXXX", "X.X.X", "XXX.X"]}]}];
+function px(p,cel){const h=p.length,w=p[0].length;let o='';
+  for(let r=0;r<h;r++)for(let c=0;c<w;c++)o+=`<rect x="${c*cel}" y="${r*cel}" width="${cel}" height="${cel}" fill="${p[r][c]==='X'?'#1b2430':'#fff'}" stroke="#b8c0cc" stroke-width=".6"/>`;
+  return `<svg viewBox="-1 -1 ${w*cel+2} ${h*cel+2}" width="${w*cel+2}" height="${h*cel+2}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Dibuix de ${w} per ${h}">${o}</svg>`;}
+function grup(g){return `<div class="gal">${g.d.map(x=>`<div class="fig" style="width:auto">${px(x.p,16)}<span>${x.id} · ${x.t}</span></div>`).join('')}</div>`;}
+function taula(t){return `<div class="tw"><table>${t.map((r,i)=>`<tr>${r.map(c=>i?`<td>${c}</td>`:`<th>${c}</th>`).join('')}</tr>`).join('')}</table></div>`;}
+/* ---------- punts ---------- */
+const CATS=[
+ {code:'PIN',nom:'Pinta per sumes: regles noves',pts:[
+  {id:'Q1',t:'Mida del full i dels dibuixos',
+   passa:'Dius que el full fa com a molt 8 × 8 i que els dibuixos fan com a molt 8 × 8. Però un full de n × m caselles amaga un dibuix de (n − 1) × (m − 1): amb un full de 8 × 8, el dibuix fa com a molt 7 × 7.',
+   proposta:'Full de com a molt 8 × 8 i, per tant, dibuixos de com a molt 7 × 7. Totes les propostes de més avall ho compleixen. El full no ha de ser quadrat: té la mida dels dibuixos més 1 (per exemple, dibuixos de 5 × 7 en un full de 6 × 8).',
+   q:'Full de com a molt 8 × 8 i dibuixos de com a molt 7 × 7? (Si vols dibuixos de 8 × 8, el full serà de 9 × 9: digues-ho al comentari.)'},
+  {id:'Q2',t:'On va el 15',
+   passa:'Has dit 2/3 menors de 15, 2/9 entre 16 i 25 i 1/9 entre 26 i 30. El 15 no queda a cap grup.',
+   proposta:'Posar el 15 al primer grup: 2/3 de l\'1 al 15, 2/9 del 16 al 25 i 1/9 del 26 al 30.',
+   q:'El 15 al primer grup (1–15)?'},
+  {id:'Q3',t:'Repetir un nombre dins d\'una posició de la plantilla',
+   passa:'Fins ara cap nombre es repetia dins dels quatre que es veuen per la finestra. Amb nombres de l\'1 al 30, cada nombre és l\'únic que pot amagar la seva combinació (parell, múltiple de 3, múltiple de 5). Amb tres dibuixos en un full de 8 × 8, la regla de no repetir costa molt de complir.',
+   extra:()=>taula([['','Fulls bons (20 proves)','1–15','16–25','26–30','Posicions amb un nombre repetit'],['Sense repetir (com ara)','3 de 20','57 %','28 %','15 %','0 %'],['Permetent repetir','20 de 20','67 %','22 %','12 %','20 %'],['Objectiu','','67 %','22 %','11 %','']]),
+   proposta:'Permetre que un nombre surti dues vegades dins d\'una mateixa posició. Així la distribució és la que demanes i qualsevol dibuix funciona. A 1 de cada 5 posicions, l\'alumne sumarà un nombre repetit (per exemple, 7 + 7 + 3 + 12).',
+   q:'Permeto repetir un nombre dins d\'una posició?'},
+  {id:'Q4',t:'Files sense pintar: també columnes?',
+   passa:'Demanes que cap fila del dibuix quedi sense pintar. Una columna buida (tota en blanc) també es pot fer estranya.',
+   proposta:'Cap fila ni cap columna sense pintar, en tots els dibuixos. Les propostes de més avall ja ho compleixen (ho he comprovat per ordinador). A les regles que no tenen dibuix, el cercador també evitarà files i columnes buides.',
+   q:'Ni files ni columnes buides?'},
+  {id:'Q5',t:'Tres dibuixos per full, de la mateixa mida',
+   passa:'Cada full amaga un dibuix per regla (la suma és parella, múltiple de 3, múltiple de 5). Si el full té la mida del dibuix, els tres dibuixos d\'un full han de fer la mateixa mida.',
+   proposta:'Els dibuixos van en grups de tres de la mateixa mida (els grups de més avall): cada grup és un full fix.',
+   q:'Un full per grup de tres dibuixos?'},
+  {id:'Q6',t:'Els altres temes i el laberint',
+   passa:'Pinta també té fulls d\'enters, de fraccions, de factors 2, 3 i 5, i el laberint. Ara són de 10 × 10 o 8 × 8.',
+   proposta:'També com a molt de 8 × 8, amb els dibuixos nous. El laberint, de 8 × 8 (7 × 7 cambres i passadissos). Els nombres d\'aquests temes no canvien.',
+   q:'Tots els temes de Pinta, com a molt de 8 × 8?'},
+  {id:'Q7',t:'Treure els dibuixos antics',
+   passa:'Els fulls fixos d\'ara (cor, cara, lletra pi…) són de 9 × 9 i no hi caben.',
+   proposta:'Substituir-los pels dibuixos nous que aprovis.',
+   q:'Trec els antics?'}]}];
+for(const g of DIB)CATS.push({code:'DIB',nom:`${g.nom} · ${g.mida}`,pts:g.d.map((x,i)=>({id:x.id,t:x.t,
+  passa:`Grup «${g.nom}», dibuixos de ${g.mida}.`,proposta:'Comentari si cal canviar algun quadret (fila i columna, per exemple «fila 3, columna 5 en blanc»).',
+  extra:i===0?()=>grup(g):()=>`<div class="gal"><div class="fig" style="width:auto">${px(x.p,22)}<span>${x.id}</span></div></div>`,
+  q:`T'agrada «${x.t}»?`}))});
+function initConf(){}function aplicaValors(){}
+const ALL=CATS.flatMap(c=>c.pts),TOTAL=ALL.length;
+const DEC=[['si','Sí, fes-ho'],['no','No'],['mes','Més endavant'],['parlem','En parlem']];
+const state={},replies={};let filtre='tots',db=null,local=false;
+/* ---------- render ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){const M=document.getElementById('main');
+  M.innerHTML=CATS.map(c=>`<section class="cat" data-cat="${c.code}"><h2><span class="code">${c.code}</span>${c.nom}</h2>${c.pts.map(p=>`
+   <article class="card" id="c-${p.id}">
+    <h3><span class="id">${p.id}</span>${p.t}</h3>
+    <div class="row"><b>Què passa</b><p>${p.passa}</p><b>Proposta</b><p>${p.proposta}</p></div>
+    ${p.extra?(typeof p.extra==='function'?p.extra():p.extra):''}
+    <div class="q">${p.q}</div>
+    <div class="dec" role="group" aria-label="Decisió ${p.id}">${DEC.map(([v,l])=>`<button type="button" data-id="${p.id}" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div>
+    <label class="legend" for="t-${p.id}">Comentari</label><textarea id="t-${p.id}" data-id="${p.id}" placeholder="Opcional"></textarea>
+    <div class="reply hidden" id="r-${p.id}"></div>
+   </article>`).join('')}</section>`).join('');
+  M.addEventListener('click',e=>{const b=e.target.closest('.dec button');if(!b)return;const id=b.dataset.id,v=b.dataset.v;
+    const cur=state[id]||{};save(id,Object.assign({},cur,{decisio:cur.decisio===v?'':v}));});
+  const timers={};M.addEventListener('input',e=>{const t=e.target;if(t.tagName!=='TEXTAREA')return;const id=t.dataset.id;clearTimeout(timers[id]);
+    timers[id]=setTimeout(()=>{const cur=state[id]||{};save(id,Object.assign({},cur,{comentari:t.value}));},700);});}
+function paint(){let n=0;for(const p of ALL){const s=state[p.id]||{},card=document.getElementById('c-'+p.id);
+    card.dataset.d=s.decisio||'';if(s.decisio)n++;
+    card.querySelectorAll('.dec button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===s.decisio)));
+    const ta=document.getElementById('t-'+p.id);if(document.activeElement!==ta&&ta.value!==(s.comentari||''))ta.value=s.comentari||'';
+    const r=replies[p.id],rd=document.getElementById('r-'+p.id);
+    if(r&&r.text){rd.classList.remove('hidden');rd.innerHTML='<b>Claude:</b> '+esc(r.text);}else rd.classList.add('hidden');
+    card.classList.toggle('hidden',filtre==='sense'&&!!s.decisio);}
+  document.querySelectorAll('section.cat').forEach(sec=>sec.classList.toggle('hidden',![...sec.querySelectorAll('.card')].some(c=>!c.classList.contains('hidden'))));
+  document.getElementById('count').textContent=`${n} de ${TOTAL} contestats`;document.getElementById('progi').style.width=(100*n/TOTAL)+'%';}
+function setStatus(t){document.getElementById('status').textContent=t;}
+/* ---------- desat ---------- */
+async function save(id,val){state[id]=val;paint();
+  if(local){try{localStorage.setItem('reixeta17',JSON.stringify(state));}catch(e){}setStatus('Desat només en aquest navegador');return;}
+  setStatus('Desant…');
+  try{await db.doc('respostes/'+id).set(Object.assign({},val,{t:Date.now()}));setStatus('Desat');}
+  catch(e){setStatus('No s\'ha pogut desar: torna-ho a provar');}}
+function fallback(msg){local=true;try{Object.assign(state,JSON.parse(localStorage.getItem('reixeta17')||'{}'));}catch(e){}
+  const w=document.getElementById('warn');w.style.display='block';
+  w.innerHTML=msg+' Les respostes es desen només en aquest navegador i Claude no les pot llegir. Quan acabis, prem <button type="button" id="cp">Copia les respostes</button> i enganxa-les al xat.';
+  document.getElementById('cp').onclick=async()=>{const txt=ALL.map(p=>{const s=state[p.id]||{};return `${p.id}: ${s.decisio||'-'}${s.comentari?' — '+s.comentari:''}${s.valors?' '+JSON.stringify(s.valors):''}`;}).join('\n');
+    try{await navigator.clipboard.writeText(txt);setStatus('Copiat');}catch(e){setStatus('No s\'ha pogut copiar');}};
+  setStatus('Mode local');paint();}
+document.getElementById('f-tots').onclick=()=>{filtre='tots';document.getElementById('f-tots').setAttribute('aria-pressed','true');document.getElementById('f-sense').setAttribute('aria-pressed','false');paint();};
+document.getElementById('f-sense').onclick=()=>{filtre='sense';document.getElementById('f-sense').setAttribute('aria-pressed','true');document.getElementById('f-tots').setAttribute('aria-pressed','false');paint();};
+render();initConf();paint();
+(async()=>{let to=setTimeout(()=>{if(!db)fallback('No s\'ha pogut connectar amb el desat compartit.');},10000);
+  try{const c=window.claude&&window.claude.use?await window.claude.use('db'):null;
+    if(!c){clearTimeout(to);fallback('Aquesta vista no pot desar al núvol.');return;}
+    db=c;let got=0;const done=()=>{if(++got===1){clearTimeout(to);setStatus('Connectat: les respostes es desen soles');}};
+    db.collection('respostes').onSnapshot(snap=>{snap.docs.forEach(d=>{const v=d.data();if(v)state[d.id]={decisio:v.decisio||'',comentari:v.comentari||'',valors:v.valors||null};});done();paint();aplicaValors();},()=>{clearTimeout(to);fallback('Error en llegir les respostes.');});
+    db.collection('replica').onSnapshot(snap=>{snap.docs.forEach(d=>{replies[d.id]=d.data();});paint();},()=>{});
+  }catch(e){clearTimeout(to);fallback('No s\'ha pogut connectar amb el desat compartit.');}})();
+</script>
+</body>
+</html>

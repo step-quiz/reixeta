@@ -4,13 +4,13 @@
    on the page (outer rectangle and hole read from the mask path); PLEC.comprova gives 0 misclassified points for them; everything drawn
    stays inside its box, at least 4 mm from the paper edge, does not touch any mask, and no text lies over a drawing or over another text. With the bars model, and on dice masks with several
    holes or a hole that is not a rectangle, there must be no instructions. Dice masks B and G have one rectangular window that is
-   not centred: the general recipe (PLEC.comprovaLliure) is checked and the eight printed fold lines must be there. No page may raise a JavaScript error. Exit code 1 on failure. */
+   not centred: the general recipe (PLEC.comprovaLliure) is checked and the four printed fold lines must be there. No page may raise a JavaScript error. Exit code 1 on failure. */
 'use strict';
 const {chromium}=require('playwright'),http=require('http'),fs=require('fs'),path=require('path'),ROOT=path.join(__dirname,'../..');
 const cons=(C,R,model,marc,star)=>`wodb/constructor.html#c=NUM.${C}x${R}.${model}.${marc}.${star}.${new Array(C*R).fill('_').join('-')}/plantilla`;
 const PAGINES=[['WODB','wodb/#NUM-A/plantilla',true],['WODB bars','wodb/#NUM-A/plantilla-barres',false],
   ['counting game 3×2','comptar/#CO1-A/plantilla',true],['counting game 3×2 bars','comptar/#CO1-A/plantilla-barres',false],['counting game 2×2','comptar/#CS1-A/plantilla',true],
-  ['Pinta N=10','pinta/#PIN-A/plantilla',true],['Pinta N=10 bars','pinta/#PIN-A/plantilla-barres',false],['Pinta N=8','pinta/#p=8.0010387c7c3810.0.0.1/plantilla',true],
+  ['Pinta','pinta/#PIN-A/plantilla',true],['Pinta bars','pinta/#PIN-A/plantilla-barres',false],['Pinta 5×5 drawings','pinta/#PIN-H/plantilla',true],
   ['builder 5×4 frame 24','/'+cons(5,4,'un',24,1),true],['builder 7×5 frame 15 no star','/'+cons(7,5,'un',15,0),true],['builder 2×2 frame 20','/'+cons(2,2,'un',20,1),true],['builder 6×5 bars','/'+cons(6,5,'barres',24,1),false],
   ['sonar (WODB mask)','sonar/#SO1-A/plantilla',true],['dice mask B (window off centre)','daus/#s=B/fitxes',true],['dice mask G (window off centre)','daus/#s=G/fitxes',true],['dice mask A (three holes)','daus/#s=A/fitxes',false],['dice mask F (L-shaped hole)','daus/#s=F/fitxes',false]];
 const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]);if(p.endsWith('/'))p+='index.html';const f=path.join(ROOT,p);
@@ -36,11 +36,11 @@ const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]
     else if(ok){const P=r.plec;if(!P){ok=false;nota='instructions missing';}else{const [x,y,w,h]=P.caixa,[x0,y0,x1,y1]=P.bb,t=.6,M=r.masks[0];
       const dins=x0>=x-t&&y0>=y-t&&x1<=x+w+t&&y1<=y+h+t,vora=Math.min(x0,y0,210-x1,297-y1);
       const lliure=r.masks.every(m=>x1<=m.caixa[0]||x0>=m.caixa[2]||y1<=m.caixa[1]||y0>=m.caixa[3]);
-      const mateixa=M.forats.length===1&&Math.abs(M.W-P.g[0])<1e-6&&Math.abs(M.H-P.g[1])<1e-6&&Math.abs(M.forats[0][0]-P.g[2])<1e-6&&Math.abs(M.forats[0][1]-P.g[3])<1e-6
-        &&Math.abs(M.forats[0][2]-(P.g.length===6?P.g[4]:(M.W-P.g[2])/2))<1e-6&&Math.abs(M.forats[0][3]-(P.g.length===6?P.g[5]:(M.H-P.g[3])/2))<1e-6   // same sizes and same place (centred unless fx, fy are given)
-        &&(P.g.length!==6||P.marques===8);                                                                                  // an off-centre window needs the printed fold lines
+      const mateixa=M.forats.length===1&&Math.abs(M.W-P.g[0])<.01&&Math.abs(M.H-P.g[1])<.01&&Math.abs(M.forats[0][0]-P.g[2])<.01&&Math.abs(M.forats[0][1]-P.g[3])<.01
+        &&Math.abs(M.forats[0][2]-(P.g.length===6?P.g[4]:(M.W-P.g[2])/2))<.01&&Math.abs(M.forats[0][3]-(P.g.length===6?P.g[5]:(M.H-P.g[3])/2))<.01   // same sizes and same place (centred unless fx, fy are given)
+        &&(P.g.length!==6||P.marques===4);                                                                                  // an off-centre window needs the printed fold lines
       const fora=r.masks.every(m=>Math.min(m.caixa[0],m.caixa[1],210-m.caixa[2],297-m.caixa[3])>=4);
-      ok=dins&&lliure&&mateixa&&fora&&vora>=4&&P.mal===0&&P.textos>=7&&P.xoc===0;
+      ok=dins&&lliure&&mateixa&&fora&&vora>=4&&P.mal===0&&P.textos>=6&&P.xoc===0;
       nota=`mask ${P.g[0]}×${P.g[1]}, window ${P.g[2]}×${P.g[3]}: ${mateixa?'same as drawn':'NOT THE MASK DRAWN'}, misclassified ${P.mal}, ${dins?'inside its box':'OUT OF ITS BOX '+P.bb.map(v=>v.toFixed(1))+' vs '+P.caixa}, ${lliure?'clear of the masks':'OVER A MASK'}, ${P.xoc?P.xoc+' TEXT/DRAWING OVERLAPS, ':''}${Math.min(vora,...r.masks.map(m=>Math.min(m.caixa[0],m.caixa[1],210-m.caixa[2],297-m.caixa[3]))).toFixed(1)} mm to the paper edge`;}}
     if(!ok)bad++;console.log((ok?'OK      ':'FAILED  ')+nom+'  — '+(nota||'page not drawn'));await pg.close();}
   if(errs.length){bad++;console.log('JS errors:',errs);}

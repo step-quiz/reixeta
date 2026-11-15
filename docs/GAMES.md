@@ -6,7 +6,7 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 
 ## DONE — WODB · Quin no hi encaixa? (rounds 5, 6, 8, 9 + redesign of 2026-11-09)
 
-- Mask: 2×2 holes. F1: 5 × 4 cells of 40 mm, so 12 positions per sheet. Every position is a valid WODB: each visible item differs from the other three in at least one listed property. Any other correct argument from students is also accepted ("no hi ha solució única").
+- Mask: 2×2 holes. F1: 5 × 4 cells of 30 mm (round 16), so 12 positions per sheet. Every position is a valid WODB: each visible item differs from the other three in at least one listed property. Any other correct argument from students is also accepted ("no hi ha solució única").
 - 8 topics (round 15, 2026-11-14), each with 4 fixed sheets (A–D): NUM numbers 1–99; FIG polygons (geometric properties only); FRA fractions only; BLO logic blocks in colour; BLB logic blocks in B/W (colour → hatch pattern: ratllat / quadriculat / puntejat; filled/empty → thick/thin contour); every block carries a dimension 1 or 2 instead of big/small; LIN line figures on an invisible 3×3 grid (symmetry axes, holes, half turn, right angle, parallel segments, curves vs segments); ANG angles (types + <45°, >270°; both rays equal); QUA quadrilaterals on a 5×5 dot grid. Removed in round 15: LLE letters, TR5/TR4 triangles, POL polyominoes, COS solids.
 - Two quality rules on top of validity: balance (no reason type in more than 5 of the 12 positions) and neighbours (moving the mask one cell should change the reasons as much as possible). See `CLAUDE.md` §4.2.
 - Teacher page `wodb/` prints F1, the mask (PDF + laser SVG) and answer keys (one page per topic), and generates new sheets ("Full nou", reproducible by number).
@@ -15,7 +15,7 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 
 ## DONE — Counting game (owner's idea, round 1 comment; format round 10) — `comptar/`
 
-- F1 6 × 4 numbers (40 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
+- F1 6 × 4 numbers (30 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
 - Team rules (owner): A vs B, first to answer; +5 if right, −10 if wrong; start at 40; first to 100. Answer key = shuffled game script; printable score track.
 - Simple variant for comparison: levels `CS1`/`CS2` on a 5×4 sheet with the WODB 2×2 mask (12 positions, answers 0–4). The owner has to choose which one stays (or both).
 - Full spec: `CLAUDE.md` §7.

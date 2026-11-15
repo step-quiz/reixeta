@@ -70,23 +70,29 @@ d=D5['blo']; its=[{'k':x['k'],'p':x['p'],'d':x['v']} for x in d['items']]
 pa=props(d['props'])
 for p in pa:   # round 15: every block carries a dimension (1 or 2) instead of the relative words gran / petit
     if p['si']=="És l'únic gran": p['si']="És l'únic de mida 2"; p['no']="És l'únic de mida 1"
-add('BLO','Blocs lògics (color)','blo',pa,its,None,{'bn':False})
+add('BLO','Blocs lògics (color)','blo',pa,its,None,{'bn':False,'caixa':24})   # round 16: 24 mm drawing box in the 30 mm cell (the small block would be 7 mm with the default)
 pb=[dict(p) for p in pa]
 REN={"vermell":"ratllat","blau":"quadriculat","groc":"puntejat"}
 for p in pb:
     for a,b in REN.items(): p['si']=p['si'].replace(a,b); p['no']=p['no'].replace(a,b)
     if p['si']=="És l'únic ple": p['si']="És l'únic amb el contorn gruixut"; p['no']="És l'únic amb el contorn prim"
-add('BLB','Blocs lògics (blanc i negre)','blo',pb,[dict(x) for x in its],None,{'bn':True})
+add('BLB','Blocs lògics (blanc i negre)','blo',pb,[dict(x) for x in its],None,{'bn':True,'caixa':24})
 # LIN (round 15, 2026-11-14): line figures on an invisible 3x3 grid, replacing the letters. Built by linies.py.
 S=load('out_lin'); add('LIN','Línies','lin',props(S['props']),[{'k':x['k'],'p':P(x['p']),'d':[x['off'][0],x['off'][1],x['d']]} for x in S['items']])
 # ANG
 from angles import ang_domain
 A=load('out_ang2'); base,_=ang_domain(); assert len(base)==len(A['items'])
 its=[{'k':x['k'],'p':P(x['p']),'d':[x['th'],x['phi']]} for i,x in enumerate(A['items']) if i%2==0]   # round 15: both rays equal, so the long/short variant (odd items) is gone
-add('ANG','Angles','ang',props(A['props']),its,None,{'caixa':31})   # drawing box of 31 mm (3 mm to the hole edge): angles are drawn at one fixed scale
+add('ANG','Angles','ang',props(A['props']),its,None,{'caixa':23})   # drawing box of 23 mm in the 30 mm cell (2 mm to the hole edge; round 16): angles are drawn at one fixed scale
 # quadrilaterals (TR5 and TR4 were removed in round 15: without the two rejected properties no sheet exists)
 for code,src,nom,g in (('QUA',sys.argv[1] if len(sys.argv)>1 else 'out_qua_g','Quadrilàters',4),):
-    S=load(src); its=[{'k':x['k'],'p':P(x['p']),'d':[g]+[c for pt in x['pts'] for c in pt],'src':x} for x in S['items']]
+    def maxang(pts):   # round 16: quadrilaterals with an angle above 160° are dropped (they look like a badly drawn triangle)
+        m=0
+        for i in range(4):
+            a,b,c=pts[i-1],pts[i],pts[(i+1)%4]; u=(a[0]-b[0],a[1]-b[1]); v=(c[0]-b[0],c[1]-b[1])
+            m=max(m,math.degrees(math.acos((u[0]*v[0]+u[1]*v[1])/math.hypot(*u)/math.hypot(*v))))
+        return m
+    S=load(src); its=[{'k':x['k'],'p':P(x['p']),'d':[g]+[c for pt in x['pts'] for c in pt],'src':x} for x in S['items'] if maxang(x['pts'])<=160]
     add(code,nom,'dots',props(S['props']),its)
 # POL and COS were removed in round 15 (2026-11-14): the owner rejected most of their properties.
 ORDER=['NUM','FIG','FRA','BLO','BLB','LIN','ANG','QUA']

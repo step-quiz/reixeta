@@ -42,7 +42,7 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write(f'''<!DOCTYPE html><html la
 <p>Imprimeix sempre a mida real (100 %, sense «ajusta a la pàgina»).</p>
 <h2>Fulls d'amagatall</h2><p>Un full per a qui amaga; no l'ha de veure qui busca.</p><ul>{li}</ul>
 <h2>Per a qui busca</h2><ul><li><a href="registre.pdf">Full de registre</a> (sis partides, amb les regles)</li></ul>
-<h2>Plantilla</h2><ul><li><a href="plantilla.pdf">Plantilla d'un sol forat</a> (2 per full A4, amb els passos per fer la finestra amb 3 plecs i 1 tall). És la mateixa del WODB.</li></ul>
+<h2>Plantilla</h2><ul><li><a href="plantilla.pdf">Plantilla d'un sol forat</a> (una per full A4, amb els passos per fer la finestra amb 2 plecs i 2 talls). És la mateixa del WODB.</li></ul>
 <h2>Solucionaris</h2><ul><li><a href="solucionaris.pdf">Solucionaris dels dotze fulls</a>: les respostes de cada posició i amb quantes preguntes n'hi ha prou</li></ul>
 </body></html>''')
 print('errors',errs)

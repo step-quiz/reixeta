@@ -7,10 +7,12 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const st={banc:'NUM',R:4,C:5,T:new Array(20).fill(-1),sel:0,pos:-1,model:'un',marc:24,estrella:true,vista:'editor'};
 const LL='ABCDE',BARRA=6,MARGE=1.5;
 const B=()=>BANCS[st.banc];
-/* ---------- mides (mm): la casella és tan gran com permet el paper amb la plantilla a les posicions extremes ---------- */
-function mides(){const m=st.marc,dalt=Math.max(m,19);                       // a dalt calen 19 mm per a les coordenades i el codi
-  const cel=Math.floor(2*Math.min(40,(297-2*m)/st.C,(210-2*dalt)/st.R))/2,k=cel/40;
-  return {cel,k,item:cel*((B().caixa||28)/40),w:st.C*cel,h:st.R*cel,x0:(297-st.C*cel)/2,y0:(210-st.R*cel)/2,S:2*cel+2*m};}
+/* ---------- mides (mm): la casella és tan gran com permet el paper, com a molt la del WODB (29 mm), amb les guies fora del marc
+   de la plantilla als quatre costats (marc + 5 mm) i 5 mm de marge d'impressió (ronda 16) ---------- */
+function mides(){const m=st.marc,vora=m+5+3.5+5,P=PLANTILLA.MIDES;
+  const cel=Math.floor(2*Math.min(P.CEL,(297-2*vora)/st.C,(210-2*vora)/st.R))/2,k=cel/P.CEL;
+  return {cel,k,item:cel*((B().caixa||P.ITEM)/P.CEL),w:st.C*cel,h:st.R*cel,x0:(297-st.C*cel)/2,y0:(210-st.R*cel)/2,S:2*cel+2*m};}
+const midesPl=()=>{const M=mides(),P=PLANTILLA.MIDES;return Object.assign({},P,{CEL:M.cel,MARC:st.marc,FORAT:M.cel-2*P.MARGE,ESTRELLA:Math.min(P.ESTRELLA,st.marc*.2)});};
 /* ---------- posicions ---------- */
 const posicions=()=>{const out=[];for(let r=0;r<st.R-1;r++)for(let c=0;c<st.C-1;c++)out.push([r,c]);return out;};
 const cells=(r,c)=>[r*st.C+c,r*st.C+c+1,(r+1)*st.C+c,(r+1)*st.C+c+1];
@@ -32,29 +34,15 @@ function desa(){history.replaceState(null,'','#c='+estatText()+(st.vista!=='edit
 /* ---------- full 1 ---------- */
 function fullSVG(){const M=mides(),{cel,k,x0,y0,w,h,item}=M,f=Math.max(4.5,7*k);
   let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
-  o+=`<text x="${x0+w}" y="${y0-5-f-3}" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${codi()}</text>`;
-  for(let r=0;r<st.R;r++)o+=`<text x="${x0-8}" y="${y0+r*cel+cel/2+f*.36}" font-size="${f}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${LL[r]}</text>`;
-  for(let c=0;c<st.C;c++)o+=`<text x="${x0+c*cel+cel/2}" y="${y0-5}" font-size="${f}" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
+  o+=`<text x="287" y="14" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${codi()}</text>`;
+  o+=PLANTILLA.guies(x0,y0,st.R,st.C,midesPl(),LL);   // guies als quatre costats, fora del marc de la plantilla
   for(let r=0;r<st.R;r++)for(let c=0;c<st.C;c++){const x=x0+c*cel,y=y0+r*cel,id=st.T[r*st.C+c];
     o+=`<rect x="${x}" y="${y}" width="${cel}" height="${cel}" fill="#fff" stroke="#000" stroke-width=".35"/>`;
     if(id>=0)o+=`<svg x="${x+(cel-item)/2}" y="${y+(cel-item)/2}" width="${item}" height="${item}" viewBox="0 0 100 100">${W.dibuixa(B(),id)}</svg>`;}
   return o+`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/></svg>`;}
-/* ---------- plantilla ---------- */
-function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
-function plantillaCos(ox,oy,laser){const {cel,S}=mides(),m=st.marc,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';let holes='';
-  if(st.model==='barres'){const f=cel-BARRA,b=BARRA/2;for(let i=0;i<2;i++)for(let j=0;j<2;j++)holes+=` M${ox+m+j*cel+b},${oy+m+i*cel+b} h${f} v${f} h${-f} Z`;}
-  else{const f=2*cel-2*MARGE;holes=` M${ox+m+MARGE},${oy+m+MARGE} h${f} v${f} h${-f} Z`;}
-  let o=laser?`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" ${cut}/>`:`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" fill="#d4d4d4" fill-rule="evenodd" ${cut}/>`;
-  const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=Math.min(6,m/2.5);
-  for(const k of [0,1,2]){const t=m+k*cel;o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/><line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
-  if(st.estrella)o+=`<polygon points="${estrella(ox+m/2,oy+m/2,m*.2)}" fill="#000"/>`;return o;}
-/* Amb el model d'un sol forat les plantilles van a l'esquerra i a la dreta hi ha com es fa la finestra plegant el paper (comu/plec.js). */
-function plantillaSVG(){const {cel,S}=mides(),un=st.model!=='barres',n=Math.max(1,Math.floor(297/(S+8))),x=un?10:(210-S)/2,g=(297-n*S)/(n+1),bx=x+S+8,f=2*cel-2*MARGE;
-  let o=`<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">`;
-  for(let i=0;i<n;i++)o+=plantillaCos(x,g+i*(S+g),false);
-  if(un)o+=PLEC.instruccions({x:bx,y:g,w:202-bx,h:297-2*g,g:{W:S,H:S,Wh:f,Hh:f,estrella:st.estrella?{x:st.marc/2,y:st.marc/2,r:st.marc*.2}:null,cols:2,files:2}});
-  return o+'</svg>';}
-function plantillaLaser(){const S=mides().S;return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true)}</svg>`;}
+/* ---------- plantilla: la mateixa de comu/plantilla.js amb la casella i el marc d'aquest full; una per full A4 ---------- */
+const plantillaSVG=()=>PLANTILLA.pagina(2,2,{model:st.model,estrella:st.estrella,m:midesPl()});
+const plantillaLaser=()=>'<?xml version="1.0" encoding="UTF-8"?>\n'+PLANTILLA.laser(2,2,{model:st.model,estrella:st.estrella,m:midesPl()});
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];
 function soluHTML(){const P=posicions(),fs=P.length<=12?3.4:P.length<=18?2.9:2.5;

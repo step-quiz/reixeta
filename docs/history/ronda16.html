@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reixeta · Revisió ronda 16</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Source+Sans+3:wght@400;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+/* Layout: capçalera amb comptador i filtres, i després una columna de targetes agrupades per tema (codi del banc a l'esquerra). */
+:root{
+  --paper:#f6f7f9; --card:#ffffff; --ink:#1b2430; --muted:#5d6878; --line:#d9dee6;
+  --accent:#1f5fbf; --accent-soft:#e3ecfa;
+  --ok:#1e7d4f; --no:#b42318; --later:#9a6700; --talk:#6941c6;
+  --display:"Bricolage Grotesque",system-ui,sans-serif; --body:"Source Sans 3",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --paper:#12161c; --card:#1b212a; --ink:#e6eaf0; --muted:#9aa5b4; --line:#2e3744; --accent:#7fb0ff; --accent-soft:#1f2d45;
+  --ok:#4cc38a; --no:#ff7a6e; --later:#e3b341; --talk:#b39dfa; color-scheme:dark;}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 var(--body)}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 80px;display:flex;flex-direction:column;gap:20px}
+h1{font:800 30px/1.15 var(--display);margin:0;text-wrap:balance}
+h2{font:600 21px/1.2 var(--display);margin:0;display:flex;gap:10px;align-items:baseline}
+h2 .code{font:500 14px var(--mono);background:var(--ink);color:var(--paper);padding:2px 8px;border-radius:4px}
+.lead{color:var(--muted);max-width:68ch;margin:6px 0 0}
+.bar{position:sticky;top:0;z-index:5;background:var(--paper);padding:10px 0;border-bottom:1px solid var(--line);display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.count{font:600 15px var(--body);font-variant-numeric:tabular-nums}
+.prog{flex:1;min-width:120px;height:8px;background:var(--line);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--accent);width:0;transition:width .2s}
+.filt button,.dec button{font:600 14px var(--body);border:1px solid var(--line);background:var(--card);color:var(--ink);padding:6px 12px;border-radius:6px;cursor:pointer}
+.filt button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--paper)}
+button:focus-visible,textarea:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.status{font-size:13px;color:var(--muted)}
+.warn{border:1px solid var(--later);background:color-mix(in srgb,var(--later) 12%,var(--card));padding:10px 14px;border-radius:8px;display:none}
+section.cat{display:flex;flex-direction:column;gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-left:5px solid var(--line);border-radius:8px;padding:16px 18px;display:flex;flex-direction:column;gap:10px}
+.card[data-d="si"]{border-left-color:var(--ok)}.card[data-d="no"]{border-left-color:var(--no)}
+.card[data-d="mes"]{border-left-color:var(--later)}.card[data-d="parlem"]{border-left-color:var(--talk)}
+.card h3{margin:0;font:700 17px/1.3 var(--body);display:flex;gap:10px;align-items:baseline}
+.card h3 .id{font:500 13px var(--mono);color:var(--accent);background:var(--accent-soft);padding:1px 7px;border-radius:4px}
+.row{display:grid;grid-template-columns:110px 1fr;gap:4px 14px}
+.row b{color:var(--muted);font-weight:600;font-size:14px}
+.row p{margin:0;max-width:72ch}
+.q{background:var(--accent-soft);border-radius:6px;padding:8px 12px;font-weight:600}
+table{border-collapse:collapse;font-size:14px;font-variant-numeric:tabular-nums}
+td,th{border-bottom:1px solid var(--line);padding:4px 10px;text-align:left}
+th{color:var(--muted);font-weight:600}
+.tw{overflow-x:auto}
+.dec{display:flex;gap:8px;flex-wrap:wrap}
+.dec button[data-v="si"][aria-pressed="true"]{background:var(--ok);border-color:var(--ok);color:#fff}
+.dec button[data-v="no"][aria-pressed="true"]{background:var(--no);border-color:var(--no);color:#fff}
+.dec button[data-v="mes"][aria-pressed="true"]{background:var(--later);border-color:var(--later);color:#fff}
+.dec button[data-v="parlem"][aria-pressed="true"]{background:var(--talk);border-color:var(--talk);color:#fff}
+textarea{width:100%;min-height:54px;font:15px var(--body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:8px}
+.reply{border-top:1px dashed var(--line);padding-top:8px;font-size:15px}
+.reply b{color:var(--accent)}
+.gal{display:flex;flex-wrap:wrap;gap:10px}
+.fig{width:112px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:12px;color:var(--muted);text-align:center}
+.fig svg{width:96px;height:96px;background:#fff;border:1px solid #999;border-radius:2px}
+.fig svg *{vector-effect:non-scaling-stroke}
+.chips{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}
+.chips span{font:500 10px var(--mono);border:1px solid var(--line);border-radius:3px;padding:0 3px;color:var(--ink)}
+.win{display:grid;grid-template-columns:repeat(2,96px);gap:4px;padding:6px;border:3px solid var(--ink);width:max-content;background:#fff}
+.win svg{width:96px;height:96px}
+.legend{font-size:13px;color:var(--muted)}
+.hidden{display:none}
+@media (max-width:560px){.row{grid-template-columns:1fr}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+.conf{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:start}
+.conf .ctl{display:flex;flex-direction:column;gap:10px;font-size:14px}
+.conf label{display:flex;flex-direction:column;gap:2px;font-weight:600}
+.conf output{font:500 13px var(--mono);color:var(--accent)}
+.conf select,.conf input[type=range]{width:100%}
+.stage{background:#e9ecef;border-radius:6px;padding:10px;overflow-x:auto}
+.stage svg{display:block;width:100%;height:auto;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2)}
+.stats{font:13px/1.5 var(--body);font-variant-numeric:tabular-nums}
+.stats .bad{color:var(--no);font-weight:700}.stats .good{color:var(--ok);font-weight:700}
+.mock{display:flex;gap:14px;flex-wrap:wrap;align-items:flex-start}
+.mock svg{background:#fff;border:1px solid var(--line);border-radius:4px}
+@media (max-width:700px){.conf{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>Revisió del disseny imprès · ronda 16</h1>
+  <p class="lead">Els 7 errors que has trobat imprimint, retallant i jugant, convertits en punts per decidir. D1 i D7 tenen un configurador: mou els controls, mira el resultat i, si t'agrada, prem «Sí, fes-ho»; els valors es desen amb la resposta.</p>
+</header>
+<div class="warn" id="warn"></div>
+<div class="bar">
+  <span class="count" id="count">0 contestats</span>
+  <span class="prog"><i id="progi"></i></span>
+  <span class="filt"><button id="f-tots" aria-pressed="true">Tots</button> <button id="f-sense" aria-pressed="false">Sense resposta</button></span>
+  <span class="status" id="status">Connectant…</span>
+</div>
+<main id="main"></main>
+</div>
+<script>
+'use strict';
+/* ---------- dibuixos ---------- */
+const NS='http://www.w3.org/2000/svg';
+const f1=v=>Math.round(v*10)/10;
+function estrella(cx,cy,r){let p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.42:r;p.push(f1(cx+rr*Math.cos(a))+','+f1(cy+rr*Math.sin(a)));}return p.join(' ');}
+/* fletxa de (x1,y1) a (x2,y2): la punta toca (x2,y2) */
+function fletxa(x1,y1,x2,y2,w){const a=Math.atan2(y2-y1,x2-x1),L=Math.max(2.2,w*3.2),b=x2-L*Math.cos(a),c=y2-L*Math.sin(a),n=L*.5;
+  return `<line x1="${f1(x1)}" y1="${f1(y1)}" x2="${f1(b)}" y2="${f1(c)}" stroke="#000" stroke-width="${w}"/><path d="M${f1(x2)} ${f1(y2)}L${f1(b+n*Math.sin(a))} ${f1(c-n*Math.cos(a))}L${f1(b-n*Math.sin(a))} ${f1(c+n*Math.cos(a))}Z" fill="#000"/>`;}
+/* plantilla amb una finestra: W×H, marc M, finestra (fx,fy,fw,fh); opcions: estrella+fletxa, marques de plec discontínues, marques guia */
+function plantilla(ox,oy,W,H,M,cel,nc,nr,opt){const mg=1.5,fx=ox+M+mg,fy=oy+M+mg,fw=nc*cel-2*mg,fh=nr*cel-2*mg;let o='';
+  o+=`<path d="M${ox} ${oy}h${W}v${H}h${-W}Z M${fx} ${fy}h${fw}v${fh}h${-fw}Z" fill="#d4d4d4" fill-rule="evenodd" stroke="#000" stroke-width=".3" ${opt.op?'fill-opacity="'+opt.op+'"':''}/>`;
+  const L=5;
+  for(let k=0;k<=nc;k++){const x=ox+M+k*cel;o+=`<line x1="${x}" y1="${oy}" x2="${x}" y2="${oy+L}" stroke="#000" stroke-width=".5"/><line x1="${x}" y1="${oy+H-L}" x2="${x}" y2="${oy+H}" stroke="#000" stroke-width=".5"/>`;}
+  for(let k=0;k<=nr;k++){const y=oy+M+k*cel;o+=`<line x1="${ox}" y1="${y}" x2="${ox+L}" y2="${y}" stroke="#000" stroke-width=".5"/><line x1="${ox+W-L}" y1="${y}" x2="${ox+W}" y2="${y}" stroke="#000" stroke-width=".5"/>`;}
+  if(opt.plecs){const d='stroke="#000" stroke-width=".4" stroke-dasharray="1.6 1.2"';
+    o+=`<line x1="${ox+W/2}" y1="${oy}" x2="${ox+W/2}" y2="${fy}" ${d}/><line x1="${ox+W/2}" y1="${fy+fh}" x2="${ox+W/2}" y2="${oy+H}" ${d}/>`;
+    o+=`<line x1="${ox}" y1="${oy+H/2}" x2="${fx}" y2="${oy+H/2}" ${d}/><line x1="${fx+fw}" y1="${oy+H/2}" x2="${ox+W}" y2="${oy+H/2}" ${d}/>`;}
+  if(opt.estrella!==false){const sx=ox+M*.42,sy=oy+M*.42,r=Math.min(4.6,M*.22);o+=`<polygon points="${estrella(sx,sy,r)}" fill="#000"/>`;
+    if(opt.fletxa)o+=fletxa(sx+r*.75,sy+r*.75,fx-.2,fy-.2,.45);}
+  return o;}
+/* ---------- D1: configurador del full de joc ---------- */
+const JOCS={wodb:{nom:'WODB i sonar: 5 × 4, plantilla 2 × 2',C:5,R:4,nc:2,nr:2},
+  ch:{nom:'Comptar: 6 × 4, plantilla 3 × 2 apaïsada',C:6,R:4,nc:3,nr:2},
+  cv:{nom:'Comptar: 6 × 4, plantilla 3 × 2 dreta',C:6,R:4,nc:2,nr:3}};
+const NUMS=[31,29,23,41,57,12,84,9,66,73,45,18,90,37,52,61,28,77,14,95,33,48,70,26];
+const conf={cel:32,marc:20,joc:'wodb',pr:0,pc:0,traç:1.3,punt:3.2};
+function d1svg(){const J=JOCS[conf.joc],CEL=conf.cel,M=conf.marc,{C,R}=J,w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2,dl=M+5,it=Math.round(CEL*.7);
+  let o=`<svg viewBox="0 0 297 210" xmlns="${NS}" role="img" aria-label="Full A4 apaïsat amb el taulell i la plantilla">`;
+  o+=`<rect x="5" y="5" width="287" height="200" fill="none" stroke="#c33" stroke-width=".3" stroke-dasharray="2 2"/>`;
+  for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=x0+c*CEL,y=y0+r*CEL;o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".35"/>`;
+    o+=`<text x="${x+CEL/2}" y="${y+CEL/2+it*.2}" font-size="${f1(it*.55)}" font-weight="700" text-anchor="middle" font-family="Arial">${NUMS[(r*C+c)%NUMS.length]}</text>`;}
+  o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/>`;
+  const T=(x,y,t)=>`<text x="${f1(x)}" y="${f1(y+2.4)}" font-size="7" text-anchor="middle" font-family="Arial">${t}</text>`;
+  for(let r=0;r<R;r++){const y=y0+r*CEL+CEL/2;o+=T(x0-dl,y,'ABCDEFGH'[r])+T(x0+w+dl,y,'ABCDEFGH'[r]);}
+  for(let c=0;c<C;c++){const x=x0+c*CEL+CEL/2;o+=T(x,y0-dl,c+1)+T(x,y0+h+dl,c+1);}
+  const pr=Math.min(conf.pr,R-J.nr),pc=Math.min(conf.pc,C-J.nc),W=J.nc*CEL+2*M,H=J.nr*CEL+2*M;
+  o+=plantilla(x0+pc*CEL-M,y0+pr*CEL-M,W,H,M,CEL,J.nc,J.nr,{op:.82,fletxa:true});
+  return o+'</svg>';}
+function d1stats(){const J=JOCS[conf.joc],CEL=conf.cel,M=conf.marc,dl=M+5,{C,R}=J;
+  const lliureV=(210-R*CEL)/2-5,lliureH=(297-C*CEL)/2-5,cal=dl+3.5,okV=lliureV>=cal,okH=lliureH>=cal;
+  const S2=2*CEL+2*M,S3=[3*CEL+2*M,2*CEL+2*M];
+  return `<div>Casella: <b>${CEL} mm</b> (ara 40) · dibuix: <b>${Math.round(CEL*.7)} mm</b> (ara 28) · forat: <b>${CEL-3} mm</b></div>
+  <div>Marc de la plantilla: <b>${M} mm</b> (ara 24) · guies a <b>${dl} mm</b> de la graella (fora del marc)</div>
+  <div>Plantilla 2 × 2: <b>${S2} × ${S2} mm</b> (ara 128) · plantilla 3 × 2: <b>${S3[0]} × ${S3[1]} mm</b> (ara 168 × 128)</div>
+  <div>Hi cap dins el marge d'impressió de 5 mm? Vertical: <span class="${okV?'good':'bad'}">${okV?'sí':'no'}</span> (${f1(lliureV)} mm lliures, en calen ${f1(cal)}) · horitzontal: <span class="${okH?'good':'bad'}">${okH?'sí':'no'}</span> (${f1(lliureH)} mm)</div>`;}
+function d1html(){return `<div class="conf"><div class="stage" id="d1stage">${d1svg()}</div><div class="ctl">
+  <label for="d1joc">Joc<select id="d1joc">${Object.entries(JOCS).map(([k,j])=>`<option value="${k}">${j.nom}</option>`).join('')}</select></label>
+  <label for="d1cel">Casella <output id="d1celo">${conf.cel} mm</output><input type="range" id="d1cel" min="26" max="40" step="1" value="${conf.cel}"></label>
+  <label for="d1marc">Marc de la plantilla <output id="d1marco">${conf.marc} mm</output><input type="range" id="d1marc" min="14" max="24" step="1" value="${conf.marc}"></label>
+  <label for="d1pos">Posició de la plantilla<select id="d1pos"></select></label>
+  <div class="stats" id="d1stats">${d1stats()}</div>
+  <p class="legend">La línia vermella discontínua és el marge de 5 mm que la majoria d'impressores no imprimeixen.</p></div></div>`;}
+function d1pos(){const J=JOCS[conf.joc],s=document.getElementById('d1pos');let o='';
+  for(let r=0;r<=J.R-J.nr;r++)for(let c=0;c<=J.C-J.nc;c++)o+=`<option value="${r},${c}">${'ABCDEFGH'[r]}${c+1}</option>`;
+  s.innerHTML=o;conf.pr=Math.min(conf.pr,J.R-J.nr);conf.pc=Math.min(conf.pc,J.C-J.nc);s.value=conf.pr+','+conf.pc;}
+function d1draw(){document.getElementById('d1stage').innerHTML=d1svg();document.getElementById('d1stats').innerHTML=d1stats();
+  document.getElementById('d1celo').textContent=conf.cel+' mm';document.getElementById('d1marco').textContent=conf.marc+' mm';}
+/* ---------- D7: configurador dels quadrilàters ---------- */
+const QEX=[[4,0,0,1,3,1,4,2,2],[4,1,0,1,2,4,4,2,1],[4,0,0,2,3,3,4,4,1],[4,0,1,1,2,4,4,3,0]];
+function quaSvg(d,tr,pt,px){const g=d[0],X=v=>f1(12+v*76/g);let o='';for(let i=0;i<=g;i++)for(let j=0;j<=g;j++)o+=`<circle cx="${X(i)}" cy="${X(j)}" r="${pt?1.6:1.9}" fill="${pt?'#999':'#777'}"/>`;
+  const P=[];for(let i=1;i<d.length;i+=2)P.push([X(d[i]),X(g-d[i+1])]);
+  o+=`<polygon points="${P.map(p=>p.join(',')).join(' ')}" fill="#d9d9d9" fill-opacity=".85" stroke="#000" stroke-width="${tr}" stroke-linejoin="round"/>`;
+  if(pt)o+=P.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="${pt}" fill="#000"/>`).join('');
+  return `<svg viewBox="0 0 100 100" width="${px}" height="${px}" xmlns="${NS}">${o}</svg>`;}
+function d7svgs(){const it=Math.round(conf.cel*.7);
+  return `<div class="mock">${QEX.map(d=>`<div class="fig" style="width:auto">${quaSvg(d,2.6,0,120)}<span>ara</span></div><div class="fig" style="width:auto">${quaSvg(d,conf.traç,conf.punt,120)}<span>proposta</span></div>`).join('<span style="width:10px"></span>')}</div>
+  <p class="legend">Mida real a la casella (${it} mm amb la casella de D1), si la pantalla està ben calibrada:</p>
+  <div class="mock">${QEX.map(d=>`<span style="display:inline-block;width:${it}mm;height:${it}mm">${quaSvg(d,conf.traç,conf.punt,'100%').replace('width="100%" height="100%"','style="width:100%;height:100%"')}</span>`).join('')}</div>`;}
+function d7html(){return `<div class="conf"><div id="d7stage">${d7svgs()}</div><div class="ctl">
+  <label for="d7tr">Gruix del traç <output id="d7tro">${conf.traç}</output><input type="range" id="d7tr" min="0.6" max="2.6" step="0.1" value="${conf.traç}"></label>
+  <label for="d7pt">Radi del punt als vèrtexs <output id="d7pto">${conf.punt}</output><input type="range" id="d7pt" min="1.6" max="4.5" step="0.1" value="${conf.punt}"></label>
+  <p class="legend">Unitats del dibuix: la casella del dibuix fa 100. Ara: traç 2,6 i cap punt als vèrtexs; els punts de la trama passen a gris més clar perquè els vèrtexs (negres) destaquin.</p></div></div>`;}
+function d7draw(){document.getElementById('d7stage').innerHTML=d7svgs();document.getElementById('d7tro').textContent=conf.traç;document.getElementById('d7pto').textContent=conf.punt;}
+/* ---------- maquetes de les plantilles ---------- */
+function mockFull2x2(){const CEL=32,M=20,S=2*CEL+2*M,x=(210-S)/2,y=18;
+  let o=`<svg viewBox="0 0 210 297" width="250" xmlns="${NS}" role="img" aria-label="Full A4 amb una sola plantilla de 2 per 2"><rect width="210" height="297" fill="#fff"/>`;
+  o+=plantilla(x,y,S,S,M,CEL,2,2,{fletxa:true,plecs:true});
+  o+=`<text x="105" y="${y+S+16}" font-size="7" font-weight="700" text-anchor="middle" font-family="Arial">La finestra, amb 3 plecs i 1 tall</text>`;
+  for(let i=0;i<5;i++){const bx=14+(i%3)*64,by=y+S+26+Math.floor(i/3)*62;o+=`<rect x="${bx}" y="${by}" width="54" height="50" fill="#f1f3f5" stroke="#bbb" stroke-width=".4"/><text x="${bx+27}" y="${by+28}" font-size="6" text-anchor="middle" font-family="Arial">pas ${i+1}</text>`;}
+  return o+'</svg>';}
+function mockZoom(){const CEL=32,M=20,S=2*CEL+2*M;return `<svg viewBox="-3 -3 50 50" width="250" xmlns="${NS}" role="img" aria-label="Detall de l'estrella i la fletxa">${plantilla(0,0,S,S,M,CEL,2,2,{fletxa:true,plecs:true})}</svg>`;}
+function mock3x2(){const CEL=32,M=20,W=2*CEL+2*M,H=3*CEL+2*M;return `<svg viewBox="-4 -4 ${W+8} ${H+8}" width="230" xmlns="${NS}" role="img" aria-label="Plantilla de 3 per 2 amb estrella, fletxa i marques de plec">${plantilla(0,0,W,H,M,CEL,2,3,{fletxa:true,plecs:true})}</svg>`;}
+/* ---------- punts ---------- */
+const CATS=[
+ {code:'FULL',nom:'El full de joc',pts:[
+  {id:'D1',t:'Taulell més petit i guies fora del marc de la plantilla, als quatre costats',
+   passa:'Les lletres i els números de les guies són a 8 mm de la graella, i el marc de la plantilla en fa 24: quan la plantilla és a la vora, les tapa (la teva imatge 1).',
+   proposta:'Caselles més petites i guies a una distància més gran que el marc (marc + 5 mm), repetides a l\'esquerra i a la dreta, a dalt i a baix. Amb la casella de 40 mm no hi caben (cal deixar el marge de 5 mm de la impressora), per això la casella baixa. Proposta: casella de 32 mm i marc de 20 mm. El dibuix de cada casella passa de 28 a 22 mm i la plantilla 2 × 2 de 128 a 104 mm. Prova altres valors amb els controls i canvia la posició de la plantilla per veure que les guies sempre es veuen.',
+   extra:()=>d1html(),
+   q:'Ho faig amb els valors que tens triats als controls?'},
+  {id:'D2',t:'A quins jocs s\'aplica',
+   passa:'El WODB, el joc de comptar i el sonar fan servir la mateixa casella de 40 mm i el mateix marc de 24 mm, i tots tres tenen guies que la plantilla tapa. Pinta per sumes té un full de 10 × 10 caselles de 18 mm i una plantilla amb un marc de 14 mm.',
+   proposta:'Aplicar D1 als tres jocs que comparteixen plantilla (WODB, comptar i sonar), perquè la plantilla del WODB continuï servint per als fulls CS del joc de comptar i per al sonar. A Pinta per sumes, mirar el mateix problema a part i fer-hi el mateix canvi de guies si les tapa.',
+   q:'WODB, comptar i sonar junts, i Pinta revisada a part?'}]},
+ {code:'PLA',nom:'Les plantilles',pts:[
+  {id:'D3',t:'Una sola plantilla per full, amb les instruccions més grans',
+   passa:'Ara cada full porta dues plantilles i les instruccions de plegar queden petites.',
+   proposta:'Una plantilla per full A4 vertical, a dalt, i a sota les instruccions dels 3 plecs i 1 tall en gran (dues files de dibuixos). Per a totes les plantilles plegables: WODB (un forat i barres), comptar (2 × 2 i 3 × 2), sonar i Pinta. Si vols dues plantilles, n\'imprimeixes dos fulls.',
+   extra:()=>`<div class="mock">${mockFull2x2()}</div>`,
+   q:'Una plantilla per full a totes?'},
+  {id:'D4',t:'Fletxa de l\'estrella al vèrtex més proper de la finestra',
+   passa:'L\'estrella diu com es posa la plantilla, però no queda clar a quina cantonada de la finestra (i, per tant, a quina casella) es refereix.',
+   proposta:'Una fletxa fina que surt de l\'estrella i acaba just a la cantonada de la finestra més propera. A les plantilles de barres (quatre forats), la fletxa va a la cantonada del forat més proper. Vols el mateix a la reixeta de Cardano i a les fitxes dels daus?',
+   extra:()=>`<div class="mock">${mockZoom()}</div>`,
+   q:'Hi poso la fletxa a totes les plantilles que es mouen sobre un full (WODB, comptar, sonar, Pinta)? Per a Cardano i daus, digues-ho al comentari.'},
+  {id:'D5',t:'Estrella i fletxa a la plantilla de 3 × 2',
+   passa:'La plantilla de 3 × 2 del joc de comptar no té estrella.',
+   proposta:'La mateixa estrella amb fletxa que a la 2 × 2, a la cantonada de dalt a l\'esquerra de la plantilla dreta (2 columnes, 3 files). Quan es fa servir apaïsada, l\'estrella queda a dalt a la dreta o a baix a l\'esquerra, i les instruccions del full ho diran.',
+   extra:()=>`<div class="mock">${mock3x2()}</div>`,
+   q:'Estrella i fletxa a la cantonada de dalt a l\'esquerra?'},
+  {id:'D6',t:'Marca de plec discontínua a la meitat del costat llarg',
+   passa:'A la 3 × 2, les marques guia són a les línies de la graella (a 1/3 i 2/3 del costat llarg) i no n\'hi ha cap a la meitat, que és per on es plega.',
+   proposta:'Una línia discontínua curta a la meitat de cada costat llarg, travessant el marc fins a la finestra (es veu a la maqueta de D5). Per coherència, també la poso a la meitat dels costats curts i a les plantilles 2 × 2 (on coincideix amb la marca guia del mig, que passaria a ser discontínua i llarga).',
+   q:'Marques de plec discontínues a les meitats, a totes les plantilles plegables?'}]},
+ {code:'QUA',nom:'Els quadrilàters',pts:[
+  {id:'D7',t:'Traç més prim i un punt a cada vèrtex',
+   passa:'Amb el traç gruixut, un angle de més de 160° no es veu i el quadrilàter sembla un triangle mal dibuixat (la teva imatge 4).',
+   proposta:'Traç més prim i un punt negre a cada vèrtex; els punts de la trama, gris clar. Ajusta el gruix i el punt amb els controls (a dalt, ara i proposta; a baix, a mida real).',
+   extra:()=>d7html(),
+   q:'Ho faig amb els valors triats als controls?'},
+  {id:'D8',t:'Treure els quadrilàters amb un angle gairebé pla',
+   passa:'122 dels 450 quadrilàters tenen un angle de més de 150°, i 60 en tenen un de més de 160° (el màxim és 168,7°). Encara que es vegin els vèrtexs, costen de llegir.',
+   proposta:'Treure els que tenen un angle de més de 160°: queden 390 i el cercador encara troba fulls bons (4 de 8 cerques; ara 7 de 8). Amb el límit de 150° en quedarien 328 i costa més (2 de 8), però també es pot fer.',
+   q:'Trec els de més de 160°? (Si prefereixes 150°, digues-ho al comentari.)'}]},
+ {code:'GEN',nom:'General',pts:[
+  {id:'G1',t:'Un PDF de prova abans del ZIP',
+   passa:'Els canvis de mida només es poden validar en paper.',
+   proposta:'Quan ho tingui fet, primer et passo un sol PDF de prova (un full de cada joc, les plantilles i un full de QUA) per imprimir, retallar i jugar. Si va bé, faig el ZIP.',
+   q:'Primer el PDF de prova?'}]}];
+/* ---------- connexió dels configuradors ---------- */
+function desaValors(id,v){const cur=state[id]||{};save(id,Object.assign({},cur,{valors:v}));}
+let tv=null;function programa(id,v){clearTimeout(tv);tv=setTimeout(()=>desaValors(id,v),600);}
+function initConf(){const g=id=>document.getElementById(id);
+  d1pos();g('d1joc').value=conf.joc;
+  g('d1joc').onchange=e=>{conf.joc=e.target.value;d1pos();d1draw();};
+  g('d1pos').onchange=e=>{const [r,c]=e.target.value.split(',').map(Number);conf.pr=r;conf.pc=c;d1draw();};
+  g('d1cel').oninput=e=>{conf.cel=+e.target.value;d1draw();d7draw();programa('D1',{casella:conf.cel,marc:conf.marc});};
+  g('d1marc').oninput=e=>{conf.marc=+e.target.value;d1draw();programa('D1',{casella:conf.cel,marc:conf.marc});};
+  g('d7tr').oninput=e=>{conf.traç=+e.target.value;d7draw();programa('D7',{traç:conf.traç,punt:conf.punt});};
+  g('d7pt').oninput=e=>{conf.punt=+e.target.value;d7draw();programa('D7',{traç:conf.traç,punt:conf.punt});};}
+let aplicat=false;
+function aplicaValors(){if(aplicat)return;aplicat=true;const g=id=>document.getElementById(id),v1=(state.D1||{}).valors,v7=(state.D7||{}).valors;
+  if(v1){conf.cel=v1.casella||conf.cel;conf.marc=v1.marc||conf.marc;g('d1cel').value=conf.cel;g('d1marc').value=conf.marc;}
+  if(v7){conf.traç=v7.traç||conf.traç;conf.punt=v7.punt||conf.punt;g('d7tr').value=conf.traç;g('d7pt').value=conf.punt;}
+  d1draw();d7draw();}
+const ALL=CATS.flatMap(c=>c.pts),TOTAL=ALL.length;
+const DEC=[['si','Sí, fes-ho'],['no','No'],['mes','Més endavant'],['parlem','En parlem']];
+const state={},replies={};let filtre='tots',db=null,local=false;
+/* ---------- render ---------- */
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){const M=document.getElementById('main');
+  M.innerHTML=CATS.map(c=>`<section class="cat" data-cat="${c.code}"><h2><span class="code">${c.code}</span>${c.nom}</h2>${c.pts.map(p=>`
+   <article class="card" id="c-${p.id}">
+    <h3><span class="id">${p.id}</span>${p.t}</h3>
+    <div class="row"><b>Què passa</b><p>${p.passa}</p><b>Proposta</b><p>${p.proposta}</p></div>
+    ${p.extra?(typeof p.extra==='function'?p.extra():p.extra):''}
+    <div class="q">${p.q}</div>
+    <div class="dec" role="group" aria-label="Decisió ${p.id}">${DEC.map(([v,l])=>`<button type="button" data-id="${p.id}" data-v="${v}" aria-pressed="false">${l}</button>`).join('')}</div>
+    <label class="legend" for="t-${p.id}">Comentari</label><textarea id="t-${p.id}" data-id="${p.id}" placeholder="Opcional"></textarea>
+    <div class="reply hidden" id="r-${p.id}"></div>
+   </article>`).join('')}</section>`).join('');
+  M.addEventListener('click',e=>{const b=e.target.closest('.dec button');if(!b)return;const id=b.dataset.id,v=b.dataset.v;
+    const cur=state[id]||{};save(id,Object.assign({},cur,{decisio:cur.decisio===v?'':v}));});
+  const timers={};M.addEventListener('input',e=>{const t=e.target;if(t.tagName!=='TEXTAREA')return;const id=t.dataset.id;clearTimeout(timers[id]);
+    timers[id]=setTimeout(()=>{const cur=state[id]||{};save(id,Object.assign({},cur,{comentari:t.value}));},700);});}
+function paint(){let n=0;for(const p of ALL){const s=state[p.id]||{},card=document.getElementById('c-'+p.id);
+    card.dataset.d=s.decisio||'';if(s.decisio)n++;
+    card.querySelectorAll('.dec button').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.v===s.decisio)));
+    const ta=document.getElementById('t-'+p.id);if(document.activeElement!==ta&&ta.value!==(s.comentari||''))ta.value=s.comentari||'';
+    const r=replies[p.id],rd=document.getElementById('r-'+p.id);
+    if(r&&r.text){rd.classList.remove('hidden');rd.innerHTML='<b>Claude:</b> '+esc(r.text);}else rd.classList.add('hidden');
+    card.classList.toggle('hidden',filtre==='sense'&&!!s.decisio);}
+  document.querySelectorAll('section.cat').forEach(sec=>sec.classList.toggle('hidden',![...sec.querySelectorAll('.card')].some(c=>!c.classList.contains('hidden'))));
+  document.getElementById('count').textContent=`${n} de ${TOTAL} contestats`;document.getElementById('progi').style.width=(100*n/TOTAL)+'%';}
+function setStatus(t){document.getElementById('status').textContent=t;}
+/* ---------- desat ---------- */
+async function save(id,val){state[id]=val;paint();
+  if(local){try{localStorage.setItem('reixeta16',JSON.stringify(state));}catch(e){}setStatus('Desat només en aquest navegador');return;}
+  setStatus('Desant…');
+  try{await db.doc('respostes/'+id).set(Object.assign({},val,{t:Date.now()}));setStatus('Desat');}
+  catch(e){setStatus('No s\'ha pogut desar: torna-ho a provar');}}
+function fallback(msg){local=true;try{Object.assign(state,JSON.parse(localStorage.getItem('reixeta16')||'{}'));}catch(e){}
+  const w=document.getElementById('warn');w.style.display='block';
+  w.innerHTML=msg+' Les respostes es desen només en aquest navegador i Claude no les pot llegir. Quan acabis, prem <button type="button" id="cp">Copia les respostes</button> i enganxa-les al xat.';
+  document.getElementById('cp').onclick=async()=>{const txt=ALL.map(p=>{const s=state[p.id]||{};return `${p.id}: ${s.decisio||'-'}${s.comentari?' — '+s.comentari:''}${s.valors?' '+JSON.stringify(s.valors):''}`;}).join('\n');
+    try{await navigator.clipboard.writeText(txt);setStatus('Copiat');}catch(e){setStatus('No s\'ha pogut copiar');}};
+  setStatus('Mode local');paint();aplicaValors();}
+document.getElementById('f-tots').onclick=()=>{filtre='tots';document.getElementById('f-tots').setAttribute('aria-pressed','true');document.getElementById('f-sense').setAttribute('aria-pressed','false');paint();};
+document.getElementById('f-sense').onclick=()=>{filtre='sense';document.getElementById('f-sense').setAttribute('aria-pressed','true');document.getElementById('f-tots').setAttribute('aria-pressed','false');paint();};
+render();initConf();paint();
+(async()=>{let to=setTimeout(()=>{if(!db)fallback('No s\'ha pogut connectar amb el desat compartit.');},10000);
+  try{const c=window.claude&&window.claude.use?await window.claude.use('db'):null;
+    if(!c){clearTimeout(to);fallback('Aquesta vista no pot desar al núvol.');return;}
+    db=c;let got=0;const done=()=>{if(++got===1){clearTimeout(to);setStatus('Connectat: les respostes es desen soles');}};
+    db.collection('respostes').onSnapshot(snap=>{snap.docs.forEach(d=>{const v=d.data();if(v)state[d.id]={decisio:v.decisio||'',comentari:v.comentari||'',valors:v.valors||null};});done();paint();aplicaValors();},()=>{clearTimeout(to);fallback('Error en llegir les respostes.');});
+    db.collection('replica').onSnapshot(snap=>{snap.docs.forEach(d=>{replies[d.id]=d.data();});paint();},()=>{});
+  }catch(e){clearTimeout(to);fallback('No s\'ha pogut connectar amb el desat compartit.');}})();
+</script>
+</body>
+</html>

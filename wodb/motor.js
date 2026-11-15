@@ -161,8 +161,11 @@ function dibuixa(B,id){const it=B.items[id],d=it.d;
     const T=p=>f1(50+p[0]-cx)+','+f1(50-(p[1]-cy)),O=T([0,0]),arc=ap.map(T).join(' ');
     return `<polygon points="${O} ${arc}" fill="#d0d0d0" stroke="none"/><polyline points="${arc}" fill="none" stroke="#000" stroke-width="1.5" stroke-linejoin="miter"/>`+
       `<polyline points="${T(P1)} ${O} ${T(P2)}" fill="none" stroke="#000" stroke-width="2.7" stroke-linecap="round" stroke-linejoin="round"/>`;}
-  case 'dots':{const g=d[0],X=v=>f1(12+v*76/g);let o='';for(let i=0;i<=g;i++)for(let j=0;j<=g;j++)o+=`<circle cx="${X(i)}" cy="${X(j)}" r="1.9" fill="#777"/>`;
-    const pts=[];for(let i=1;i<d.length;i+=2)pts.push(X(d[i])+','+X(g-d[i+1]));return o+`<polygon points="${pts.join(' ')}" fill="#d9d9d9" fill-opacity=".85" stroke="#000" stroke-width="2.6" stroke-linejoin="round"/>`;}
+  case 'dots':{   /* Ronda 16 (el propietari, després d'imprimir): traç prim (1,6) i un punt negre a cada vèrtex (radi 2,8), perquè un angle
+                     gairebé pla es vegi; els punts de la trama, gris clar. */
+    const g=d[0],X=v=>f1(12+v*76/g);let o='';for(let i=0;i<=g;i++)for(let j=0;j<=g;j++)o+=`<circle cx="${X(i)}" cy="${X(j)}" r="1.6" fill="#999"/>`;
+    const P=[];for(let i=1;i<d.length;i+=2)P.push([X(d[i]),X(g-d[i+1])]);
+    return o+`<polygon points="${P.map(p=>p.join(',')).join(' ')}" fill="#d9d9d9" fill-opacity=".85" stroke="#000" stroke-width="1.6" stroke-linejoin="round"/>`+P.map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="2.8" fill="#000"/>`).join('');}
   case 'cells':{const w=Math.max(...d.map(p=>p[0]))+1,h=Math.max(...d.map(p=>p[1]))+1,s=Math.min(84/w,84/h,20),ox=50-w*s/2,oy=50-h*s/2;
     return d.map(([x,y])=>`<rect x="${f1(ox+x*s)}" y="${f1(oy+(h-1-y)*s)}" width="${f1(s)}" height="${f1(s)}" fill="#d9d9d9" stroke="#000" stroke-width="2.2"/>`).join('');}
   case 'svg':return d;}

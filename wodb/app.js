@@ -3,8 +3,7 @@
 'use strict';
 const W=window.WODB,BANCS=window.BANCS,ORDRE=window.BANCS_ORDRE;
 const $=s=>document.querySelector(s);
-const CEL=40,FORAT=37,MARGE=(CEL-FORAT)/2,ITEM=28,MARC=24;  // mm: casella, forat, marge del forat, dibuix, marc de la plantilla
-const BARRA=6,ESTRELLA=4.9;                              // mm: barres del model de quatre forats; radi de l'estrella
+const {CEL,FORAT,MARGE,ITEM,MARC}=PLANTILLA.MIDES;   // mm: casella, forat, marge del forat, dibuix, marc de la plantilla (comu/plantilla.js, ronda 16)
 const FIXOS=c=>Object.keys(BANCS[c].fulls);              // fulls fixos d'un banc: A, B, C, D
 const generats={};               // 'NUM-4821' -> tauler
 const st={banc:'NUM',ver:'A',vista:'full',model:'un',solu:new Set(ORDRE)};   // solu: temes (els 4 fulls fixos) i fulls generats triats
@@ -13,31 +12,17 @@ function tauler(id){const [c,v]=id.split('-');return BANCS[c].fulls[v]||generats
 /* ---------- full 1 ---------- */
 function fullSVG(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]=W.dims(B);
   const w=C*CEL,h=R*CEL,x0=(297-w)/2,y0=(210-h)/2,it=B.caixa||ITEM;let o=`<svg class="full" viewBox="0 0 297 210" xmlns="http://www.w3.org/2000/svg">`;
-  o+=`<text x="${x0+w}" y="${y0-15}" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
-  for(let r=0;r<R;r++)o+=`<text x="${x0-8}" y="${y0+r*CEL+CEL/2+2.5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${'ABCDEFGH'[r]}</text>`;
-  for(let c=0;c<C;c++)o+=`<text x="${x0+c*CEL+CEL/2}" y="${y0-5}" font-size="7" text-anchor="middle" font-family="Arial,Helvetica,sans-serif">${c+1}</text>`;
+  o+=`<text x="287" y="14" font-size="5.5" text-anchor="end" font-family="Courier New,monospace" font-weight="700">${id}</text>`;
+  o+=PLANTILLA.guies(x0,y0,R,C,PLANTILLA.MIDES);   // guies als quatre costats, fora del marc de la plantilla
   for(let r=0;r<R;r++)for(let c=0;c<C;c++){const x=x0+c*CEL,y=y0+r*CEL;
     o+=`<rect x="${x}" y="${y}" width="${CEL}" height="${CEL}" fill="#fff" stroke="#000" stroke-width=".35"/>`;
     o+=`<svg x="${x+(CEL-it)/2}" y="${y+(CEL-it)/2}" width="${it}" height="${it}" viewBox="0 0 100 100">${W.dibuixa(B,T[r*C+c])}</svg>`;}
   o+=`<rect x="${x0}" y="${y0}" width="${w}" height="${h}" fill="none" stroke="#000" stroke-width=".8"/></svg>`;return o;}
 /* ---------- plantilla ---------- */
-function estrella(cx,cy,R){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,r=i%2?R*.42:R;p.push((cx+r*Math.cos(a)).toFixed(2)+','+(cy+r*Math.sin(a)).toFixed(2));}return p.join(' ');}
-/* Dos models: 'un' = un sol forat gran (per defecte: no té cap part fràgil); 'barres' = quatre forats separats per barres de BARRA mm. */
-function plantillaCos(ox,oy,laser,model){const S=2*CEL+2*MARC,cut=laser?'stroke="#FF0000" stroke-width="0.01" fill="none"':'stroke="#000" stroke-width=".3"';
-  let holes='';
-  if(model==='barres'){const f=CEL-BARRA,m=BARRA/2;for(let i=0;i<2;i++)for(let j=0;j<2;j++){const x=ox+MARC+j*CEL+m,y=oy+MARC+i*CEL+m;holes+=` M${x},${y} h${f} v${f} h${-f} Z`;}}
-  else{const f=2*CEL-2*MARGE;holes=` M${ox+MARC+MARGE},${oy+MARC+MARGE} h${f} v${f} h${-f} Z`;}
-  let o=laser?`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" ${cut}/>`:`<path d="M${ox},${oy} h${S} v${S} h${-S} Z${holes}" fill="#d4d4d4" fill-rule="evenodd" ${cut}/>`;
-  const g=laser?'stroke="#0000FF" stroke-width="0.01"':'stroke="#000" stroke-width=".5"',L=6;
-  for(const k of [0,1,2]){const t=MARC+k*CEL;   // marques guia: continuen les línies de la graella
-    o+=`<line x1="${ox+t}" y1="${oy}" x2="${ox+t}" y2="${oy+L}" ${g}/><line x1="${ox+t}" y1="${oy+S-L}" x2="${ox+t}" y2="${oy+S}" ${g}/>`;
-    o+=`<line x1="${ox}" y1="${oy+t}" x2="${ox+L}" y2="${oy+t}" ${g}/><line x1="${ox+S-L}" y1="${oy+t}" x2="${ox+S}" y2="${oy+t}" ${g}/>`;}
-  o+=`<polygon points="${estrella(ox+MARC/2,oy+MARC/2,ESTRELLA)}" fill="#000"/>`;return o;}   // estrella centrada a la cantonada de dalt a l'esquerra
-/* Dues plantilles per A4 vertical. Amb el model d'un sol forat van a l'esquerra i a la dreta hi ha com es fa la finestra plegant el paper (comu/plec.js). */
-function plantillaSVG(model){const S=2*CEL+2*MARC,un=model!=='barres',x=un?10:(210-S)/2,g=(297-2*S)/3,bx=x+S+8,f=2*CEL-2*MARGE;
-  const ins=un?PLEC.instruccions({x:bx,y:g,w:202-bx,h:297-2*g,g:{W:S,H:S,Wh:f,Hh:f,estrella:{x:MARC/2,y:MARC/2,r:ESTRELLA},cols:2,files:2}}):'';
-  return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${plantillaCos(x,g,false,model)}${plantillaCos(x,2*g+S,false,model)}${ins}</svg>`;}
-function plantillaLaser(model){const S=2*CEL+2*MARC;return `<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${plantillaCos(0,0,true,model)}</svg>`;}
+/* Dos models: 'un' = un sol forat gran (per defecte: no té cap part fràgil); 'barres' = quatre forats separats per barres.
+   Una sola plantilla per full A4 vertical i, al model d'un sol forat, com es fa la finestra plegant el paper (comu/plantilla.js, comu/plec.js). */
+const plantillaSVG=model=>PLANTILLA.pagina(2,2,{model});
+const plantillaLaser=model=>PLANTILLA.laser(2,2,{model});
 /* ---------- solucionari ---------- */
 const FLETXA=['↖','↗','↙','↘'];
 function soluHTML(id){const [code]=id.split('-'),B=BANCS[code],T=tauler(id),[R,C]=W.dims(B);
