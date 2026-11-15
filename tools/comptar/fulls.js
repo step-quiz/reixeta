@@ -8,6 +8,7 @@ const K=globalThis.COMPTAR,SEEDS=+(process.env.SEEDS||16),out={};
 const OLD=fs.existsSync(path.join(__dirname,'../../comptar/fulls.js'))?(require(path.join(__dirname,'../../comptar/fulls.js')),globalThis.COMPTAR_FULLS||{}):{};
 for(const niv of K.ORDRE){if(OLD[niv]&&!process.env.TOT){out[niv]=OLD[niv];console.log(niv,'kept (set TOT=1 to search again)');continue;}out[niv]={};
   for(const nm of 'ABCD'){let best=null;
-    for(let s=0;s<SEEDS;s++){const T=K.genera(niv,'fix-'+nm+'-'+s);if(!T)continue;const c=K.cost(T,niv);if(!best||c<best.c)best={T,c};}
+    const usats=new Set(Object.values(out[niv]).map(T=>T.slice().sort((a,b)=>a-b).join()));   // round 18: the four sheets of a level must have different sets of numbers
+    for(let s=0;s<SEEDS;s++){const T=K.genera(niv,'fix-'+nm+'-'+s);if(!T||usats.has(T.slice().sort((a,b)=>a-b).join()))continue;const c=K.cost(T,niv);if(!best||c<best.c)best={T,c};}
     out[niv][nm]=best.T;console.log(niv+'-'+nm,'cost',best.c.toFixed(1),JSON.stringify(K.histograma(best.T,niv)));}}
 fs.writeFileSync(path.join(__dirname,'../../comptar/fulls.js'),'/* Reixeta · Joc de comptar — fulls fixos. Generat automàticament (tools/comptar/fulls.js). */\nwindow.COMPTAR_FULLS='+JSON.stringify(out)+';\n');

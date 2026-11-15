@@ -172,3 +172,8 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - The owner played the 10 × 10 sheet: exhausting. **Q1** sheets of at most 8 × 8, drawings at most 7 × 7, not necessarily square (the sheet takes the size of its drawings). **Q2** numbers 1–30: 2/3 on 1–15 (15 included), 2/9 on 16–25, 1/9 on 26–30. **Q3** a number may repeat inside a mask position (with one value per class the no-repeat rule failed: 3 sheets in 20; allowing repeats: 20 in 20 and the exact distribution). **Q4** no drawing with an empty row or column. **Q5** one fixed sheet per group of three drawings of the same size. **Q6** every theme and the maze at most 8 × 8. **Q7** the old 9 × 9 drawings removed.
 - Drawings approved: happy face, sad face, alien, ghost, cat, stick figure, heart, lollipop, cup, gift, party mask, crown, small heart, small star. Rejected and redrawn: wink (→ serious face), sun / star / flower (→ moon, tree, mushroom: "no s'entén"), ice cream and apple (→ banana, as he suggested, and carrot), candle (→ cake), pac-man with a pellet (→ simpler pac-man). Fixed: the balloon string (straight, not zigzag) and the house (bottom row all painted).
 
+## Round 18 — counting game questions (2026-11-15, in chat)
+- Levels: 2–36 (level 1) and 2–120 (level 2), for CO and CS.
+- About 85 % "how many" and 15 % "add" in the scripts; multiples of 5 always "add", never "how many" (owner). Asked in chat how to read the 15 %: **15 % of the whole script** (multiples of 5 ≈ 10 %, other sums ≈ 5 %).
+- New questions: multiples of 4, triangular numbers (owner) and **divisors of 36 / of 60** (Claude's idea, chosen by the owner; "how many even numbers" and "largest − smallest" were not chosen).
+

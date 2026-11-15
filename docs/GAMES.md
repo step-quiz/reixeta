@@ -15,7 +15,7 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 
 ## DONE — Counting game (owner's idea, round 1 comment; format round 10) — `comptar/`
 
-- F1 6 × 4 numbers (30 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
+- F1 6 × 4 numbers (30 mm cells), F2 3×2 holes used horizontally and vertically (22 positions). Questions (round 18): how many primes / multiples of 3 / multiples of 4 / squares / triangular numbers / divisors of 36 or 60, or (15 %) the sum of; multiples of 5 only as a sum; levels 2–36 and 2–120. Before: how many primes / multiples of 3 / perfect squares (0–6), or the sum of the visible numbers with the property. Levels `CO1` (2–50) and `CO2` (2–150); one sheet serves all the questions and its answers are balanced; four fixed sheets per level + "Full nou".
 - Team rules (owner): A vs B, first to answer; +5 if right, −10 if wrong; start at 40; first to 100. Answer key = shuffled game script; printable score track.
 - Simple variant for comparison: levels `CS1`/`CS2` on a 5×4 sheet with the WODB 2×2 mask (12 positions, answers 0–4). The owner has to choose which one stays (or both).
 - Full spec: `CLAUDE.md` §7.

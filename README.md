@@ -82,7 +82,8 @@ A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 8 
 
 Un full de 6 × 4 nombres i una plantilla de 6 forats (3 × 2) que es pot posar horitzontal o vertical: 22 posicions per full. Dos equips; qui fa d'àrbitre col·loca la plantilla i pregunta quants primers, múltiples de 3 o quadrats perfectes es veuen, o quant sumen (només els que compleixen la propietat). El primer equip que respon guanya 5 punts si l'encerta i en perd 10 si falla; es comença amb 40 i guanya qui arriba a 100.
 
-- **Nivells:** `CO1`, nombres de 2 a 50; `CO2`, de 2 a 150. Quatre fulls fixos per nivell (A–D) i «Full nou».
+- **Nivells:** `CO1`, nombres de 2 a 36; `CO2`, de 2 a 120. Quatre fulls fixos per nivell (A–D) i «Full nou».
+- **Preguntes (ronda 18):** quants primers, múltiples de 3, múltiples de 4, quadrats perfectes, nombres triangulars o divisors de 36 (nivell 1) / de 60 (nivell 2) es veuen; i, poques vegades, quant sumen. Els múltiples de 5 només es pregunten sumant. Als guions, un 85 % de preguntes són de comptar i un 15 % de sumar.
 - **Versió senzilla:** `CS1` i `CS2` fan servir un full de 5 × 4 i la mateixa plantilla de 2 × 2 del WODB: 12 posicions, respostes de 0 a 4 i 72 jugades per full.
 - **Un sol full per a totes les preguntes:** a cada full, les respostes de cada pregunta surten repartides entre les 22 posicions, de manera que no es poden endevinar. Al nivell 1 només hi ha sis quadrats perfectes, i veure'n cinc o sis alhora és poc freqüent o impossible.
 - **Guió de partida:** fa de solucionari. Són 40 jugades barrejades per cara (posició, pregunta i resposta), dos guions per full.
