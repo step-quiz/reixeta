@@ -99,14 +99,19 @@ $('#tema').onchange=e=>{if(e.target.value===st.tema)return;st.tema=e.target.valu
 $('#mida').onchange=e=>{const [h,w]=e.target.value.split('x').map(Number);if(h===st.h&&w===st.w)return;st.h=h;st.w=w;st.dib=[P.buit(h,w),P.buit(h,w),P.buit(h,w)];st.ex='';canvi();pinta();};
 $('#btnNou').onclick=()=>{st.llavor=String(1+Math.floor(Math.random()*999999));st.ex='';canvi();pinta();};
 document.querySelectorAll('[data-vista]').forEach(b=>b.onclick=()=>{st.vista=b.dataset.vista;pinta();actualitzaHash();});
-$('#btnPrint').onclick=()=>window.print();
+/* Des de la vista «Dibuixos» l'editor no s'imprimeix: s'imprimeix el joc complet del full (full de nombres, full de laberints si n'hi ha,
+   full de respostes i solucionari), cada pàgina amb la seva orientació (pàgines amb nom a pinta.css). */
+function totHTML(){if(!T)return '';const pag=(c,x)=>`<div class="pagina ${c}">${x}</div>`;
+  return pag('v',fullSVG())+(laberints().length?pag('h',graellesSVG('laberint')):'')+pag('h',graellesSVG('respostes'))+pag('h',graellesSVG('solu'));}
+function preparaImpressio(){const I=$('#impressio'),tot=st.vista==='editor'&&!!T;document.body.classList.toggle('imprimeix-tot',tot);if(tot){I.innerHTML=totHTML();I.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1));$('#mida-pagina').textContent='';}else I.innerHTML='';}
+$('#btnPrint').onclick=()=>{preparaImpressio();window.print();};
 window.addEventListener('resize',escala);
-window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1)));
-window.addEventListener('afterprint',escala);
+window.addEventListener('beforeprint',()=>{preparaImpressio();document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1));});
+window.addEventListener('afterprint',()=>{$('#impressio').innerHTML='';document.body.classList.remove('imprimeix-tot');pinta();});
 function aplicaHash(){const m=/^#(?:PIN-([A-Z])|p=([0-9a-fA-Zx.]+))(?:\/(editor|full|plantilla|plantilla-barres|respostes|laberint|solu))?$/.exec(location.hash);
   if(m){if(m[1]&&P.EX[m[1]])carregaEx(m[1]);else if(m[2]){const d=P.descodifica(m[2]);if(d){st.tema=d.tema;st.h=d.h;st.w=d.w;st.dib=d.dibuixos;st.llavor=d.llavor;st.ex='';}}
     st.vista=(m[3]||'editor').replace('-barres','');st.model=m[3]==='plantilla-barres'?'barres':'un';}
   calcula();pinta();estat(T?'Codi del full: '+codi()+'.':'');}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
-window.__reixeta={fullSVG,plantillaLaser,st,pinta,laberints,get T(){return T;}};
+window.__reixeta={fullSVG,plantillaLaser,st,pinta,laberints,preparaImpressio,get T(){return T;}};
 })();

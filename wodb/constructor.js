@@ -120,12 +120,17 @@ $('#estrella').onchange=e=>{st.estrella=e.target.checked;canvi();};
 $('#btnBuida').onclick=()=>{nouTauler();canvi();};
 $('#btnOmple').onclick=()=>{estat('Buscant un full…');$('#btnOmple').disabled=true;setTimeout(()=>{const ok=omple();$('#btnOmple').disabled=false;canvi();if(!ok){const imp=st.T.some(x=>x>=0)?impossibles():[];estat('No he trobat cap full amb totes les posicions vàlides'+(imp.length?': amb els elements que hi has posat, la posició '+imp.join(', ')+' no es pot completar de cap manera. Canvia-hi algun element (doble clic per treure\'l).':st.T.some(x=>x>=0)?' que respecti les caselles que ja has posat. Treu-ne alguna (doble clic) o prem «Buida».':' per a aquesta graella. Prova-ho una altra vegada o fes-la més petita.'));}},30);};
 document.querySelectorAll('[data-vista]').forEach(b=>b.onclick=()=>{st.vista=b.dataset.vista;canvi();});
-$('#btnPrint').onclick=()=>window.print();
+/* Des de la vista d'edició l'editor no s'imprimeix: s'imprimeix el full, la plantilla i el solucionari, cada pàgina amb la seva
+   orientació (pàgines amb nom a constructor.css). */
+function preparaImpressio(){const I=$('#impressio'),tot=st.vista==='editor';document.body.classList.toggle('imprimeix-tot',tot);
+  I.innerHTML=tot?`<div class="pagina h">${fullSVG()}</div><div class="pagina v">${plantillaSVG()}</div><div class="pagina h">${soluHTML()}</div>`:'';
+  if(tot){I.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1));$('#mida-pagina').textContent='';}}
+$('#btnPrint').onclick=()=>{preparaImpressio();window.print();};
 $('#btnLaser').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([plantillaLaser()],{type:'image/svg+xml'}));a.download='plantilla-'+codi()+'.svg';document.body.appendChild(a);a.click();a.remove();};
 window.addEventListener('resize',()=>{if(st.vista==='editor')pintaEditor();else escala();});
-window.addEventListener('beforeprint',()=>document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1)));
-window.addEventListener('afterprint',escala);
+window.addEventListener('beforeprint',()=>{preparaImpressio();document.querySelectorAll('.pagina').forEach(p=>p.style.setProperty('--z',1));});
+window.addEventListener('afterprint',()=>{$('#impressio').innerHTML='';document.body.classList.remove('imprimeix-tot');pinta();});
 function aplicaHash(){const m=/^#c=([^/]+)(?:\/(editor|full|plantilla|solu))?$/.exec(location.hash);if(m&&llegeix(decodeURIComponent(m[1])))st.vista=m[2]||'editor';marca();pinta();missatge();}
 window.addEventListener('hashchange',aplicaHash);aplicaHash();
-window.__constructor={st,resum,mides,omple,canvi,impossibles,estatText,codi,plantillaLaser,estatPos,posicions};
+window.__constructor={preparaImpressio,st,resum,mides,omple,canvi,impossibles,estatText,codi,plantillaLaser,estatPos,posicions};
 })();
