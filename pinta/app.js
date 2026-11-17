@@ -42,7 +42,7 @@ function graellesSVG(mode){const nh=st.h,nw=st.w,us=mode==='laberint'?laberints(
   else o+=`<text x="${gx}" y="30" font-size="4.8">Posa la plantilla a cada posició i pinta la casella si es compleix la regla.</text>`;
   us.forEach((k,i)=>{const x0=gx+i*(w+gx),y0=74,D=ple?P.pinta(st.tema,T,k):null,C=P.cami(st.dib[k]),lab=mode==='laberint'||(ple&&C);
     const R=trenca((mode==='laberint'?'Només es pot passar si ':'Pinta si ')+M().regles[k].text.replace(/ \(.*$/,''),38);
-    o+=`<text x="${x0}" y="${y0-24}" font-size="5.2" font-weight="700">${lab?'Laberint':'Dibuix'} ${i+1}</text>`+R.map((l,j)=>`<text x="${x0}" y="${y0-17.5+j*5.2}" font-size="4.3">${esc(l)}</text>`).join('');
+    o+=`<text x="${x0}" y="${y0-24}" font-size="5.2" font-weight="700">${lab?'Laberint':'Dibuix'} ${k+1}</text>`+R.map((l,j)=>`<text x="${x0}" y="${y0-17.5+j*5.2}" font-size="4.3">${esc(l)}</text>`).join('');
     for(let j=0;j<nw;j++)o+=`<text x="${x0+j*u+u/2}" y="${y0-2.5}" font-size="3.6" text-anchor="middle">${j+1}</text>`;
     for(let j=0;j<nh;j++)o+=`<text x="${x0-3.5}" y="${y0+j*u+u/2+1.3}" font-size="3.6" text-anchor="middle">${lletres[j]}</text>`;
     for(let r=0;r<nh;r++)for(let c=0;c<nw;c++)o+=`<rect x="${x0+c*u}" y="${y0+r*u}" width="${u}" height="${u}" fill="${D&&D[r][c]==='X'?'#000':'#fff'}" stroke="#000" stroke-width=".25"/>`;

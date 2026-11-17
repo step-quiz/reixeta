@@ -17,7 +17,6 @@ What is known about each piece, so that nobody takes "built" for "validated":
 
 ## P0 — Waiting for the owner
 
-0. **Pinta icon mix** (2026-11-17): artifact https://claude.ai/artifact/Mb664Czhi7wqBdwRSrv2fN. On «Revisa artifact»: read collection `fulls` (F1–F6, `icones` = ids like A1 = old PIN-A drawing 1), rebuild the 7 × 7 sheets of `EX` in `pinta/motor.js` from them (check each with `resol`, run `tools/pinta/check.js`, regenerate the PDFs), rename the sheets, keep F, G, H, N, R, Q.
 
 1. **Rounds 12 and 13 are closed** (answered 2026-11-11, see `docs/DECISIONS.md`). Postponed by the owner («Més endavant»), do not build until he asks: round 12 **A1** (which laser / printer / materials the school really has — he never told; laser files assume a CO₂ laser ≥ 300 × 200 mm and 3 mm MDF or acrylic) and **L3** (an "A" engraved on the Sanefa cards — void: Sanefa was removed).
 0. **Round 15 is closed** (2026-11-14; artifact https://claude.ai/artifact/62miWirBD9fBm3CvJcGkUU, offline copy `docs/history/ronda15.html`): WODB topics revised and rebuilt, see `docs/DECISIONS.md`. Pending: the owner's look at the new LIN sheets and at the block dimensions on paper.
