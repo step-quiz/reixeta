@@ -61,7 +61,7 @@ A `wodb/constructor.html` es pot fer un full propi a partir de qualsevol dels 8 
 
 ## Imprimir
 
-Cada pàgina de PDF (`pdf/wodb/`, `pdf/comptar/`, `pdf/pinta/`, `pdf/cardano/`) té a dalt l'enllaç **Baixa tots els PDF**: un sol fitxer ZIP amb tots els PDF del joc i els fitxers per a la talladora làser.
+Cada pàgina de PDF (`pdf/wodb/`, `pdf/comptar/`, `pdf/pinta/`, `pdf/cardano/`) té a dalt l'enllaç **Baixa tots els PDF**: un sol fitxer ZIP amb tots els PDF del joc i els fitxers per a la talladora làser. Una casella, **Inclou les solucions**, tria si el ZIP porta també els solucionaris i els guions. Dins del ZIP totes les pàgines són apaïsades (les verticals hi van girades un quart de volta); els PDF de la llista no canvien.
 
 1. Imprimeix sempre a **mida real (100 %)**, mai amb «ajusta a la pàgina».
 2. Abans d'imprimir-ne molts, fes una prova: imprimeix un full 1 i la plantilla i comprova que les caselles fan 30 mm i que el forat de la plantilla hi encaixa.
