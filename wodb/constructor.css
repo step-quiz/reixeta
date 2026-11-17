@@ -31,3 +31,8 @@
 .csolu td.p{width:11mm;font-weight:700}
 .csolu .el{font-weight:700}
 @media print{.cons,.paleta{display:none}}
+/* Impressió des de la vista d'edició: full, plantilla i solucionari, cada pàgina amb la seva orientació */
+#impressio{display:none}
+@page vertical{size:A4 portrait;margin:0}
+@page apaisat{size:A4 landscape;margin:0}
+@media print{body.imprimeix-tot #pagines{display:none}#impressio{display:block}#impressio .pagina.v{page:vertical}#impressio .pagina.h{page:apaisat}}

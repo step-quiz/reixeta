@@ -10,3 +10,8 @@
 .ajuda{max-width:720px;color:#374151;font-size:.9rem;margin:0 auto;text-align:center}
 @media (max-width:420px){.dib .px button{width:24px;height:24px}}
 @media print{.editor,.ajuda{display:none}}
+/* Impressió des de la vista «Dibuixos»: el joc complet del full, cada pàgina amb la seva orientació */
+#impressio{display:none}
+@page vertical{size:A4 portrait;margin:0}
+@page apaisat{size:A4 landscape;margin:0}
+@media print{body.imprimeix-tot #pagines{display:none}#impressio{display:block}#impressio .pagina.v{page:vertical}#impressio .pagina.h{page:apaisat}}

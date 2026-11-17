@@ -17,6 +17,7 @@ What is known about each piece, so that nobody takes "built" for "validated":
 
 ## P0 — Waiting for the owner
 
+
 1. **Rounds 12 and 13 are closed** (answered 2026-11-11, see `docs/DECISIONS.md`). Postponed by the owner («Més endavant»), do not build until he asks: round 12 **A1** (which laser / printer / materials the school really has — he never told; laser files assume a CO₂ laser ≥ 300 × 200 mm and 3 mm MDF or acrylic) and **L3** (an "A" engraved on the Sanefa cards — void: Sanefa was removed).
 0. **Round 15 is closed** (2026-11-14; artifact https://claude.ai/artifact/62miWirBD9fBm3CvJcGkUU, offline copy `docs/history/ronda15.html`): WODB topics revised and rebuilt, see `docs/DECISIONS.md`. Pending: the owner's look at the new LIN sheets and at the block dimensions on paper.
 0. **Round 14 is closed** (answered and built on 2026-11-13; artifact https://claude.ai/artifact/161sYgsFy1KTRcSnqdJjcZ, offline copy `docs/history/ronda14.html`, decisions in `docs/DECISIONS.md`). Built: T1 cache stamps (`tools/versio.js`), the Cardano grille (`CLAUDE.md` §11), Pinta themes + mazes (§9), dice and events (§12), the sonar (§13). Postponed by the owner: **B2 "Mosaic trencat"** (wallpaper groups, the continuation of Sanefa; wait until the new Sanefa has been tested on paper). **Nothing of round 14 has been seen on paper by the owner**: when he comes back, ask what he thinks of each piece. Points Claude flagged to him:
