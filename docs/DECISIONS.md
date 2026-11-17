@@ -177,3 +177,7 @@ Owner's choice per sheet: ANG none; POL none; QUA symmetry axis, equal diagonals
 - About 85 % "how many" and 15 % "add" in the scripts; multiples of 5 always "add", never "how many" (owner). Asked in chat how to read the 15 %: **15 % of the whole script** (multiples of 5 ≈ 10 %, other sums ≈ 5 %).
 - New questions: multiples of 4, triangular numbers (owner) and **divisors of 36 / of 60** (Claude's idea, chosen by the owner; "how many even numbers" and "largest − smallest" were not chosen).
 
+## 2026-11-17 — three games removed, Pinta drawings to redraw, «Baixa tots els PDF»
+- The owner: "vull abandonar definitivament les activitats Sanefa trencada, Daus i successos, El sonar. No m'agraden. Pots esborrar-les completament del projecte i del repo." Done: folders, PDFs, tools, home cards, tests and documentation removed; the code survives only in the git history (last commit with them: `c852bc5`). Rewriting the history to purge them was not done (it would break every old link and is not reversible).
+- Pinta per sumes: he dislikes the sad face (PIN-A, drawing 2), the mushroom (PIN-B, 3), the banana and the carrot (PIN-E, 1 and 2) and the three mazes (PIN-L). He asked for an artifact with a simple pixel editor to draw the replacements himself.
+- PDF indexes: he wants a «Baixar tots els PDF» link on every PDF page → `tools/tots_pdf.py` (one ZIP per game folder).

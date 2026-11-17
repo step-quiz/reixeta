@@ -20,13 +20,9 @@ Status legend: **DONE**, **APPROVED** (to build), **PARKED** ("més endavant"), 
 - Simple variant for comparison: levels `CS1`/`CS2` on a 5×4 sheet with the WODB 2×2 mask (12 positions, answers 0–4). The owner has to choose which one stays (or both).
 - Full spec: `CLAUDE.md` §7.
 
-## DONE — Sanefa trencada (round 4 S1, round 7 Q13, format round 10, rebuilt after round 13) — `sanefa/`
+## REMOVED — Sanefa trencada (2026-11-17)
 
-- One portrait sheet = the seven frieze types (translation; vertical mirrors; glide reflection; half-turns; vertical mirrors + half-turns; horizontal mirror; vertical + horizontal mirrors) made with one motif without symmetry, 8 copies of 22 mm each, exactly one wrong copy per frieze. Same motif within a sheet, different motifs on different sheets. No "creative version".
-- Motifs: straight-cut shapes with the drawing inside (sail, cheese, shed, boot), so that the card can be cut by hand. The first figurative motifs (boot, flag, sailboat, duck) were dropped: their holes could only be cut by laser.
-- F2 = card with a clipped corner whose final position names the isometry; default model = the motif as a bite on the card edge (scissors), second model = hole inside (cutter or laser). Separate answer key.
-- Rejected in round 10: splitting the seven friezes over two sheets (too "baroque"). Rejected in round 13: square window + printed motif, transparent overlay, laser-only masks.
-- Full spec: `CLAUDE.md` §8.
+- Built in rounds 4–13 (seven frieze types, one wrong copy, a card whose clipped corner names the isometry). The owner abandoned it after round 14: "no m'agraden". Code in the git history (`c852bc5`).
 
 ## DONE — Pinta per sumes (round 2 A1; format round 11) — `pinta/`
 
@@ -64,15 +60,15 @@ The mask's holes form a cube net; F1 is full of digits 1–6. Fold mentally what
 
 - Themes: two-digit sums; integers (product positive); fractions (sum is a whole number); factors 2, 3, 5 (product is a perfect square). Mazes: the hidden picture is a maze walked one cell at a time. Full spec: `CLAUDE.md` §9.
 
-## DONE — Dice and events (round 14 C3) — `daus/`
+## REMOVED — Dice and events (2026-11-17)
 
-- The 36 outcomes of two dice and one mask per event; stacking masks = intersection; question sheet and key. Full spec: `CLAUDE.md` §12. Not built: the deck-of-cards variant.
+- Built in round 14 (C3): the 36 outcomes of two dice, one mask per event. Abandoned by the owner. Code in the git history (`c852bc5`).
 
-## DONE — The sonar (round 14 F2) — `sonar/`
+## REMOVED — The sonar (2026-11-17)
 
-- Two players, 5 treasures hidden on a 5 × 4 sheet, the WODB mask as the query tool, three levels. Full spec: `CLAUDE.md` §13.
+- Built in round 14 (F2): two players, 5 hidden treasures, the WODB mask as the query tool. Abandoned by the owner. Code in the git history (`c852bc5`).
 
-## PARKED — Mosaic trencat (round 14 B2)
+## PARKED — Mosaic trencat (round 14 B2) — probably void: its base game, Sanefa trencada, was removed on 2026-11-17
 
 - Wallpaper groups as the continuation of Sanefa trencada (11 of the 17 groups are possible with one asymmetric motif per square cell, per the other AI's classifier — not re-verified by Claude). Owner: later. Do not start before the new Sanefa has been tested on paper.
 
