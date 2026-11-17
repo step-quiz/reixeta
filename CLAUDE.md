@@ -53,11 +53,13 @@ wodb/constructor.html (+ .js, .css)   Builder: own grid, own sheet, own mask (§
 wodb/motor.js                 Engine: reasons, drawing (SVG), deterministic two-phase generator
 wodb/bancs.js                 GENERATED: item banks, properties, fixed sheets A–D
 wodb/app.js, wodb/wodb.css    Page logic and print CSS (mm units, @page A4)
-pdf/wodb/, pdf/comptar/, pdf/pinta/, pdf/cardano/   GENERATED PDFs + laser SVGs + index.html + <game>-tots.zip (every PDF of the folder, `tools/tots_pdf.py`)
+pdf/wodb/, pdf/comptar/, pdf/pinta/, pdf/cardano/   GENERATED PDFs + laser SVGs + index.html + the two «Baixa tots els PDF» ZIPs (`tools/tots_pdf.py`)
 tools/wodb/                   Pipeline: Python builds bancs.js and the PDFs; Node searches and checks the sheets
 tools/comptar/, tools/pinta/   fulls.js (comptar only), check.js, make_pdfs.py — see each README.md
 tools/cardano/                check.js, make_pdfs.py, README.md
-tools/tots_pdf.py             Builds pdf/<game>/<game>-tots.zip and the «Baixa tots els PDF» link of each PDF index (run by every make_pdfs.py)
+tools/tots_pdf.py             Builds pdf/<game>/<game>-tots.zip and <game>-tots-sense-solucions.zip (every page landscape: portrait pages get
+                              /Rotate 90; answer keys = files solucionari*/guions* + pages whose text contains «solucionari») and the
+                              «Baixa tots els PDF» block with the «Inclou les solucions» checkbox on each PDF index (run by every make_pdfs.py)
 tools/plec/                   check.js (maths of the fold-and-cut recipe) and prova.js (browser test of the mask pages)
 tools/versio.js               Cache-busting stamps (?v=hash) on every script, stylesheet, PDF and SVG link; --check is part of tools/check.js
 tools/check.js                Runs every verification of the repo in one go
