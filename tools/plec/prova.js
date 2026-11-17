@@ -11,8 +11,7 @@ const cons=(C,R,model,marc,star)=>`wodb/constructor.html#c=NUM.${C}x${R}.${model
 const PAGINES=[['WODB','wodb/#NUM-A/plantilla',true],['WODB bars','wodb/#NUM-A/plantilla-barres',false],
   ['counting game 3×2','comptar/#CO1-A/plantilla',true],['counting game 3×2 bars','comptar/#CO1-A/plantilla-barres',false],['counting game 2×2','comptar/#CS1-A/plantilla',true],
   ['Pinta','pinta/#PIN-A/plantilla',true],['Pinta bars','pinta/#PIN-A/plantilla-barres',false],['Pinta 5×5 drawings','pinta/#PIN-H/plantilla',true],
-  ['builder 5×4 frame 24','/'+cons(5,4,'un',24,1),true],['builder 7×5 frame 15 no star','/'+cons(7,5,'un',15,0),true],['builder 2×2 frame 20','/'+cons(2,2,'un',20,1),true],['builder 6×5 bars','/'+cons(6,5,'barres',24,1),false],
-  ['sonar (WODB mask)','sonar/#SO1-A/plantilla',true],['dice mask B (window off centre)','daus/#s=B/fitxes',true],['dice mask G (window off centre)','daus/#s=G/fitxes',true],['dice mask A (three holes)','daus/#s=A/fitxes',false],['dice mask F (L-shaped hole)','daus/#s=F/fitxes',false]];
+  ['builder 5×4 frame 24','/'+cons(5,4,'un',24,1),true],['builder 7×5 frame 15 no star','/'+cons(7,5,'un',15,0),true],['builder 2×2 frame 20','/'+cons(2,2,'un',20,1),true],['builder 6×5 bars','/'+cons(6,5,'barres',24,1),false]];
 const srv=http.createServer((q,r)=>{let p=decodeURIComponent(q.url.split('?')[0]);if(p.endsWith('/'))p+='index.html';const f=path.join(ROOT,p);
   fs.readFile(f,(e,d)=>{if(e){r.writeHead(404);r.end();return;}r.writeHead(200,{'Content-Type':f.endsWith('.js')?'text/javascript':f.endsWith('.css')?'text/css':'text/html'});r.end(d);});}).listen(8782,async()=>{
   const b=await chromium.launch(),errs=[];let bad=0;

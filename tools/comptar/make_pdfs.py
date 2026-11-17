@@ -39,4 +39,5 @@ open(f'{OUT}/index.html','w',encoding='utf-8').write('''<!DOCTYPE html><html lan
 <h2>Per jugar</h2><ul><li><a href="guions.pdf">Guions de partida</a> (dos per full, un per cara)</li><li><a href="marcador.pdf">Marcador</a></li></ul>
 </body></html>''')
 print('errors',errs)
+import subprocess; subprocess.run(['python3',ROOT+'/tools/tots_pdf.py',os.path.basename(OUT)],check=True)   # «Baixa tots els PDF»: ZIP + link
 import subprocess; subprocess.run(['node',ROOT+'/tools/versio.js'],check=True)   # stamp the links of the pages just written (cache busting)
