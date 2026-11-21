@@ -27,9 +27,9 @@ const serveix=(W,H,Wh,Hh)=>Wh>0&&Hh>0&&Wh<W&&Hh<H;
 
 const TITOL='Com retallar el quadrat interior amb dos plecs i dos talls',   // ronda 16; amb un forat rectangular, «rectangle» (titolDe)
       titolDe=g=>Math.abs(g.Wh-g.Hh)<1e-6?TITOL:TITOL.replace('el quadrat','el rectangle'),
-  INTRO_C='Retalla primer el contorn. Plega sempre cap enrere, amb el dibuix a fora. Fes-ho abans de plastificar.',
+  INTRO_C='Retalla primer el contorn. Plega sempre cap enrere, amb el dibuix a fora.',
   PASSOS_C=['Plega per la meitat.','Torna a plegar per la meitat.','Fes dos talls rectes, per les dues línies de la finestra.','Desplega.'];
-const INTRO_L='Retalla primer el contorn. Plega per les línies de punts, sempre cap enrere, amb el dibuix a fora. Fes-ho abans de plastificar.',
+const INTRO_L='Retalla primer el contorn. Plega per les línies de punts, sempre cap enrere, amb el dibuix a fora.',
   PASSOS_L=['Plega per una de les dues línies de punts.','Plega per l\'altra línia de punts.','Fes dos talls rectes, per les dues línies de la finestra.','Desplega.'];
 const GRIS='#d4d4d4',n2=x=>(+x).toFixed(2);
 /* Parteix un text en línies d'una amplada donada (amplada mitjana d'un caràcter d'Arial ≈ 0,5 × cos; 0,56 en negreta). */

@@ -32,7 +32,7 @@ function reixetaCos(ox,oy,laser){const cut=laser?'stroke="#FF0000" stroke-width=
 function reixetaSVG(){const x=(210-S)/2,y=24;
   return `<svg class="full" viewBox="0 0 210 297" xmlns="http://www.w3.org/2000/svg">${reixetaCos(x,y,false)}`
     +[`Reixeta de Cardano: la mateixa per a tots els fulls.`,`Es posa amb l'estrella a dalt a l'esquerra; després es gira tres vegades un quart de volta cap a la dreta.`,
-      `Retalla el contorn i els nou quadrats blancs amb cúter i regle (36 talls de ${FORAT} mm) o amb la talladora làser.`,`Fes-ho abans de plastificar.`]
+      `Retalla el contorn i els nou quadrats blancs amb cúter i regle (36 talls de ${FORAT} mm) o amb la talladora làser.`]
       .map((t,i)=>`<text x="${x}" y="${y+S+9+i*5.6}" font-size="3.8" ${AR}>${t}</text>`).join('')+'</svg>';}
 function reixetaLaser(){return `<?xml version="1.0" encoding="UTF-8"?>\n<svg xmlns="http://www.w3.org/2000/svg" width="${S}mm" height="${S}mm" viewBox="0 0 ${S} ${S}">${reixetaCos(0,0,true)}</svg>`;}
 /* ---------- solucionari: les quatre posicions en petit ---------- */

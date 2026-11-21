@@ -29,8 +29,8 @@ function fullSVG(){const R=st.h+1,C=st.w+1,c=P.CEL,w=C*c,hh=R*c,x0=(210-w)/2,y0=
   for(let r=0;r<R;r++)for(let k=0;k<C;k++)o+=`<rect x="${x0+k*c}" y="${y0+r*c}" width="${c}" height="${c}" fill="#fff" stroke="#000" stroke-width=".3"/>`+valorSVG(T[r][k],x0+k*c+c/2,y0+r*c+c/2,c);
   return o+`<rect x="${x0}" y="${y0}" width="${w}" height="${hh}" fill="none" stroke="#000" stroke-width=".7"/></svg>`;}
 /* ---------- plantilla de 2×2: comu/plantilla.js amb la casella de Pinta i un marc de 14 mm; una per full A4 ---------- */
-const plantillaSVG=()=>PLANTILLA.pagina(2,2,{model:st.model,m:midesPl()});
-const plantillaLaser=()=>PLANTILLA.laser(2,2,{model:st.model,m:midesPl()});
+const plantillaSVG=()=>PLANTILLA.pagina(2,2,{model:st.model,m:midesPl(),estrella:false});   // ronda 19: sense estrella (a Pinta no té sentit)
+const plantillaLaser=()=>PLANTILLA.laser(2,2,{model:st.model,m:midesPl(),estrella:false});
 /* ---------- full de respostes, full de laberints i solucionari: una graella per dibuix ---------- */
 function trenca(t,max){const out=[];let l='';for(const w of t.split(' ')){if(l&&(l+' '+w).length>max){out.push(l);l=w;}else l=l?l+' '+w:w;}if(l)out.push(l);return out;}
 /* mode: 'respostes' (graelles buides), 'laberint' (graelles buides amb entrada i sortida, només els dibuixos que són laberints)

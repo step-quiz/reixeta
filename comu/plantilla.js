@@ -1,6 +1,6 @@
 /* Reixeta · Full de joc i plantilla plegable, comuns a tots els jocs on una plantilla es mou sobre un full (ronda 16, 2026-11-15).
-   - guies(): les lletres i els números de les files i les columnes, als quatre costats de la graella i més lluny que el marc de la
-     plantilla (GUIA = marc + 5 mm), perquè la plantilla no les tapi mai, sigui on sigui.
+   - guies(): les lletres de les files (a l'esquerra) i els números de les columnes (a dalt), més lluny que el marc de la plantilla
+     (GUIA = marc + 5 mm), perquè la plantilla no les tapi mai; les línies de la graella s'hi allarguen en discontinu (ronda 19).
    - cos(): la plantilla. Al model d'un sol forat, marques de plec discontínues a la meitat de cada costat (travessen el marc i fan
      de guia: no hi ha marques curtes); al de barres, marques guia a les línies de la graella; una estrella a la cantonada de dalt a l'esquerra i una fletxa que va cap a la cantonada de la
      finestra més propera, sense arribar-hi (3 mm abans).
@@ -16,11 +16,15 @@ const AMPLIA=1.05;
 const n2=x=>(+x).toFixed(2),AR='font-family="Arial,Helvetica,sans-serif"';
 function estrella(cx,cy,r){const p=[];for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,rr=i%2?r*.42:r;p.push(n2(cx+rr*Math.cos(a))+','+n2(cy+rr*Math.sin(a)));}return p.join(' ');}
 const GUIA=m=>m.MARC+5;
-/* Guies als quatre costats. lletres = 'ABCD…' (o una funció r -> text). */
+/* Guies (ronda 19, el propietari): lletres a l'esquerra i números a dalt, només; les línies de la graella s'allarguen amb un traç
+   discontinu fins més enllà de les guies, de manera que entre dues lletres (o dos números) hi ha una línia que les separa.
+   lletres = 'ABCD…' (o una funció r -> text). */
 function guies(x0,y0,R,C,m,lletres){const cel=m.CEL,d=GUIA(m),w=C*cel,h=R*cel,L=typeof lletres==='function'?lletres:(r=>(lletres||'ABCDEFGHIJ')[r]);let o='';
-  const T=(x,y,t)=>`<text x="${n2(x)}" y="${n2(y+2.5)}" font-size="7" text-anchor="middle" ${AR}>${t}</text>`;
-  for(let r=0;r<R;r++){const y=y0+r*cel+cel/2;o+=T(x0-d,y,L(r))+T(x0+w+d,y,L(r));}
-  for(let c=0;c<C;c++){const x=x0+c*cel+cel/2;o+=T(x,y0-d,c+1)+T(x,y0+h+d,c+1);}
+  const T=(x,y,t)=>`<text x="${n2(x)}" y="${n2(y+2.5)}" font-size="7" text-anchor="middle" ${AR}>${t}</text>`,ext=d+5,ds='stroke="#666" stroke-width=".3" stroke-dasharray="1.5 1.2"';
+  for(let r=0;r<=R;r++){const y=y0+r*cel;o+=`<line x1="${n2(x0-ext)}" y1="${n2(y)}" x2="${n2(x0)}" y2="${n2(y)}" ${ds}/>`;}
+  for(let c=0;c<=C;c++){const x=x0+c*cel;o+=`<line x1="${n2(x)}" y1="${n2(y0-ext)}" x2="${n2(x)}" y2="${n2(y0)}" ${ds}/>`;}
+  for(let r=0;r<R;r++)o+=T(x0-d,y0+r*cel+cel/2,L(r));
+  for(let c=0;c<C;c++)o+=T(x0+c*cel+cel/2,y0-d,c+1);
   return o;}
 /* La plantilla amb la cantonada de dalt a l'esquerra a (ox, oy): nc columnes × nr files de finestra.
    op: {laser, model:'un'|'barres', estrella (per defecte sí), m (mides)} */
@@ -38,6 +42,17 @@ function cos(ox,oy,nc,nr,op){op=op||{};const m=op.m||MIDES,cel=m.CEL,M=m.MARC,W=
   /* Model d'un sol forat: sense marques guia (ronda 16, el propietari): les línies discontínues de plegar ja fan de guia. */
   if(plecs){const cx=ox+W/2,cy=oy+H/2,ln=(a,b,c,d)=>`<line x1="${n2(a)}" y1="${n2(b)}" x2="${n2(c)}" y2="${n2(d)}" ${dash}/>`;   // marques de plec: la meitat de cada costat
     o+=ln(cx,oy,cx,fy)+ln(cx,fy2,cx,oy+H)+ln(ox,cy,fx,cy)+ln(fx2,cy,ox+W,cy);}
+  if(!laser){/* Ronda 19: les quatre zones del marc (separades pels plecs) es numeren I, II (a dalt) i III, IV (a baix), com es llegeix;
+     la I és la de l'estrella. */
+    const fs=Math.min(7,M*.38),yT=oy+M/2+fs*.36,yB=oy+H-M/2+fs*.36,N=(x,y,t)=>`<text x="${n2(x)}" y="${n2(y)}" font-size="${n2(fs)}" font-weight="700" text-anchor="middle" fill="#333" ${AR}>${t}</text>`;
+    o+=N(ox+W/4+(op.estrella!==false?M*.25:0),yT,'I')+N(ox+3*W/4,yT,'II')+N(ox+W/4,yB,'III')+N(ox+3*W/4,yB,'IV');
+    /* Ronda 19: unes tisores fora de la plantilla, a la dreta de la cantonada de dalt (3 mm de separació), apuntant cap a la vora de
+       dalt: el primer pas és retallar el contorn. Icona plena (anelles negres i fulles cònniques, com la que va triar el propietari).
+       Dibuixada apuntant cap a +x amb la punta a l'origen i girada mitja volta. Cap part toca la zona gris. */
+    const k=Math.min(1.3,M/17);o+=`<g transform="translate(${n2(ox+W+3)},${n2(oy)}) scale(${n2(k)}) rotate(180)">`
+      +`<path d="M-8.1,-2.3 L-5.6,-1.25 Q-2.4,0.2 0,2.3 Q-2.9,1.75 -6.1,1.0 Z M-8.1,2.3 L-5.6,1.25 Q-2.4,-0.2 0,-2.3 Q-2.9,-1.75 -6.1,-1.0 Z" fill="#000" stroke="#000" stroke-width=".3" stroke-linejoin="round"/>`
+      +`<circle cx="-9.6" cy="-2.7" r="1.75" fill="#fff" stroke="#000" stroke-width="1.15"/><circle cx="-9.6" cy="2.7" r="1.75" fill="#fff" stroke="#000" stroke-width="1.15"/>`
+      +`<circle cx="-5.55" cy="0" r=".42" fill="#fff"/></g>`;}
   if(op.estrella!==false){const sx=ox+M/2,sy=oy+M/2,r=m.ESTRELLA,fill=laser?'fill="#000"':'fill="#000"';
     o+=`<polygon points="${estrella(sx,sy,r)}" ${fill}/>`;
     const [hx,hy]=forats.reduce((a,b)=>Math.hypot(b[0]-sx,b[1]-sy)<Math.hypot(a[0]-sx,a[1]-sy)?b:a);   // cantonada de forat més propera
