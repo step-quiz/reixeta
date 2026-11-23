@@ -70,7 +70,22 @@ function resol(tema,h,w,dibuixos,llavor){const M=TEMES[tema];if(!M||!midaOk(h,w)
       /* tema S: entre els primers 16 fulls bons, el que té la distribució més propera a 2/3, 2/9, 1/9 */
       const f=[0,0,0];T.flat().forEach(v=>{f[GRUPS.findIndex(g=>+v.s<=g)]++;});const d=f.reduce((z,x,i)=>z+Math.abs(x/(R*C)-OBJ[i]),0);
       if(!millor||d<millor.d)millor={T,d};if(++bons>=16)break;}}
-  return millor?millor.T:null;}
+  return millor?(tema==='S'?escurca(millor.T):millor.T):null;}
+/* Tema S: escurça les sumes llargues sense canviar cap dibuix (document de matemàtiques, apartats 2.4 i 2.10). Sumar k, restar k,
+   sumar k… al llarg d'una columna (o d'una fila), mòdul 30, no canvia cap suma de finestra mòdul 30: és un element del nucli.
+   A cada pas es fa el moviment d'aquest tipus que més rebaixa (1) el nombre de finestres que sumen més de 60, (2) la suma de
+   finestra més gran i (3) la distància a la distribució 2/3, 2/9, 1/9, sense que aquesta distància passi de 0,10 (o de la que
+   ja tenia el full). Determinista: la mateixa llavor dona el mateix full. */
+function escurca(T){const H=T.length,W=T[0].length,md=v=>((v-1)%30+30)%30+1;let n=T.map(f=>f.map(v=>+v.s));
+  const nota=m=>{let mx=0,o=0;for(let r=0;r<H-1;r++)for(let c=0;c<W-1;c++){const s=m[r][c]+m[r][c+1]+m[r+1][c]+m[r+1][c+1];if(s>mx)mx=s;if(s>60)o++;}
+    const f=[0,0,0];m.forEach(fl=>fl.forEach(v=>f[GRUPS.findIndex(g=>v<=g)]++));const d=f.reduce((z,x,i)=>z+Math.abs(x/(H*W)-OBJ[i]),0);return {d,val:1000*o+mx+40*d};};
+  let cur=nota(n);const DMAX=Math.max(cur.d,0.10);
+  for(let it=0;it<200;it++){let millor=null;
+    for(let l=0;l<H+W;l++)for(let k=1;k<30;k++){const m=n.map(f=>f.slice());
+      if(l<W){for(let r=0;r<H;r++)m[r][l]=md(m[r][l]+(r%2?-k:k));}else{for(let c=0;c<W;c++)m[l-W][c]=md(m[l-W][c]+(c%2?-k:k));}
+      const s=nota(m);if(s.d<=DMAX&&s.val<cur.val-1e-9&&(!millor||s.val<millor.s.val))millor={m,s};}
+    if(!millor)break;n=millor.m;cur=millor.s;}
+  return n.map(f=>f.map(v=>V_SUMES[v-1]));}
 /* Dibuix que surt de pintar, amb la regla k del tema, les posicions del full T. */
 function pinta(tema,T,k){const g=TEMES[tema].regles[k].g,R=T.length,C=T[0].length,out=[];for(let r=0;r<R-1;r++){let s='';for(let c=0;c<C-1;c++)s+=g.sum(g.sum(T[r][c].c[k],T[r][c+1].c[k]),g.sum(T[r+1][c].c[k],T[r+1][c+1].c[k]))===0?'X':'.';out.push(s);}return out;}
 function comprova(tema,T,dibuixos){const M=TEMES[tema],R=T.length,C=T[0].length;
@@ -79,12 +94,16 @@ function comprova(tema,T,dibuixos){const M=TEMES[tema],R=T.length,C=T[0].length;
   return M.regles.every((g,k)=>{if(!teNegre(dibuixos[k]))return senseBuides(pinta(tema,T,k));return pinta(tema,T,k).join()===dibuixos[k].join();});}
 /* ---------- laberints ---------- */
 /* Laberint a l'atzar (sempre el mateix per a la mateixa llavor): les posicions de fila i columna senars (A1, A3, C1…) són
-   cambres, i un arbre de passadissos les uneix totes. Negre = es pot passar. Entre dues posicions només hi ha un camí. */
+   cambres, i un arbre de passadissos les uneix totes. Negre = es pot passar. Entre dues posicions només hi ha un camí.
+   Algorisme de Wilson (passejades a l'atzar sense bucles): tots els laberints possibles tenen la mateixa probabilitat
+   (100.352 per a 7 × 7). La cerca en profunditat d'abans només en podia donar 322 (document de matemàtiques, 2.9). */
 function laberint(h,w,llavor){if(h%2===0||w%2===0)return null;   // cal un nombre senar de files i de columnes
   const mh=(h+1)/2,mw=(w+1)/2,rnd=mulberry32(hashSeed('lab-'+h+'x'+w+'-'+llavor)),D=Array.from({length:h},()=>new Array(w).fill('.'));
-  const vist=Array.from({length:mh},()=>new Array(mw).fill(false)),pila=[[0,0]];vist[0][0]=true;D[0][0]='X';
-  while(pila.length){const [r,c]=pila[pila.length-1],ve=[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(([a,b])=>a>=0&&b>=0&&a<mh&&b<mw&&!vist[a][b]);
-    if(!ve.length){pila.pop();continue;}const [a,b]=ve[Math.floor(rnd()*ve.length)];vist[a][b]=true;D[2*a][2*b]='X';D[r+a][c+b]='X';pila.push([a,b]);}
+  const arbre=Array.from({length:mh},()=>new Array(mw).fill(false)),seg=new Map();arbre[0][0]=true;D[0][0]='X';
+  const veins=(r,c)=>[[r-1,c],[r+1,c],[r,c-1],[r,c+1]].filter(([a,b])=>a>=0&&b>=0&&a<mh&&b<mw);
+  for(let i=0;i<mh;i++)for(let j=0;j<mw;j++){if(arbre[i][j])continue;
+    let [r,c]=[i,j];while(!arbre[r][c]){const v=veins(r,c),[a,b]=v[Math.floor(rnd()*v.length)];seg.set(r*mw+c,[a,b]);[r,c]=[a,b];}   // passejada; l'última sortida de cada cambra esborra els bucles
+    [r,c]=[i,j];while(!arbre[r][c]){const [a,b]=seg.get(r*mw+c);arbre[r][c]=true;D[2*r][2*c]='X';D[r+a][c+b]='X';[r,c]=[a,b];}}
   return D.map(f=>f.join(''));}
 /* Si el dibuix és un laberint (les caselles negres fan un arbre que conté l'entrada, a dalt a l'esquerra, i la sortida,
    a baix a la dreta), torna l'únic camí de l'entrada a la sortida com a llista de [fila, columna]. Si no ho és, torna null. */
